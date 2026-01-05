@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Filogenética - Fomitiporia TreeApp</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧬 Fomitiporia TreeApp</h1>
+            <p>Análise Filogenética com MAFFT e IQ-TREE/FastTree</p>
+        </header>
+
+        <main>
+            <!-- Seção de Upload - Alinhamento -->
+            <section id="alignment-section" class="card">
+                <h2>1. Matriz de Alinhamento</h2>
+                <p class="section-hint">Carregue o alinhamento existente ou use o padrão fornecido</p>
+                
+                <div class="alignment-container">
+                    <div class="upload-area" id="upload-area-alignment">
+                        <input type="file" id="file-input-alignment" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
+                        <label for="file-input-alignment" class="upload-label">
+                            <div class="upload-icon">📄</div>
+                            <p>Clique ou arraste para substituir o alinhamento</p>
+                            <p class="upload-hint">.fasta, .fa, .fas, .faa, .fna</p>
+                        </label>
+                    </div>
+                    <div id="alignment-info" style="display: none;">
+                        <p><strong>Alinhamento carregado:</strong> <span id="alignment-filename"></span></p>
+                    </div>
+                    <div id="alignment-default" style="display: block;">
+                        <p style="color: #667eea; font-weight: 600;">✓ Usando alinhamento padrão</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção de Novas Sequências -->
+            <section id="sequences-section" class="card">
+                <h2>2. Adicionar Sequências</h2>
+                <p class="section-hint">Insira novas sequências por texto ou carregue um arquivo</p>
+                
+                <div class="sequences-input-container">
+                    <div class="input-method">
+                        <h3>📝 Por Texto</h3>
+                        <p class="format-hint">Formato: >nome_da_sequência<br>AAATTTGGGCCC<br>ou: >nome\tAAAAAAAA (tab-separado)</p>
+                        <textarea id="sequences-text" placeholder=">sequence_1&#10;AAATTTGGGCCC&#10;&#10;>sequence_2&#10;GGGCCCAAATTT" rows="8"></textarea>
+                    </div>
+
+                    <div class="divider">OU</div>
+
+                    <div class="input-method">
+                        <h3>📤 Por Upload</h3>
+                        <div class="upload-area" id="upload-area-sequences">
+                            <input type="file" id="file-input-sequences" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
+                            <label for="file-input-sequences" class="upload-label">
+                                <div class="upload-icon">📁</div>
+                                <p>Clique ou arraste arquivo FASTA</p>
+                                <p class="upload-hint">.fasta, .fa, .fas, .faa, .fna</p>
+                            </label>
+                        </div>
+                        <div id="sequences-file-info" style="display: none;">
+                            <p><strong>Arquivo:</strong> <span id="sequences-filename"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção de Árvore -->
+            <section id="tree-section" class="card">
+                <h2>3. Construção de Árvore (Opcional)</h2>
+                <p class="section-hint">Escolha o método para construção da árvore filogenética</p>
+                
+                <form id="tree-config-form">
+                    <div class="form-group">
+                        <label for="tree-tool">Ferramenta:</label>
+                        <select id="tree-tool">
+                            <option value="skip">Pular (apenas alinhamento)</option>
+                            <option value="fasttree" selected>FastTree (rápido, ~minutos)</option>
+                            <option value="iqtree">IQ-TREE (preciso, pode demorar mais)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="bootstrap-group" style="display: none;">
+                        <label for="bootstrap">Bootstrap (IQ-TREE):</label>
+                        <input type="number" id="bootstrap" value="1000" min="100" max="10000" step="100">
+                        <small>Recomendado: 1000 para publicação</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Iniciar Análise</button>
+                </form>
+            </section>
+
+            <!-- Seção de Progresso -->
+            <section id="progress-section" class="card" style="display: none;">
+                <h2>4. Processamento</h2>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <p id="progress-text">Iniciando...</p>
+                    <p id="progress-step"></p>
+                </div>
+            </section>
+
+            <!-- Seção de Resultados -->
+            <section id="results-section" class="card" style="display: none;">
+                <h2>5. Resultados</h2>
+                <div class="results-actions">
+                    <button class="btn btn-success" id="download-tree">⬇️ Download Árvore (.nwk)</button>
+                    <button class="btn btn-success" id="download-alignment">⬇️ Download Alinhamento (.fasta)</button>
+                    <button class="btn btn-secondary" id="new-analysis">🔄 Nova Análise</button>
+                </div>
+                
+                <h3>Visualização da Árvore Filogenética</h3>
+                <div id="tree-container"></div>
+            </section>
+
+            <!-- Seção de Erro -->
+            <section id="error-section" class="card error" style="display: none;">
+                <h2>⚠️ Erro</h2>
+                <p id="error-message"></p>
+                <button class="btn btn-secondary" id="retry-btn">Tentar Novamente</button>
+            </section>
+        </main>
+
+        <footer>
+            <p>Desenvolvido para análises filogenéticas de <em>Fomitiporia</em> e outros organismos</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
