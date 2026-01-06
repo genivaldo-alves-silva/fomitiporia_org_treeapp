@@ -153,41 +153,42 @@ async function startAnalysis() {
 
     console.log('startAnalysis chamada com:', { treeTool, bootstrap, currentJobId });
 
-    try {
-        // Mostrar barra de progresso ANTES de fazer a chamada
-        console.log('Mostrando progress section...');
-        document.getElementById('alignment-section').style.display = 'none';
-        document.getElementById('sequences-section').style.display = 'none';
-        document.getElementById('tree-section').style.display = 'none';
-        progressSection.style.display = 'block';
-        
-        // Inicializar barra
-        progressFill.style.width = '5%';
-        progressText.textContent = '5% completo';
-        progressStep.textContent = 'Enviando para análise...';
-        
-        console.log('Progress section visível');
+    // Mostrar barra de progresso ANTES de fazer a chamada
+    console.log('Mostrando progress section...');
+    document.getElementById('alignment-section').style.display = 'none';
+    document.getElementById('sequences-section').style.display = 'none';
+    document.getElementById('tree-section').style.display = 'none';
+    progressSection.style.display = 'block';
+    
+    // Inicializar barra
+    progressFill.style.width = '5%';
+    progressText.textContent = '5% completo';
+    progressStep.textContent = 'Enviando para análise...';
+    
+    console.log('Progress section visível');
 
-        const url = `${API_URL}/analyze/${currentJobId}?tree_tool=${treeTool}&bootstrap=${bootstrap}`;
-        console.log('Chamando:', url);
-        
-        const response = await fetch(url, { method: 'POST' });
+    const url = `${API_URL}/analyze/${currentJobId}?tree_tool=${treeTool}&bootstrap=${bootstrap}`;
+    console.log('Chamando:', url);
+    
+    // Disparar análise SEM aguardar (não bloqueia)
+    fetch(url, { method: 'POST' })
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                return response.json().then(error => {
+                    throw new Error(error.detail || 'Erro ao iniciar análise');
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erro em fetch /analyze:', error);
+            stopPolling();
+            showError(`Erro ao iniciar análise: ${error.message}`);
+        });
 
-        console.log('Response status:', response.status);
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Erro ao iniciar análise');
-        }
-
-        console.log('Começando polling...');
-        // Começar polling
-        startPolling();
-
-    } catch (error) {
-        console.error('Erro em startAnalysis:', error);
-        showError(`Erro ao iniciar análise: ${error.message}`);
-    }
+    console.log('Começando polling IMEDIATAMENTE...');
+    // Iniciar polling SEM esperar a resposta do /analyze
+    startPolling();
 }
 
 function startPolling() {
