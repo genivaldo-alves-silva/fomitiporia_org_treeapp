@@ -2,3 +2,6 @@ fastapi==0.109.0
 uvicorn[standard]==0.27.0
 python-multipart==0.0.6
 pydantic==2.5.3
+toyplot==2.0.0
+toytree==3.0.11
+requests==2.32.5

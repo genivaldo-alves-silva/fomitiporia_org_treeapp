@@ -192,7 +192,7 @@ async def analyze(job_id: str, background_tasks: BackgroundTasks,
 
 @app.get("/download/{job_id}/{file_type}")
 async def download_result(job_id: str, file_type: str):
-    """Download de resultados (tree ou alignment)"""
+    """Download de resultados (tree, tree_svg ou alignment)"""
     
     if job_id not in job_status:
         raise HTTPException(status_code=404, detail="Job não encontrado")
@@ -201,13 +201,17 @@ async def download_result(job_id: str, file_type: str):
         raise HTTPException(status_code=400, detail="Análise ainda não completada")
     
     if file_type == "tree":
-        file_path = RESULTS_DIR / job_id / "tree.nwk"
+        file_path = RESULTS_DIR / job_id / "tree.tree"
         media_type = "text/plain"
-        filename = "phylogenetic_tree.nwk"
+        filename = "phylogenetic_tree.tree"
     elif file_type == "alignment":
         file_path = UPLOAD_DIR / job_id / "aligned.fasta"
         media_type = "text/plain"
         filename = "alignment.fasta"
+    elif file_type == "tree_svg":
+        file_path = RESULTS_DIR / job_id / "supportvalue_output.svg"
+        media_type = "image/svg+xml"
+        filename = "phylogenetic_tree.svg"
     else:
         raise HTTPException(status_code=400, detail="Tipo de arquivo inválido")
     
@@ -230,7 +234,7 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
         result_dir.mkdir(exist_ok=True)
         
         aligned_file = job_dir / "aligned.fasta"
-        tree_file = result_dir / "tree.nwk"
+        tree_file = result_dir / "tree.tree"
         
         # Passo 1: Alinhamento com MAFFT (modo --add)
         job_status[job_id] = {"status": "processing", "progress": 20, "step": "alignment"}
@@ -386,6 +390,34 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
                     # Com -B, o IQ-TREE gera .contree (consensus tree com bootstrap)
                     job_status[job_id] = {"status": "processing", "progress": 99, "step": "tree_building"}
                     shutil.copy(result_dir / "iqtree.contree", tree_file)
+                    
+                    # Gerar SVG da árvore
+                    try:
+                        svg_script = Path(__file__).parent / "tree_set_svg_edit" / "tree_set_cli.py"
+                        svg_result = subprocess.run(
+                            ["python3", str(svg_script), str(tree_file), str(result_dir)],
+                            capture_output=True,
+                            text=True,
+                            timeout=120
+                        )
+                        if svg_result.returncode != 0:
+                            print(f"Aviso: Falha ao gerar SVG: {svg_result.stderr}")
+                        else:
+                            # Processar SVG com svg_edit (italics/bold)
+                            svg_edit_script = Path(__file__).parent / "tree_set_svg_edit" / "svg_edit_cli.py"
+                            input_svg = result_dir / "supportvalue.svg"
+                            output_svg = result_dir / "supportvalue_output.svg"
+                            
+                            edit_result = subprocess.run(
+                                ["python3", str(svg_edit_script), str(input_svg), str(output_svg)],
+                                capture_output=True,
+                                text=True,
+                                timeout=60
+                            )
+                            if edit_result.returncode != 0:
+                                print(f"Aviso: Falha ao processar SVG: {edit_result.stderr}")
+                    except Exception as e:
+                        print(f"Aviso: Erro ao gerar/processar SVG: {e}")
             if result.returncode != 0:
                 raise Exception(f"{tree_tool} falhou: {result.stderr}")
         

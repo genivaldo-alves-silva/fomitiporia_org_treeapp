@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+## Tree visualization with support values - CLI version
+##
+import html
+import toytree
+import re
+import toyplot.svg
+import sys
+from pathlib import Path
+
+def generate_tree_svg(tree_file: str, output_dir: str):
+    """
+    Gera SVG da árvore filogenética com valores de suporte
+    
+    Args:
+        tree_file: Caminho para arquivo .tree (Newick)
+        output_dir: Diretório onde salvar o SVG
+    """
+    # Load the tree
+    tree = toytree.tree(tree_file)
+    
+    # Find tips that match 'uncisetus' for rooting
+    matching_tips = [name for name in tree.get_tip_labels() if 'uncisetus' in name.lower()]
+    
+    # Root the tree using the MRCA of the matched tips (se encontrado)
+    if matching_tips:
+        mrca = tree.get_mrca_node(*matching_tips)
+        rooted_tree = tree.root(mrca)
+    else:
+        rooted_tree = tree
+    
+    # Ladderize the tree
+    ladderized_tree = rooted_tree.ladderize()
+    
+    # Create node label list for all nodes (internal and terminal)
+    node_labels = ['' for _ in range(ladderized_tree.nnodes)]
+    
+    # Create node size list
+    node_sizes = [0 for _ in range(ladderized_tree.nnodes)]
+    
+    # Create node marker list
+    node_markers = ['' for _ in range(ladderized_tree.nnodes)]
+    
+    # Create node color list
+    node_colors = ['black' for _ in range(ladderized_tree.nnodes)]
+    
+    # Traverse all internal nodes and add support labels where support >= 50
+    for node in ladderized_tree.treenode.traverse():
+        if node.is_leaf():
+            continue
+        support_value = node.support
+        if support_value is not None and support_value >= 50:
+            node_labels[node.idx] = str(int(support_value))
+            node_sizes[node.idx] = 15
+            node_markers[node.idx] = "s"
+    
+    # Draw the tree
+    canvas, axes, mark = ladderized_tree.draw(
+        width=1700,
+        height=4000,
+        tip_labels_align=False,
+        tip_labels_style={
+            "fill": "#262626",
+            "font-size": "20px",
+            "-toyplot-anchor-shift": "15px",
+        },
+        node_labels=node_labels,
+        node_labels_style={
+            "fill": "#262626",
+            "font-size": "15px",
+        },
+        node_sizes=None,
+        node_markers=node_markers,
+        node_colors=node_colors,
+        edge_style={
+            "stroke": "black", 
+            "stroke-width": 1,
+        },
+    )
+    
+    # Save to output directory
+    output_path = Path(output_dir) / "supportvalue.svg"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    toyplot.svg.render(canvas, str(output_path))
+    
+    return str(output_path)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python tree_set_cli.py <tree_file> <output_dir>")
+        sys.exit(1)
+    
+    tree_file = sys.argv[1]
+    output_dir = sys.argv[2]
+    
+    output_svg = generate_tree_svg(tree_file, output_dir)
+    print(f"SVG generated: {output_svg}")

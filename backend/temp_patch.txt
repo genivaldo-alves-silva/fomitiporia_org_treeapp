@@ -1,0 +1,18 @@
+                if result.returncode == 0:
+                    # Com -B, o IQ-TREE gera .contree (consensus tree com bootstrap)
+                    job_status[job_id] = {"status": "processing", "progress": 99, "step": "tree_building"}
+                    shutil.copy(result_dir / "iqtree.contree", tree_file)
+                    
+                    # Gerar SVG da árvore
+                    try:
+                        svg_script = Path(__file__).parent / "tree_set_svg_edit" / "tree_set_cli.py"
+                        svg_result = subprocess.run(
+                            ["python3", str(svg_script), str(tree_file), str(result_dir)],
+                            capture_output=True,
+                            text=True,
+                            timeout=120
+                        )
+                        if svg_result.returncode != 0:
+                            print(f"Aviso: Falha ao gerar SVG: {svg_result.stderr}")
+                    except Exception as e:
+                        print(f"Aviso: Erro ao gerar SVG: {e}")

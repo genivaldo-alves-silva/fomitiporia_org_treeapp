@@ -32,6 +32,7 @@ const errorMessage = document.getElementById('error-message');
 
 const downloadTreeBtn = document.getElementById('download-tree');
 const downloadAlignmentBtn = document.getElementById('download-alignment');
+const downloadTreeSvgBtn = document.getElementById('download-tree-svg');
 const newAnalysisBtn = document.getElementById('new-analysis');
 const retryBtn = document.getElementById('retry-btn');
 
@@ -263,6 +264,7 @@ async function showResults() {
 
     downloadTreeBtn.onclick = () => downloadFile('tree');
     downloadAlignmentBtn.onclick = () => downloadFile('alignment');
+    downloadTreeSvgBtn.onclick = () => downloadFile('tree_svg');
 
     await visualizeTree();
 }
@@ -285,7 +287,7 @@ async function visualizeTree() {
             container.innerHTML = `
                 <div style="padding: 20px; background: white; border-radius: 8px;">
                     <h3 style="margin-top: 0;">🌳 Árvore Filogenética Gerada</h3>
-                    <p style="color: #666; margin-bottom: 20px;">A árvore foi gerada com sucesso! Use o botão de download para obter o arquivo .nwk e visualizá-lo em ferramentas especializadas como iTOL, FigTree ou MEGA.</p>
+                    <p style="color: #666; margin-bottom: 20px;">A árvore foi gerada com sucesso! Use o botão de download para obter o arquivo .tree e visualizá-lo em ferramentas especializadas como iTOL, FigTree ou MEGA.</p>
                     <details style="margin-top: 20px;">
                         <summary style="cursor: pointer; font-weight: bold; padding: 10px; background: #f0f0f0; border-radius: 4px;">📄 Ver formato Newick (clique para expandir)</summary>
                         <pre style="background: #f8f8f8; padding: 15px; border-radius: 4px; overflow-x: auto; margin-top: 10px; font-size: 12px; line-height: 1.5;">${newickString}</pre>
@@ -321,7 +323,7 @@ async function visualizeTree() {
     } catch (error) {
         console.error('Erro ao visualizar árvore:', error);
         document.getElementById('tree-container').innerHTML = 
-            '<p style="color: #666;">Árvore gerada com sucesso! Use o botão de download para obter o arquivo .nwk</p>';
+            '<p style="color: #666;">Árvore gerada com sucesso! Use o botão de download para obter o arquivo .tree</p>';
     }
 }
 
