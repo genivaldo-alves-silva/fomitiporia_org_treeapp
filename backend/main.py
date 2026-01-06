@@ -11,7 +11,6 @@ from pydantic import BaseModel
 import tempfile
 import threading
 import time
-import json
 
 app = FastAPI(title="Phylogenetic Analysis API")
 
@@ -41,44 +40,6 @@ if not DEFAULT_ALIGNMENT.exists():
 
 # Armazena status dos jobs
 job_status = {}
-
-def save_progress(job_id: str, status: str, progress: int, step: str = ""):
-    """Salva progresso em arquivo JSON para persistência"""
-    result_dir = RESULTS_DIR / job_id
-    result_dir.mkdir(exist_ok=True)
-    
-    progress_file = result_dir / "progress.json"
-    data = {
-        "status": status,
-        "progress": progress,
-        "step": step,
-        "timestamp": time.time()
-    }
-    
-    # Escrita atômica: escrever em arquivo temporário e depois renomear
-    with open(progress_file, "w") as f:
-        json.dump(data, f)
-    
-    # Também atualiza memória para compatibilidade
-    job_status[job_id] = data
-
-def load_progress(job_id: str) -> dict:
-    """Carrega progresso do arquivo JSON"""
-    result_dir = RESULTS_DIR / job_id
-    progress_file = result_dir / "progress.json"
-    
-    if progress_file.exists():
-        try:
-            with open(progress_file, "r") as f:
-                return json.load(f)
-        except:
-            pass
-    
-    # Fallback para memória
-    if job_id in job_status:
-        return job_status[job_id]
-    
-    return {"status": "unknown", "progress": 0, "step": ""}
 
 @app.get("/")
 async def root():
@@ -171,11 +132,6 @@ async def upload_multiple_files(
     
     job_status[job_id] = {"status": "uploaded", "progress": 0, "files": files_uploaded}
     
-    # Salvar progresso inicial
-    result_dir = RESULTS_DIR / job_id
-    result_dir.mkdir(exist_ok=True)
-    save_progress(job_id, "uploaded", 0, "Arquivos carregados")
-    
     return {
         "job_id": job_id,
         "files_uploaded": files_uploaded,
@@ -184,12 +140,11 @@ async def upload_multiple_files(
 
 @app.get("/status/{job_id}")
 async def get_status(job_id: str):
-    """Consulta status do job - lê do arquivo JSON"""
-    status = load_progress(job_id)
-    if status["status"] == "unknown":
+    """Consulta status do job"""
+    if job_id not in job_status:
         raise HTTPException(status_code=404, detail="Job não encontrado")
     
-    return status
+    return job_status[job_id]
 
 @app.post("/analyze/{job_id}")
 async def analyze(job_id: str, background_tasks: BackgroundTasks, 
@@ -227,7 +182,7 @@ async def analyze(job_id: str, background_tasks: BackgroundTasks,
         tree_tool, bootstrap, mafft_options
     )
     
-    save_progress(job_id, "processing", 10, "Iniciando análise")
+    job_status[job_id] = {"status": "processing", "progress": 10}
     
     return {
         "job_id": job_id,
@@ -278,7 +233,7 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
         tree_file = result_dir / "tree.nwk"
         
         # Passo 1: Alinhamento com MAFFT (modo --add)
-        save_progress(job_id, "processing", 20, "Alinhando sequências")
+        job_status[job_id] = {"status": "processing", "progress": 20, "step": "alignment"}
 
         # Construir comando MAFFT com opções padrão
         mafft_cmd = ["mafft"]
@@ -327,7 +282,11 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
                 for milestone_text, progress in mafft_milestones:
                     if milestone_text not in completed_milestones and milestone_text in line:
                         completed_milestones.add(milestone_text)
-                        save_progress(job_id, "processing", progress, f"Alinhamento: {milestone_text}")
+                        job_status[job_id] = {
+                            "status": "processing",
+                            "progress": progress,
+                            "step": "alignment"
+                        }
         
         # Executar MAFFT com monitoramento
         process = subprocess.Popen(mafft_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -354,11 +313,11 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
             raise Exception(f"MAFFT falhou")
         
         # Atualizar para 60% quando MAFFT terminar
-        save_progress(job_id, "processing", 60, "Alinhamento concluído")
+        job_status[job_id] = {"status": "processing", "progress": 60, "step": "alignment"}
         
         # Passo 2: Construção de árvore (opcional)
         if tree_tool != "skip":
-            save_progress(job_id, "processing", 60, "Iniciando construção de árvore")
+            job_status[job_id] = {"status": "processing", "progress": 60, "step": "tree_building"}
             
             if tree_tool == "fasttree":
                 tree_cmd = ["FastTree", "-nt", str(aligned_file)]
@@ -401,7 +360,11 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
                                     for milestone_text, progress in milestones:
                                         if milestone_text not in completed_milestones and milestone_text in content:
                                             completed_milestones.add(milestone_text)
-                                            save_progress(job_id, "processing", progress, f"Construindo árvore: {milestone_text}")
+                                            job_status[job_id] = {
+                                                "status": "processing",
+                                                "progress": progress,
+                                                "step": "tree_building"
+                                            }
                             
                             time.sleep(2)
                         except Exception as e:
@@ -421,18 +384,23 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
                 
                 if result.returncode == 0:
                     # Com -B, o IQ-TREE gera .contree (consensus tree com bootstrap)
-                    save_progress(job_id, "processing", 99, "Finalizando construção de árvore")
+                    job_status[job_id] = {"status": "processing", "progress": 99, "step": "tree_building"}
                     shutil.copy(result_dir / "iqtree.contree", tree_file)
             if result.returncode != 0:
                 raise Exception(f"{tree_tool} falhou: {result.stderr}")
         
         # Sucesso
-        save_progress(job_id, "completed", 100, "Análise concluída com sucesso")
+        job_status[job_id] = {
+            "status": "completed", 
+            "progress": 100,
+            "tree_file": str(tree_file) if tree_tool != "skip" else None,
+            "aligned_file": str(aligned_file)
+        }
         
     except subprocess.TimeoutExpired:
-        save_progress(job_id, "error", 0, "Timeout: análise muito longa")
+        job_status[job_id] = {"status": "error", "message": "Timeout: análise muito longa"}
     except Exception as e:
-        save_progress(job_id, "error", 0, f"Erro: {str(e)}")
+        job_status[job_id] = {"status": "error", "message": str(e)}
 
 if __name__ == "__main__":
     import uvicorn
