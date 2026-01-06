@@ -37,3 +37,9 @@ Thumbs.db
 # Env
 .env
 .env.local
+
+# Backups
+*.tar.gz
+
+# Documentation
+COMO_ATUALIZAR_ALINHAMENTO.md
