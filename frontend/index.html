@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análise Filogenética - Fomitiporia TreeApp</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Phylocanvas GL para visualização de árvores -->
+    <script src="https://unpkg.com/@phylocanvas/phylocanvas.gl@latest/dist/bundle.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -115,6 +117,60 @@
                 </div>
                 
                 <h3>Visualização da Árvore Filogenética</h3>
+                
+                <!-- Controles da Árvore -->
+                <div id="tree-controls" class="tree-controls">
+                    <div class="control-group">
+                        <label for="tree-type-select">Tipo:</label>
+                        <select id="tree-type-select">
+                            <option value="rectangular">Retangular</option>
+                            <option value="circular">Circular</option>
+                            <option value="radial">Radial</option>
+                            <option value="diagonal">Diagonal</option>
+                            <option value="hierarchical">Hierárquico</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Zoom:</label>
+                        <button class="btn-control" id="zoom-in" title="Aumentar zoom">➕</button>
+                        <button class="btn-control" id="zoom-out" title="Diminuir zoom">➖</button>
+                        <button class="btn-control" id="zoom-fit" title="Ajustar à tela">🔲</button>
+                    </div>
+                    <div class="control-group">
+                        <label>Ações:</label>
+                        <button class="btn-control" id="reset-tree" title="Resetar árvore">🔄 Reset</button>
+                        <button class="btn-control" id="export-png" title="Exportar PNG">📷 PNG</button>
+                    </div>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="show-labels" checked> Rótulos
+                        </label>
+                        <label>
+                            <input type="checkbox" id="align-labels"> Alinhar
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Ações no nó selecionado -->
+                <div id="node-actions" class="node-actions" style="display: none;">
+                    <span id="selected-node-name" class="selected-node-name">Nó: </span>
+                    <button class="btn-action" id="action-reroot" title="Enraizar a árvore neste nó">🌱 Enraizar</button>
+                    <button class="btn-action" id="action-rotate" title="Rotacionar os ramos filhos">🔄 Rotacionar</button>
+                    <button class="btn-action" id="action-collapse" title="Colapsar ou expandir este clado">📁 Colapsar</button>
+                    <button class="btn-action" id="action-clear" title="Limpar seleção">✖ Limpar</button>
+                </div>
+                
+                <!-- Seleção manual de nó -->
+                <div id="manual-node-select" class="manual-node-select">
+                    <label for="node-id-input">Nó interno (ID numérico):</label>
+                    <input type="number" id="node-id-input" min="0" max="500" value="0" style="width: 80px; padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
+                    <button class="btn-control" id="action-reroot-direct">🌱 Enraizar</button>
+                    <button class="btn-control" id="action-rotate-direct">🔄 Rotacionar</button>
+                    <button class="btn-control" id="action-collapse-direct">📁 Colapsar</button>
+                </div>
+                
+                <p class="tree-hint">💡 <strong>Dica:</strong> Os nós internos têm IDs numéricos (0, 1, 2...). Tente diferentes valores para encontrar o nó desejado.</p>
+                
                 <div id="tree-container"></div>
             </section>
 

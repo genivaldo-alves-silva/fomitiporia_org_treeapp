@@ -4,6 +4,8 @@ let pollInterval = null;
 let alignmentFile = null;
 let sequencesFile = null;
 let progressStartTime = null;
+let treeInstance = null;  // Instância global do Phylocanvas
+let selectedNode = null;  // Nó selecionado para menu de contexto
 
 // Elementos DOM
 const fileInputAlignment = document.getElementById('file-input-alignment');
@@ -281,9 +283,9 @@ async function visualizeTree() {
 
         const container = document.getElementById('tree-container');
         
-        // Verificar se Phylocanvas está disponível
-        if (typeof Phylocanvas === 'undefined') {
-            console.warn('Phylocanvas não carregado, usando visualização alternativa');
+        // Verificar se Phylocanvas GL está disponível
+        if (typeof phylocanvas === 'undefined' || !phylocanvas.PhylocanvasGL) {
+            console.warn('Phylocanvas GL não carregado, usando visualização alternativa');
             container.innerHTML = `
                 <div style="padding: 20px; background: white; border-radius: 8px;">
                     <h3 style="margin-top: 0;">🌳 Árvore Filogenética Gerada</h3>
@@ -294,37 +296,311 @@ async function visualizeTree() {
                     </details>
                 </div>
             `;
+            document.getElementById('tree-controls').style.display = 'none';
             return;
         }
 
+        // Limpar container e criar div para o canvas
         container.innerHTML = '';
-        
-        // Criar elemento canvas
-        const canvas = document.createElement('canvas');
-        canvas.id = 'tree-canvas';
-        canvas.width = container.offsetWidth - 40;
-        canvas.height = 600;
-        container.appendChild(canvas);
+        const treeDiv = document.createElement('div');
+        treeDiv.id = 'phylocanvas-tree';
+        treeDiv.style.width = '100%';
+        treeDiv.style.height = '600px';
+        treeDiv.style.background = 'white';
+        treeDiv.style.borderRadius = '8px';
+        container.appendChild(treeDiv);
 
-        // Phylocanvas
-        const tree = new Phylocanvas.Tree('tree-canvas', {
-            fillCanvas: true,
-            lineWidth: 2,
+        // Phylocanvas GL - criar árvore
+        treeInstance = new phylocanvas.PhylocanvasGL(treeDiv, {
+            source: newickString,
+            type: phylocanvas.TreeTypes.Rectangular,
             showLabels: true,
-            showBootstraps: true,
-            textSize: 14,
-            padding: 20
+            showLeafLabels: true,
+            interactive: true,
+            padding: 20,
+            nodeSize: 10,
+            lineWidth: 1.5,
+            fontFamily: 'Arial, sans-serif',
+            fontSize: 12,
+            size: { 
+                width: container.offsetWidth - 40, 
+                height: 600 
+            }
         });
 
-        tree.load(newickString);
-        tree.setTreeType('rectangular');
-        tree.draw();
+        console.log('Árvore Phylocanvas GL criada com sucesso');
+        
+        // Configurar controles
+        setupTreeControls();
+        
+        // Configurar detecção de clique em nós
+        setupNodeClickDetection(treeDiv);
+        
+        // Popular dropdown com nós da árvore
+        setupDirectActions();
 
     } catch (error) {
         console.error('Erro ao visualizar árvore:', error);
-        document.getElementById('tree-container').innerHTML = 
-            '<p style="color: #666;">Árvore gerada com sucesso! Use o botão de download para obter o arquivo .tree</p>';
+        document.getElementById('tree-container').innerHTML = `
+            <div style="padding: 20px; background: white; border-radius: 8px;">
+                <p style="color: #666;">Árvore gerada com sucesso! Use o botão de download para obter o arquivo .tree</p>
+                <p style="color: #999; font-size: 12px;">Erro: ${error.message}</p>
+            </div>
+        `;
     }
+}
+
+// Configurar detecção de clique em nós
+function setupNodeClickDetection(treeDiv) {
+    const nodeActionsDiv = document.getElementById('node-actions');
+    const selectedNodeName = document.getElementById('selected-node-name');
+    
+    // O Phylocanvas GL atualiza selectedIds automaticamente quando interactive=true
+    // Vamos monitorar mudanças usando polling
+    let lastSelectedIds = [];
+    
+    setInterval(() => {
+        if (!treeInstance) return;
+        
+        const currentSelectedIds = treeInstance.props.selectedIds || [];
+        
+        // Verificar se houve mudança na seleção
+        if (JSON.stringify(currentSelectedIds) !== JSON.stringify(lastSelectedIds)) {
+            lastSelectedIds = [...currentSelectedIds];
+            
+            if (currentSelectedIds.length > 0) {
+                const nodeId = currentSelectedIds[0];
+                
+                // Buscar informações do nó
+                const node = treeInstance.findNodeById(nodeId);
+                selectedNode = node || { id: nodeId };
+                
+                const nodeName = node ? (node.label || node.id) : nodeId;
+                const displayName = nodeName.length > 35 ? nodeName.substring(0, 35) + '...' : nodeName;
+                
+                // Mostrar barra de ações
+                nodeActionsDiv.style.display = 'flex';
+                selectedNodeName.textContent = `Nó: ${displayName}`;
+                
+                console.log('Nó selecionado:', nodeId, node);
+            } else {
+                // Nenhum nó selecionado
+                nodeActionsDiv.style.display = 'none';
+                selectedNode = null;
+            }
+        }
+    }, 200);
+    
+    // Configurar botões de ação
+    document.getElementById('action-reroot').addEventListener('click', () => {
+        if (!treeInstance || !selectedNode) {
+            alert('Por favor, clique em um nó primeiro para selecioná-lo.');
+            return;
+        }
+        try {
+            const nodeId = selectedNode.id;
+            // Usar setProps com rootId (não quebra se falhar)
+            treeInstance.setProps({ rootId: nodeId });
+            console.log('Árvore enraizada no nó:', nodeId);
+        } catch (err) {
+            console.error('Erro ao enraizar:', err);
+            // Não mostrar alert para não travar - apenas log
+        }
+    });
+    
+    document.getElementById('action-rotate').addEventListener('click', () => {
+        if (!treeInstance || !selectedNode) {
+            alert('Por favor, clique em um nó primeiro para selecioná-lo.');
+            return;
+        }
+        try {
+            const nodeId = selectedNode.id;
+            const currentRotated = treeInstance.props.rotatedIds || [];
+            
+            // Toggle - adiciona ou remove da lista de rotacionados
+            if (currentRotated.includes(nodeId)) {
+                treeInstance.setProps({ 
+                    rotatedIds: currentRotated.filter(id => id !== nodeId) 
+                });
+            } else {
+                treeInstance.setProps({ 
+                    rotatedIds: [...currentRotated, nodeId] 
+                });
+            }
+            console.log('Clado rotacionado:', nodeId);
+        } catch (err) {
+            console.error('Erro ao rotacionar:', err);
+        }
+    });
+    
+    document.getElementById('action-collapse').addEventListener('click', () => {
+        if (!treeInstance || !selectedNode) {
+            alert('Por favor, clique em um nó primeiro para selecioná-lo.');
+            return;
+        }
+        try {
+            const nodeId = selectedNode.id;
+            const currentCollapsed = treeInstance.props.collapsedIds || [];
+            
+            // Toggle - adiciona ou remove da lista de colapsados
+            if (currentCollapsed.includes(nodeId)) {
+                treeInstance.setProps({ 
+                    collapsedIds: currentCollapsed.filter(id => id !== nodeId) 
+                });
+            } else {
+                treeInstance.setProps({ 
+                    collapsedIds: [...currentCollapsed, nodeId] 
+                });
+            }
+            console.log('Clado colapsado/expandido:', nodeId);
+        } catch (err) {
+            console.error('Erro ao colapsar:', err);
+        }
+    });
+    
+    document.getElementById('action-clear').addEventListener('click', () => {
+        selectedNode = null;
+        nodeActionsDiv.style.display = 'none';
+        lastSelectedIds = [];
+        if (treeInstance) {
+            treeInstance.setProps({ selectedIds: [] });
+        }
+        // Limpar dropdown
+        document.getElementById('node-id-select').value = '';
+    });
+}
+
+// Configurar ações diretas com input numérico
+function setupDirectActions() {
+    if (!treeInstance) return;
+    
+    const nodeIdInput = document.getElementById('node-id-input');
+    
+    // Enraizar diretamente
+    document.getElementById('action-reroot-direct').addEventListener('click', () => {
+        if (!treeInstance) return;
+        const nodeId = nodeIdInput.value;
+        try {
+            treeInstance.setProps({ rootId: nodeId });
+            console.log('Árvore enraizada no nó:', nodeId);
+        } catch (err) {
+            console.error('Erro ao enraizar:', err);
+        }
+    });
+    
+    // Rotacionar diretamente
+    document.getElementById('action-rotate-direct').addEventListener('click', () => {
+        if (!treeInstance) return;
+        const nodeId = nodeIdInput.value;
+        try {
+            const currentRotated = treeInstance.props.rotatedIds || [];
+            if (currentRotated.includes(nodeId)) {
+                treeInstance.setProps({ 
+                    rotatedIds: currentRotated.filter(id => id !== nodeId) 
+                });
+            } else {
+                treeInstance.setProps({ 
+                    rotatedIds: [...currentRotated, nodeId] 
+                });
+            }
+            console.log('Clado rotacionado:', nodeId);
+        } catch (err) {
+            console.error('Erro ao rotacionar:', err);
+        }
+    });
+    
+    // Colapsar diretamente
+    document.getElementById('action-collapse-direct').addEventListener('click', () => {
+        if (!treeInstance) return;
+        const nodeId = nodeIdInput.value;
+        try {
+            const currentCollapsed = treeInstance.props.collapsedIds || [];
+            if (currentCollapsed.includes(nodeId)) {
+                treeInstance.setProps({ 
+                    collapsedIds: currentCollapsed.filter(id => id !== nodeId) 
+                });
+            } else {
+                treeInstance.setProps({ 
+                    collapsedIds: [...currentCollapsed, nodeId] 
+                });
+            }
+            console.log('Clado colapsado/expandido:', nodeId);
+        } catch (err) {
+            console.error('Erro ao colapsar:', err);
+        }
+    });
+}
+
+// Configurar controles da árvore
+function setupTreeControls() {
+    // Tipo de árvore
+    const treeTypeSelect = document.getElementById('tree-type-select');
+    treeTypeSelect.addEventListener('change', (e) => {
+        if (!treeInstance) return;
+        const typeMap = {
+            'rectangular': phylocanvas.TreeTypes.Rectangular,
+            'circular': phylocanvas.TreeTypes.Circular,
+            'radial': phylocanvas.TreeTypes.Radial,
+            'diagonal': phylocanvas.TreeTypes.Diagonal,
+            'hierarchical': phylocanvas.TreeTypes.Hierarchical
+        };
+        treeInstance.setProps({ type: typeMap[e.target.value] });
+    });
+
+    // Zoom
+    document.getElementById('zoom-in').addEventListener('click', () => {
+        if (!treeInstance) return;
+        const currentZoom = treeInstance.getZoom();
+        treeInstance.setProps({ zoom: currentZoom + 0.5 });
+    });
+
+    document.getElementById('zoom-out').addEventListener('click', () => {
+        if (!treeInstance) return;
+        const currentZoom = treeInstance.getZoom();
+        treeInstance.setProps({ zoom: currentZoom - 0.5 });
+    });
+
+    document.getElementById('zoom-fit').addEventListener('click', () => {
+        if (!treeInstance) return;
+        treeInstance.fitInPanel();
+    });
+
+    // Reset
+    document.getElementById('reset-tree').addEventListener('click', () => {
+        if (!treeInstance) return;
+        treeInstance.setProps({
+            rootId: null,
+            collapsedIds: [],
+            rotatedIds: [],
+            selectedIds: []
+        });
+        treeInstance.fitInPanel();
+    });
+
+    // Exportar PNG
+    document.getElementById('export-png').addEventListener('click', () => {
+        if (!treeInstance) return;
+        const dataUri = treeInstance.exportPNG();
+        const link = document.createElement('a');
+        link.download = 'phylogenetic_tree.png';
+        link.href = dataUri;
+        link.click();
+    });
+
+    // Mostrar/ocultar rótulos
+    document.getElementById('show-labels').addEventListener('change', (e) => {
+        if (!treeInstance) return;
+        treeInstance.setProps({ 
+            showLabels: e.target.checked,
+            showLeafLabels: e.target.checked
+        });
+    });
+
+    // Alinhar rótulos
+    document.getElementById('align-labels').addEventListener('change', (e) => {
+        if (!treeInstance) return;
+        treeInstance.setProps({ alignLabels: e.target.checked });
+    });
 }
 
 newAnalysisBtn.addEventListener('click', () => {

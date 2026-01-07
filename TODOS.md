@@ -1,0 +1,5 @@
+- Permitir que o mafft adicione _new ao(s) espécime(s) novos e que essa tag seja utilizada para destaque (bold and red?) com svg_edit.py;
+- Tamanho da árvore com toytree baseado no tamanho da matriz;
+- Possibilidade do usuário fazer alinhamento do zero?
+- Construição de árvore multiloci?
+- Possibilidade dos usuários alimentarem o sistema com matrizes atualizadas com qualificação certificada?

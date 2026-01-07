@@ -467,3 +467,168 @@ footer em {
         margin-bottom: 10px;
     }
 }
+
+/* ===== Tree Controls ===== */
+.tree-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.tree-controls .control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tree-controls label {
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
+
+.tree-controls select {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+}
+
+.btn-control {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.btn-control:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.tree-hint {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: #fff3cd;
+    border-radius: 4px;
+    border-left: 4px solid #ffc107;
+}
+
+/* ===== Node Actions Bar ===== */
+.node-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.selected-node-name {
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    margin-right: 10px;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-action {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-action:hover {
+    background: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-action:active {
+    transform: translateY(0);
+}
+
+/* ===== Manual Node Select ===== */
+.manual-node-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 15px;
+    background: #f0f4ff;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    align-items: center;
+    border: 1px solid #d0d8ff;
+}
+
+.manual-node-select label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+}
+
+.manual-node-select select {
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    background: white;
+}
+
+/* ===== Context Menu ===== */
+.context-menu {
+    position: fixed;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 180px;
+    padding: 8px 0;
+}
+
+.context-menu-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background 0.15s;
+}
+
+.context-menu-item:hover {
+    background: #667eea;
+    color: white;
+}
+
+.context-menu-divider {
+    height: 1px;
+    background: #eee;
+    margin: 5px 0;
+}
