@@ -11,6 +11,7 @@ from pydantic import BaseModel
 import tempfile
 import threading
 import time
+import sys
 
 app = FastAPI(title="Phylogenetic Analysis API")
 
@@ -40,6 +41,28 @@ if not DEFAULT_ALIGNMENT.exists():
 
 # Armazena status dos jobs
 job_status = {}
+
+def add_new_label_to_fasta(fasta_path: Path) -> None:
+    """Adiciona prefixo $new$ aos headers das sequências para identificação posterior.
+    
+    Exemplo: >Genus_species -> >$new$_Genus_species
+    """
+    with open(fasta_path, 'r') as f:
+        content = f.read()
+    
+    lines = content.splitlines()
+    new_lines = []
+    
+    for line in lines:
+        if line.startswith('>'):
+            # Remove o '>' inicial, adiciona o label, e reconstrói
+            seq_name = line[1:].strip()
+            new_lines.append(f">$new$_{seq_name}")
+        else:
+            new_lines.append(line)
+    
+    with open(fasta_path, 'w') as f:
+        f.write('\n'.join(new_lines) + '\n')
 
 @app.get("/")
 async def root():
@@ -84,6 +107,8 @@ async def upload_multiple_files(
         path = job_dir / "new_sequences.fasta"
         with open(path, "wb") as buffer:
             shutil.copyfileobj(new_sequences.file, buffer)
+        # Adicionar label $new$ para identificação no SVG
+        add_new_label_to_fasta(path)
         files_uploaded.append("new_sequences_file")
     
     # Novas sequências - texto
@@ -128,6 +153,8 @@ async def upload_multiple_files(
         path = job_dir / "new_sequences.fasta"
         with open(path, "w") as f:
             f.write(norm_text)
+        # Adicionar label $new$ para identificação no SVG
+        add_new_label_to_fasta(path)
         files_uploaded.append("new_sequences_text")
     
     job_status[job_id] = {"status": "uploaded", "progress": 0, "files": files_uploaded}
@@ -333,7 +360,7 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
                     try:
                         svg_script = Path(__file__).parent / "tree_set_svg_edit" / "tree_set_cli.py"
                         svg_result = subprocess.run(
-                            ["python3", str(svg_script), str(tree_file), str(result_dir)],
+                            [sys.executable, str(svg_script), str(tree_file), str(result_dir)],
                             capture_output=True,
                             text=True,
                             timeout=120
@@ -346,7 +373,7 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
                             input_svg = result_dir / "supportvalue.svg"
                             output_svg = result_dir / "supportvalue_output.svg"
                             edit_result = subprocess.run(
-                                ["python3", str(svg_edit_script), str(input_svg), str(output_svg)],
+                                [sys.executable, str(svg_edit_script), str(input_svg), str(output_svg)],
                                 capture_output=True,
                                 text=True,
                                 timeout=60
@@ -422,7 +449,7 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
                     try:
                         svg_script = Path(__file__).parent / "tree_set_svg_edit" / "tree_set_cli.py"
                         svg_result = subprocess.run(
-                            ["python3", str(svg_script), str(tree_file), str(result_dir)],
+                            [sys.executable, str(svg_script), str(tree_file), str(result_dir)],
                             capture_output=True,
                             text=True,
                             timeout=120
@@ -436,7 +463,7 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
                             output_svg = result_dir / "supportvalue_output.svg"
                             
                             edit_result = subprocess.run(
-                                ["python3", str(svg_edit_script), str(input_svg), str(output_svg)],
+                                [sys.executable, str(svg_edit_script), str(input_svg), str(output_svg)],
                                 capture_output=True,
                                 text=True,
                                 timeout=60

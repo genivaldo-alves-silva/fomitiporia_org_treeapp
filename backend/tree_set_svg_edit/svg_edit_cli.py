@@ -29,6 +29,12 @@ def internet_connection_check():
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace('', SVG_NS)
 
+# Estilo para novas sequências (marcadas com $new$)
+NEW_SEQUENCE_STYLE = 'font-weight:bold;fill:#CC0000'  # Vermelho e negrito
+
+# Pattern para detectar marcador $new$
+new_marker_pattern = re.compile(r'^\$new\$_?')
+
 # Patterns to detect genus/species and 'type' words
 genus_pattern = re.compile(
     r'(?P<genus>\b[A-Z][a-z]{3,})\s+'
@@ -120,6 +126,14 @@ def italicize_genus_species(svg_file, output_file):
 
     for text_elem in root.findall(f'.//{{{SVG_NS}}}text'):
         text = ''.join(text_elem.itertext()).strip()
+        
+        # Verificar se é uma nova sequência (marcada com $new$)
+        is_new_sequence = bool(new_marker_pattern.match(text))
+        
+        # Remover o marcador $new$ do texto
+        if is_new_sequence:
+            text = new_marker_pattern.sub('', text)
+        
         adjusted_text = text.replace('_', ' ')
 
         x_attr = text_elem.get('x')
@@ -130,6 +144,14 @@ def italicize_genus_species(svg_file, output_file):
             text_elem.set('x', x_attr)
         if y_attr:
             text_elem.set('y', y_attr)
+        
+        # Se for nova sequência, aplicar estilo ao elemento pai
+        if is_new_sequence:
+            existing_style = text_elem.get('style', '')
+            if existing_style:
+                text_elem.set('style', f"{existing_style};{NEW_SEQUENCE_STYLE}")
+            else:
+                text_elem.set('style', NEW_SEQUENCE_STYLE)
 
         process_text_elements(text_elem, adjusted_text, genus_cache)
 
