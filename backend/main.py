@@ -201,9 +201,9 @@ async def download_result(job_id: str, file_type: str):
         raise HTTPException(status_code=400, detail="Análise ainda não completada")
     
     if file_type == "tree":
-        file_path = RESULTS_DIR / job_id / "tree.tree"
+        file_path = RESULTS_DIR / job_id / "tree.tre"
         media_type = "text/plain"
-        filename = "phylogenetic_tree.tree"
+        filename = "phylogenetic_tree.tre"
     elif file_type == "alignment":
         file_path = UPLOAD_DIR / job_id / "aligned.fasta"
         media_type = "text/plain"
@@ -234,7 +234,7 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
         result_dir.mkdir(exist_ok=True)
         
         aligned_file = job_dir / "aligned.fasta"
-        tree_file = result_dir / "tree.tree"
+        tree_file = result_dir / "tree.tre"
         
         # Passo 1: Alinhamento com MAFFT (modo --add)
         job_status[job_id] = {"status": "processing", "progress": 20, "step": "alignment"}
@@ -328,6 +328,33 @@ async def run_phylogenetic_analysis(job_id: str, existing_alignment: Path, new_s
                 with open(tree_file, "w") as out:
                     result = subprocess.run(tree_cmd, stdout=out, stderr=subprocess.PIPE,
                                            text=True, timeout=7200)
+                # Gerar SVG também para FastTree, se sucesso
+                if result.returncode == 0:
+                    try:
+                        svg_script = Path(__file__).parent / "tree_set_svg_edit" / "tree_set_cli.py"
+                        svg_result = subprocess.run(
+                            ["python3", str(svg_script), str(tree_file), str(result_dir)],
+                            capture_output=True,
+                            text=True,
+                            timeout=120
+                        )
+                        if svg_result.returncode != 0:
+                            print(f"Aviso: Falha ao gerar SVG (FastTree): {svg_result.stderr}")
+                        else:
+                            # Processar SVG com svg_edit (italics/bold)
+                            svg_edit_script = Path(__file__).parent / "tree_set_svg_edit" / "svg_edit_cli.py"
+                            input_svg = result_dir / "supportvalue.svg"
+                            output_svg = result_dir / "supportvalue_output.svg"
+                            edit_result = subprocess.run(
+                                ["python3", str(svg_edit_script), str(input_svg), str(output_svg)],
+                                capture_output=True,
+                                text=True,
+                                timeout=60
+                            )
+                            if edit_result.returncode != 0:
+                                print(f"Aviso: Falha ao processar SVG (FastTree): {edit_result.stderr}")
+                    except Exception as e:
+                        print(f"Aviso: Erro ao gerar/processar SVG (FastTree): {e}")
             elif tree_tool == "iqtree":
                 tree_cmd = [
                     "iqtree", 

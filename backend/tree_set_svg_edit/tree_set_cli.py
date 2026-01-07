@@ -7,17 +7,20 @@ import re
 import toyplot.svg
 import sys
 from pathlib import Path
+from ete3 import Tree
 
 def generate_tree_svg(tree_file: str, output_dir: str):
     """
     Gera SVG da árvore filogenética com valores de suporte
     
     Args:
-        tree_file: Caminho para arquivo .tree (Newick)
+        tree_file: Caminho para arquivo .tre (Newick)
         output_dir: Diretório onde salvar o SVG
     """
+    t = Tree(tree_file, format=0)
+    t.write(outfile=output_dir + "/temp.tre", format=0)
     # Load the tree
-    tree = toytree.tree(tree_file)
+    tree = toytree.tree(output_dir + "/temp.tre")
     
     # Find tips that match 'uncisetus' for rooting
     matching_tips = [name for name in tree.get_tip_labels() if 'uncisetus' in name.lower()]
