@@ -39,6 +39,7 @@ Thumbs.db
 .env.local
 
 # Backups
+backup/
 *.tar.gz
 
 # Documentation
