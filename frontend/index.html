@@ -77,13 +77,12 @@
                     <div class="form-group">
                         <label for="tree-tool">Ferramenta:</label>
                         <select id="tree-tool">
-                            <option value="skip">Pular (apenas alinhamento)</option>
-                            <option value="fasttree" selected>FastTree (rápido, ~minutos)</option>
-                            <option value="iqtree">IQ-TREE (preciso, pode demorar mais)</option>
+                            <option value="fasttree">FastTree (rápido, ~minutos)</option>
+                            <option value="iqtree" selected>IQ-TREE (preciso, pode demorar mais)</option>
                         </select>
                     </div>
 
-                    <div class="form-group" id="bootstrap-group" style="display: none;">
+                    <div class="form-group" id="bootstrap-group">
                         <label for="bootstrap">Bootstrap (IQ-TREE):</label>
                         <input type="number" id="bootstrap" value="1000" min="100" max="10000" step="100">
                         <small>Recomendado: 1000 para publicação</small>
