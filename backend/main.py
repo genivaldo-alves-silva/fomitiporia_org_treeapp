@@ -65,7 +65,7 @@ def run_trimal(input_fasta: Path, output_fasta: Path) -> bool:
         True se sucesso, False se falhou
     """
     try:
-        command = ["trimal", "-in", str(input_fasta), "-out", str(output_fasta), "-automated1"]
+        command = ["trimal", "-in", str(input_fasta), "-out", str(output_fasta), "-gt", "0.2", "-cons", "60"]
         result = subprocess.run(command, capture_output=True, text=True, timeout=600)
         if result.returncode != 0:
             print(f"Erro trimAl: {result.stderr}")
@@ -93,9 +93,9 @@ def merge_fasta_files(file1: Path, file2: Path, output: Path) -> None:
                     out.write(content)
 
 def add_new_label_to_fasta(fasta_path: Path) -> None:
-    """Adiciona prefixo $new$ aos headers das sequências para identificação posterior.
+    """Adiciona prefixo neew aos headers das sequências para identificação posterior.
     
-    Exemplo: >Genus_species -> >$new$_Genus_species
+    Exemplo: >Genus_species -> >neew_Genus_species
     """
     with open(fasta_path, 'r') as f:
         content = f.read()
@@ -107,7 +107,7 @@ def add_new_label_to_fasta(fasta_path: Path) -> None:
         if line.startswith('>'):
             # Remove o '>' inicial, adiciona o label, e reconstrói
             seq_name = line[1:].strip()
-            new_lines.append(f">$new$_{seq_name}")
+            new_lines.append(f">neew_{seq_name}")
         else:
             new_lines.append(line)
     
@@ -162,7 +162,7 @@ async def upload_multiple_files(
         path = job_dir / "new_sequences.fasta"
         with open(path, "wb") as buffer:
             shutil.copyfileobj(new_sequences.file, buffer)
-        # Adicionar label $new$ para identificação no SVG
+        # Adicionar label neew para identificação no SVG
         add_new_label_to_fasta(path)
         files_uploaded.append("new_sequences_file")
     
@@ -208,7 +208,7 @@ async def upload_multiple_files(
         path = job_dir / "new_sequences.fasta"
         with open(path, "w") as f:
             f.write(norm_text)
-        # Adicionar label $new$ para identificação no SVG
+        # Adicionar label neew para identificação no SVG
         add_new_label_to_fasta(path)
         files_uploaded.append("new_sequences_text")
     

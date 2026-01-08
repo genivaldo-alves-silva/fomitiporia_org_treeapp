@@ -29,11 +29,11 @@ def internet_connection_check():
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace('', SVG_NS)
 
-# Estilo para novas sequências (marcadas com $new$)
+# Estilo para novas sequências (marcadas com neew)
 NEW_SEQUENCE_STYLE = 'font-weight:bold;fill:#CC0000'  # Vermelho e negrito
 
-# Pattern para detectar marcador $new$
-new_marker_pattern = re.compile(r'^\$new\$_?')
+# Pattern para detectar marcador neew
+new_marker_pattern = re.compile(r'^neew_')
 
 # Patterns to detect genus/species and 'type' words
 genus_pattern = re.compile(
@@ -127,10 +127,10 @@ def italicize_genus_species(svg_file, output_file):
     for text_elem in root.findall(f'.//{{{SVG_NS}}}text'):
         text = ''.join(text_elem.itertext()).strip()
         
-        # Verificar se é uma nova sequência (marcada com $new$)
+        # Verificar se é uma nova sequência (marcada com neew)
         is_new_sequence = bool(new_marker_pattern.match(text))
         
-        # Remover o marcador $new$ do texto
+        # Remover o marcador neew do texto
         if is_new_sequence:
             text = new_marker_pattern.sub('', text)
         
