@@ -9,28 +9,34 @@ import sys
 from pathlib import Path
 from ete3 import Tree
 
-def generate_tree_svg(tree_file: str, output_dir: str):
+# Default outgroup para enraizamento da árvore
+DEFAULT_OUTGROUP = "uncisetus"
+
+def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_OUTGROUP):
     """
     Gera SVG da árvore filogenética com valores de suporte
     
     Args:
         tree_file: Caminho para arquivo .tre (Newick)
         output_dir: Diretório onde salvar o SVG
+        outgroup: String para buscar nas tips e usar como outgroup para enraizamento
     """
     t = Tree(tree_file, format=0)
     t.write(outfile=output_dir + "/temp.tre", format=0)
     # Load the tree
     tree = toytree.tree(output_dir + "/temp.tre")
     
-    # Find tips that match 'uncisetus' for rooting
-    matching_tips = [name for name in tree.get_tip_labels() if 'uncisetus' in name.lower()]
+    # Find tips that match outgroup for rooting
+    matching_tips = [name for name in tree.get_tip_labels() if outgroup.lower() in name.lower()]
     
     # Root the tree using the MRCA of the matched tips (se encontrado)
     if matching_tips:
         mrca = tree.get_mrca_node(*matching_tips)
         rooted_tree = tree.root(mrca)
+        print(f"Árvore enraizada usando outgroup '{outgroup}' ({len(matching_tips)} tips encontradas)")
     else:
         rooted_tree = tree
+        print(f"Aviso: Outgroup '{outgroup}' não encontrado, árvore não enraizada")
     
     # Ladderize the tree
     ladderized_tree = rooted_tree.ladderize()
@@ -89,12 +95,14 @@ def generate_tree_svg(tree_file: str, output_dir: str):
     return str(output_path)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python tree_set_cli.py <tree_file> <output_dir>")
+    if len(sys.argv) < 3:
+        print("Usage: python tree_set_cli.py <tree_file> <output_dir> [outgroup]")
+        print(f"  outgroup: String para buscar nas tips (default: '{DEFAULT_OUTGROUP}')")
         sys.exit(1)
     
     tree_file = sys.argv[1]
     output_dir = sys.argv[2]
+    outgroup = sys.argv[3] if len(sys.argv) > 3 else DEFAULT_OUTGROUP
     
-    output_svg = generate_tree_svg(tree_file, output_dir)
+    output_svg = generate_tree_svg(tree_file, output_dir, outgroup)
     print(f"SVG generated: {output_svg}")
