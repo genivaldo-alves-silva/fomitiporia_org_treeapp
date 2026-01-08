@@ -1,192 +1,341 @@
 const API_URL = 'http://localhost:8000';
 let currentJobId = null;
+let currentWorkflowMode = null;
 let pollInterval = null;
+let progressStartTime = null;
+let treeInstance = null;
+let selectedNode = null;
+
+// Arquivos para cada modo
+let mode1File = null;
 let alignmentFile = null;
 let sequencesFile = null;
-let progressStartTime = null;
-let treeInstance = null;  // Instância global do Phylocanvas
-let selectedNode = null;  // Nó selecionado para menu de contexto
+let rawMatrixFile = null;
+let userSequencesFile = null;
 
-// Elementos DOM
-const fileInputAlignment = document.getElementById('file-input-alignment');
-const uploadAreaAlignment = document.getElementById('upload-area-alignment');
-const alignmentInfo = document.getElementById('alignment-info');
-const alignmentFilename = document.getElementById('alignment-filename');
-const alignmentDefault = document.getElementById('alignment-default');
+// ========================================
+// INICIALIZAÇÃO
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
+    setupWorkflowSelection();
+    setupMode1();
+    setupMode2();
+    setupMode3();
+    setupBackButtons();
+});
 
-const fileInputSequences = document.getElementById('file-input-sequences');
-const uploadAreaSequences = document.getElementById('upload-area-sequences');
-const sequencesText = document.getElementById('sequences-text');
-const sequencesFileInfo = document.getElementById('sequences-file-info');
-const sequencesFilename = document.getElementById('sequences-filename');
-
-const treeConfigForm = document.getElementById('tree-config-form');
-const treeToolSelect = document.getElementById('tree-tool');
-const bootstrapGroup = document.getElementById('bootstrap-group');
-
-const progressFill = document.getElementById('progress-fill');
-const progressText = document.getElementById('progress-text');
-const progressStep = document.getElementById('progress-step');
-const progressSection = document.getElementById('progress-section');
-const resultsSection = document.getElementById('results-section');
-const errorSection = document.getElementById('error-section');
-const errorMessage = document.getElementById('error-message');
-
-const downloadTreeBtn = document.getElementById('download-tree');
-const downloadAlignmentBtn = document.getElementById('download-alignment');
-const downloadTreeSvgBtn = document.getElementById('download-tree-svg');
-const newAnalysisBtn = document.getElementById('new-analysis');
-const retryBtn = document.getElementById('retry-btn');
-
-// Setup drag and drop
-setupDragDrop(uploadAreaAlignment, fileInputAlignment);
-setupDragDrop(uploadAreaSequences, fileInputSequences);
-
-fileInputAlignment.addEventListener('change', handleAlignmentUpload);
-fileInputSequences.addEventListener('change', handleSequencesUpload);
-treeToolSelect.addEventListener('change', updateBootstrapVisibility);
-treeConfigForm.addEventListener('submit', handleSubmit);
-
-function setupDragDrop(area, input) {
-    area.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        area.style.background = '#f8f9ff';
+// ========================================
+// SELEÇÃO DE WORKFLOW
+// ========================================
+function setupWorkflowSelection() {
+    const workflowCards = document.querySelectorAll('.workflow-card');
+    
+    workflowCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const mode = card.dataset.mode;
+            selectWorkflow(mode);
+        });
     });
+}
 
-    area.addEventListener('dragleave', () => {
-        area.style.background = '';
-    });
+function selectWorkflow(mode) {
+    currentWorkflowMode = mode;
+    
+    // Esconder seção de seleção
+    document.getElementById('workflow-section').style.display = 'none';
+    
+    // Mostrar seção do modo selecionado
+    document.getElementById(`mode${mode}-section`).style.display = 'block';
+}
 
-    area.addEventListener('drop', (e) => {
-        e.preventDefault();
-        area.style.background = '';
-        if (e.dataTransfer.files.length > 0) {
-            input.files = e.dataTransfer.files;
-            input.dispatchEvent(new Event('change', { bubbles: true }));
+function setupBackButtons() {
+    ['mode1', 'mode2', 'mode3'].forEach(mode => {
+        const btn = document.getElementById(`back-from-${mode}`);
+        if (btn) {
+            btn.addEventListener('click', () => {
+                document.getElementById(`${mode}-section`).style.display = 'none';
+                document.getElementById('workflow-section').style.display = 'block';
+                currentWorkflowMode = null;
+            });
         }
     });
 }
 
-async function handleAlignmentUpload() {
-    const file = fileInputAlignment.files[0];
-    if (!file) return;
-
-    alignmentFile = file;
-    alignmentInfo.style.display = 'block';
-    alignmentDefault.style.display = 'none';
-    alignmentFilename.textContent = file.name;
-}
-
-async function handleSequencesUpload() {
-    const file = fileInputSequences.files[0];
-    if (!file) return;
-
-    sequencesFile = file;
-    sequencesFileInfo.style.display = 'block';
-    sequencesFilename.textContent = file.name;
+// ========================================
+// MODO 1: MATRIZ ALINHADA
+// ========================================
+function setupMode1() {
+    const fileInput = document.getElementById('file-input-mode1');
+    const uploadArea = document.getElementById('upload-area-mode1');
+    const treeToolSelect = document.getElementById('tree-tool-mode1');
+    const bootstrapGroup = document.getElementById('bootstrap-group-mode1');
     
-    // Limpar textarea se arquivo foi enviado
-    sequencesText.value = '';
-}
-
-function updateBootstrapVisibility() {
-    if (treeToolSelect.value === 'iqtree') {
-        bootstrapGroup.style.display = 'block';
-    } else {
-        bootstrapGroup.style.display = 'none';
-    }
-}
-
-async function handleSubmit(e) {
-    e.preventDefault();
-
-    // Validar entrada de sequências
-    const textSequences = sequencesText.value.trim();
+    if (!fileInput) return;
     
-    if (!textSequences && !sequencesFile) {
-        showError('Por favor, insira sequências em texto ou carregue um arquivo');
+    setupDragDrop(uploadArea, fileInput);
+    
+    fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (file) {
+            mode1File = file;
+            document.getElementById('mode1-file-info').style.display = 'block';
+            document.getElementById('mode1-filename').textContent = file.name;
+        }
+    });
+    
+    treeToolSelect.addEventListener('change', () => {
+        bootstrapGroup.style.display = treeToolSelect.value === 'iqtree' ? 'block' : 'none';
+    });
+    
+    document.getElementById('submit-mode1').addEventListener('click', handleSubmitMode1);
+}
+
+async function handleSubmitMode1() {
+    if (!mode1File) {
+        showError('Por favor, carregue sua matriz alinhada');
         return;
     }
-
+    
+    const outgroup = document.getElementById('outgroup-mode1').value || 'uncisetus';
+    const treeTool = document.getElementById('tree-tool-mode1').value;
+    const bootstrap = document.getElementById('bootstrap-mode1').value;
+    
     try {
-        // Fazer upload
         const formData = new FormData();
+        formData.append('workflow_mode', '1');
+        formData.append('outgroup', outgroup);
+        formData.append('aligned_matrix', mode1File);
         
-        // Alinhamento (se foi carregado)
-        if (alignmentFile) {
-            formData.append('existing_alignment', alignmentFile);
-        } else {
-            // Usar alinhamento padrão - vamos enviar uma flag
-            formData.append('use_default_alignment', 'true');
-        }
-
-        // Sequências
-        if (sequencesFile) {
-            formData.append('new_sequences', sequencesFile);
-        } else if (textSequences) {
-            // Enviar texto como blob
-            const blob = new Blob([textSequences], { type: 'text/plain' });
-            formData.append('new_sequences_text', blob);
-        }
-
-        const response = await fetch(`${API_URL}/upload_multiple`, {
+        const response = await fetch(`${API_URL}/upload`, {
             method: 'POST',
             body: formData
         });
-
+        
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.detail || 'Erro no upload');
         }
-
+        
         const data = await response.json();
         currentJobId = data.job_id;
-
-        // Iniciar análise com opções padrão
-        await startAnalysis();
-
+        
+        await startAnalysis(treeTool, bootstrap);
+        
     } catch (error) {
         showError(`Erro: ${error.message}`);
     }
 }
 
-async function startAnalysis() {
-    const treeTool = treeToolSelect.value;
+// ========================================
+// MODO 2: ADICIONAR SEQUÊNCIAS
+// ========================================
+function setupMode2() {
+    const fileInputAlignment = document.getElementById('file-input-alignment');
+    const uploadAreaAlignment = document.getElementById('upload-area-alignment');
+    const fileInputSequences = document.getElementById('file-input-sequences');
+    const uploadAreaSequences = document.getElementById('upload-area-sequences');
+    const treeToolSelect = document.getElementById('tree-tool');
+    const bootstrapGroup = document.getElementById('bootstrap-group');
+    
+    if (!fileInputAlignment) return;
+    
+    setupDragDrop(uploadAreaAlignment, fileInputAlignment);
+    setupDragDrop(uploadAreaSequences, fileInputSequences);
+    
+    fileInputAlignment.addEventListener('change', () => {
+        const file = fileInputAlignment.files[0];
+        if (file) {
+            alignmentFile = file;
+            document.getElementById('alignment-info').style.display = 'block';
+            document.getElementById('alignment-default').style.display = 'none';
+            document.getElementById('alignment-filename').textContent = file.name;
+        }
+    });
+    
+    fileInputSequences.addEventListener('change', () => {
+        const file = fileInputSequences.files[0];
+        if (file) {
+            sequencesFile = file;
+            document.getElementById('sequences-file-info').style.display = 'block';
+            document.getElementById('sequences-filename').textContent = file.name;
+            document.getElementById('sequences-text').value = '';
+        }
+    });
+    
+    treeToolSelect.addEventListener('change', () => {
+        bootstrapGroup.style.display = treeToolSelect.value === 'iqtree' ? 'block' : 'none';
+    });
+    
+    document.getElementById('submit-mode2').addEventListener('click', handleSubmitMode2);
+}
+
+async function handleSubmitMode2() {
+    const textSequences = document.getElementById('sequences-text').value.trim();
+    
+    if (!textSequences && !sequencesFile) {
+        showError('Por favor, insira sequências em texto ou carregue um arquivo');
+        return;
+    }
+    
+    const outgroup = document.getElementById('outgroup-mode2').value || 'uncisetus';
+    const treeTool = document.getElementById('tree-tool').value;
     const bootstrap = document.getElementById('bootstrap').value;
-
-    console.log('startAnalysis chamada com:', { treeTool, bootstrap, currentJobId });
-
+    
     try {
-        // Mostrar barra de progresso ANTES de fazer a chamada
-        console.log('Mostrando progress section...');
-        document.getElementById('alignment-section').style.display = 'none';
-        document.getElementById('sequences-section').style.display = 'none';
-        document.getElementById('tree-section').style.display = 'none';
+        const formData = new FormData();
+        formData.append('workflow_mode', '2');
+        formData.append('outgroup', outgroup);
+        
+        if (alignmentFile) {
+            formData.append('existing_alignment', alignmentFile);
+        } else {
+            formData.append('use_default_alignment', 'true');
+        }
+        
+        if (sequencesFile) {
+            formData.append('new_sequences', sequencesFile);
+        } else if (textSequences) {
+            const blob = new Blob([textSequences], { type: 'text/plain' });
+            formData.append('new_sequences_text', blob);
+        }
+        
+        const response = await fetch(`${API_URL}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Erro no upload');
+        }
+        
+        const data = await response.json();
+        currentJobId = data.job_id;
+        
+        await startAnalysis(treeTool, bootstrap);
+        
+    } catch (error) {
+        showError(`Erro: ${error.message}`);
+    }
+}
+
+// ========================================
+// MODO 3: ALINHAR DO ZERO
+// ========================================
+function setupMode3() {
+    const fileInputRaw = document.getElementById('file-input-raw');
+    const uploadAreaRaw = document.getElementById('upload-area-raw');
+    const fileInputUser = document.getElementById('file-input-user');
+    const uploadAreaUser = document.getElementById('upload-area-user');
+    const treeToolSelect = document.getElementById('tree-tool-mode3');
+    const bootstrapGroup = document.getElementById('bootstrap-group-mode3');
+    
+    if (!fileInputRaw) return;
+    
+    setupDragDrop(uploadAreaRaw, fileInputRaw);
+    setupDragDrop(uploadAreaUser, fileInputUser);
+    
+    fileInputRaw.addEventListener('change', () => {
+        const file = fileInputRaw.files[0];
+        if (file) {
+            rawMatrixFile = file;
+            document.getElementById('raw-file-info').style.display = 'block';
+            document.getElementById('raw-filename').textContent = file.name;
+        }
+    });
+    
+    fileInputUser.addEventListener('change', () => {
+        const file = fileInputUser.files[0];
+        if (file) {
+            userSequencesFile = file;
+            document.getElementById('user-file-info').style.display = 'block';
+            document.getElementById('user-filename').textContent = file.name;
+            document.getElementById('user-sequences-text').value = '';
+        }
+    });
+    
+    treeToolSelect.addEventListener('change', () => {
+        bootstrapGroup.style.display = treeToolSelect.value === 'iqtree' ? 'block' : 'none';
+    });
+    
+    document.getElementById('submit-mode3').addEventListener('click', handleSubmitMode3);
+}
+
+async function handleSubmitMode3() {
+    if (!rawMatrixFile) {
+        showError('Por favor, carregue sua matriz crua (não alinhada)');
+        return;
+    }
+    
+    const userSeqText = document.getElementById('user-sequences-text').value.trim();
+    const outgroup = document.getElementById('outgroup-mode3').value || 'uncisetus';
+    const treeTool = document.getElementById('tree-tool-mode3').value;
+    const bootstrap = document.getElementById('bootstrap-mode3').value;
+    
+    try {
+        const formData = new FormData();
+        formData.append('workflow_mode', '3');
+        formData.append('outgroup', outgroup);
+        formData.append('raw_matrix', rawMatrixFile);
+        
+        if (userSequencesFile) {
+            formData.append('user_sequences', userSequencesFile);
+        } else if (userSeqText) {
+            const blob = new Blob([userSeqText], { type: 'text/plain' });
+            formData.append('user_sequences_text', blob);
+        }
+        
+        const response = await fetch(`${API_URL}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Erro no upload');
+        }
+        
+        const data = await response.json();
+        currentJobId = data.job_id;
+        
+        await startAnalysis(treeTool, bootstrap);
+        
+    } catch (error) {
+        showError(`Erro: ${error.message}`);
+    }
+}
+
+// ========================================
+// ANÁLISE E PROGRESSO
+// ========================================
+async function startAnalysis(treeTool, bootstrap) {
+    console.log('startAnalysis chamada com:', { treeTool, bootstrap, currentJobId, currentWorkflowMode });
+    
+    try {
+        // Esconder todas as seções de modo
+        document.getElementById('workflow-section').style.display = 'none';
+        ['mode1', 'mode2', 'mode3'].forEach(mode => {
+            const section = document.getElementById(`${mode}-section`);
+            if (section) section.style.display = 'none';
+        });
+        
+        // Mostrar progresso
+        const progressSection = document.getElementById('progress-section');
         progressSection.style.display = 'block';
         
         // Inicializar barra
-        progressFill.style.width = '75%';
-        progressText.textContent = '75% completo';
-        progressStep.textContent = 'Alinhamento pronto e reconstrução filogenética em andamento...';
+        setProgress(10, 'Iniciando análise...');
         
-        console.log('Progress section visível');
-
         const url = `${API_URL}/analyze/${currentJobId}?tree_tool=${treeTool}&bootstrap=${bootstrap}`;
-        console.log('Chamando:', url);
-        
         const response = await fetch(url, { method: 'POST' });
-
-        console.log('Response status:', response.status);
-
+        
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.detail || 'Erro ao iniciar análise');
         }
-
-        console.log('Começando polling...');
-        // Começar polling
+        
         startPolling();
-
+        
     } catch (error) {
         console.error('Erro em startAnalysis:', error);
         showError(`Erro ao iniciar análise: ${error.message}`);
@@ -207,6 +356,10 @@ function stopPolling() {
 }
 
 function setProgress(value, stepText) {
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const progressStep = document.getElementById('progress-step');
+    
     progressFill.style.width = `${value}%`;
     progressText.textContent = `${value.toFixed(0)}% completo`;
     if (stepText) {
@@ -221,25 +374,28 @@ async function checkStatus() {
         if (!response.ok) {
             throw new Error('Erro ao verificar status');
         }
-
+        
         const status = await response.json();
-
+        
         const stepNames = {
             'alignment': 'Alinhando sequências com MAFFT...',
+            'alignment_done': 'Alinhamento concluído!',
+            'merging_files': 'Juntando arquivos...',
+            'trimming': 'Curadoria do alinhamento com trimAl...',
+            'trimming_done': 'Curadoria concluída!',
+            'skipping_alignment': 'Matriz já alinhada, pulando...',
             'tree_building': 'Construindo árvore filogenética...'
         };
         const stepText = stepNames[status.step] || status.step || 'Processando...';
-
-        // Exibir progresso do servidor diretamente
+        
         setProgress(status.progress || 0, stepText);
-
+        
         if (status.status === 'completed') {
-            // Garantir que a barra fique visível por pelo menos 1.2s
             const elapsed = Date.now() - (progressStartTime || Date.now());
             const minDisplay = 1200;
-
+            
             setProgress(100, 'Finalizando...');
-
+            
             if (elapsed < minDisplay) {
                 setTimeout(() => {
                     stopPolling();
@@ -253,21 +409,24 @@ async function checkStatus() {
             stopPolling();
             showError(status.message || 'Erro desconhecido na análise');
         }
-
+        
     } catch (error) {
         stopPolling();
         showError(`Erro ao verificar status: ${error.message}`);
     }
 }
 
+// ========================================
+// RESULTADOS
+// ========================================
 async function showResults() {
-    progressSection.style.display = 'none';
-    resultsSection.style.display = 'block';
-
-    downloadTreeBtn.onclick = () => downloadFile('tree');
-    downloadAlignmentBtn.onclick = () => downloadFile('alignment');
-    downloadTreeSvgBtn.onclick = () => downloadFile('tree_svg');
-
+    document.getElementById('progress-section').style.display = 'none';
+    document.getElementById('results-section').style.display = 'block';
+    
+    document.getElementById('download-tree').onclick = () => downloadFile('tree');
+    document.getElementById('download-alignment').onclick = () => downloadFile('alignment');
+    document.getElementById('download-tree-svg').onclick = () => downloadFile('tree_svg');
+    
     await visualizeTree();
 }
 
@@ -280,10 +439,9 @@ async function visualizeTree() {
     try {
         const response = await fetch(`${API_URL}/download/${currentJobId}/tree`);
         const newickString = await response.text();
-
+        
         const container = document.getElementById('tree-container');
         
-        // Verificar se Phylocanvas GL está disponível
         if (typeof phylocanvas === 'undefined' || !phylocanvas.PhylocanvasGL) {
             console.warn('Phylocanvas GL não carregado, usando visualização alternativa');
             container.innerHTML = `
@@ -299,8 +457,7 @@ async function visualizeTree() {
             document.getElementById('tree-controls').style.display = 'none';
             return;
         }
-
-        // Limpar container e criar div para o canvas
+        
         container.innerHTML = '';
         const treeDiv = document.createElement('div');
         treeDiv.id = 'phylocanvas-tree';
@@ -309,8 +466,7 @@ async function visualizeTree() {
         treeDiv.style.background = 'white';
         treeDiv.style.borderRadius = '8px';
         container.appendChild(treeDiv);
-
-        // Phylocanvas GL - criar árvore
+        
         treeInstance = new phylocanvas.PhylocanvasGL(treeDiv, {
             source: newickString,
             type: phylocanvas.TreeTypes.Rectangular,
@@ -327,18 +483,13 @@ async function visualizeTree() {
                 height: 600 
             }
         });
-
+        
         console.log('Árvore Phylocanvas GL criada com sucesso');
         
-        // Configurar controles
         setupTreeControls();
-        
-        // Configurar detecção de clique em nós
         setupNodeClickDetection(treeDiv);
-        
-        // Popular dropdown com nós da árvore
         setupDirectActions();
-
+        
     } catch (error) {
         console.error('Erro ao visualizar árvore:', error);
         document.getElementById('tree-container').innerHTML = `
@@ -350,13 +501,50 @@ async function visualizeTree() {
     }
 }
 
-// Configurar detecção de clique em nós
+// ========================================
+// UTILITÁRIOS
+// ========================================
+function setupDragDrop(area, input) {
+    if (!area) return;
+    
+    area.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        area.style.background = '#f8f9ff';
+    });
+    
+    area.addEventListener('dragleave', () => {
+        area.style.background = '';
+    });
+    
+    area.addEventListener('drop', (e) => {
+        e.preventDefault();
+        area.style.background = '';
+        if (e.dataTransfer.files.length > 0) {
+            input.files = e.dataTransfer.files;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    });
+}
+
+function showError(message) {
+    document.getElementById('workflow-section').style.display = 'none';
+    ['mode1', 'mode2', 'mode3'].forEach(mode => {
+        const section = document.getElementById(`${mode}-section`);
+        if (section) section.style.display = 'none';
+    });
+    document.getElementById('progress-section').style.display = 'none';
+    document.getElementById('results-section').style.display = 'none';
+    document.getElementById('error-section').style.display = 'block';
+    document.getElementById('error-message').textContent = message;
+}
+
+// ========================================
+// CONTROLES DA ÁRVORE (mantido do original)
+// ========================================
 function setupNodeClickDetection(treeDiv) {
     const nodeActionsDiv = document.getElementById('node-actions');
     const selectedNodeName = document.getElementById('selected-node-name');
     
-    // O Phylocanvas GL atualiza selectedIds automaticamente quando interactive=true
-    // Vamos monitorar mudanças usando polling
     let lastSelectedIds = [];
     
     setInterval(() => {
@@ -364,47 +552,35 @@ function setupNodeClickDetection(treeDiv) {
         
         const currentSelectedIds = treeInstance.props.selectedIds || [];
         
-        // Verificar se houve mudança na seleção
         if (JSON.stringify(currentSelectedIds) !== JSON.stringify(lastSelectedIds)) {
             lastSelectedIds = [...currentSelectedIds];
             
             if (currentSelectedIds.length > 0) {
                 const nodeId = currentSelectedIds[0];
-                
-                // Buscar informações do nó
                 const node = treeInstance.findNodeById(nodeId);
                 selectedNode = node || { id: nodeId };
                 
                 const nodeName = node ? (node.label || node.id) : nodeId;
                 const displayName = nodeName.length > 35 ? nodeName.substring(0, 35) + '...' : nodeName;
                 
-                // Mostrar barra de ações
                 nodeActionsDiv.style.display = 'flex';
                 selectedNodeName.textContent = `Nó: ${displayName}`;
-                
-                console.log('Nó selecionado:', nodeId, node);
             } else {
-                // Nenhum nó selecionado
                 nodeActionsDiv.style.display = 'none';
                 selectedNode = null;
             }
         }
     }, 200);
     
-    // Configurar botões de ação
     document.getElementById('action-reroot').addEventListener('click', () => {
         if (!treeInstance || !selectedNode) {
             alert('Por favor, clique em um nó primeiro para selecioná-lo.');
             return;
         }
         try {
-            const nodeId = selectedNode.id;
-            // Usar setProps com rootId (não quebra se falhar)
-            treeInstance.setProps({ rootId: nodeId });
-            console.log('Árvore enraizada no nó:', nodeId);
+            treeInstance.setProps({ rootId: selectedNode.id });
         } catch (err) {
             console.error('Erro ao enraizar:', err);
-            // Não mostrar alert para não travar - apenas log
         }
     });
     
@@ -414,20 +590,12 @@ function setupNodeClickDetection(treeDiv) {
             return;
         }
         try {
-            const nodeId = selectedNode.id;
             const currentRotated = treeInstance.props.rotatedIds || [];
-            
-            // Toggle - adiciona ou remove da lista de rotacionados
-            if (currentRotated.includes(nodeId)) {
-                treeInstance.setProps({ 
-                    rotatedIds: currentRotated.filter(id => id !== nodeId) 
-                });
+            if (currentRotated.includes(selectedNode.id)) {
+                treeInstance.setProps({ rotatedIds: currentRotated.filter(id => id !== selectedNode.id) });
             } else {
-                treeInstance.setProps({ 
-                    rotatedIds: [...currentRotated, nodeId] 
-                });
+                treeInstance.setProps({ rotatedIds: [...currentRotated, selectedNode.id] });
             }
-            console.log('Clado rotacionado:', nodeId);
         } catch (err) {
             console.error('Erro ao rotacionar:', err);
         }
@@ -439,20 +607,12 @@ function setupNodeClickDetection(treeDiv) {
             return;
         }
         try {
-            const nodeId = selectedNode.id;
             const currentCollapsed = treeInstance.props.collapsedIds || [];
-            
-            // Toggle - adiciona ou remove da lista de colapsados
-            if (currentCollapsed.includes(nodeId)) {
-                treeInstance.setProps({ 
-                    collapsedIds: currentCollapsed.filter(id => id !== nodeId) 
-                });
+            if (currentCollapsed.includes(selectedNode.id)) {
+                treeInstance.setProps({ collapsedIds: currentCollapsed.filter(id => id !== selectedNode.id) });
             } else {
-                treeInstance.setProps({ 
-                    collapsedIds: [...currentCollapsed, nodeId] 
-                });
+                treeInstance.setProps({ collapsedIds: [...currentCollapsed, selectedNode.id] });
             }
-            console.log('Clado colapsado/expandido:', nodeId);
         } catch (err) {
             console.error('Erro ao colapsar:', err);
         }
@@ -465,75 +625,55 @@ function setupNodeClickDetection(treeDiv) {
         if (treeInstance) {
             treeInstance.setProps({ selectedIds: [] });
         }
-        // Limpar dropdown
-        document.getElementById('node-id-select').value = '';
     });
 }
 
-// Configurar ações diretas com input numérico
 function setupDirectActions() {
     if (!treeInstance) return;
     
     const nodeIdInput = document.getElementById('node-id-input');
     
-    // Enraizar diretamente
     document.getElementById('action-reroot-direct').addEventListener('click', () => {
         if (!treeInstance) return;
-        const nodeId = nodeIdInput.value;
         try {
-            treeInstance.setProps({ rootId: nodeId });
-            console.log('Árvore enraizada no nó:', nodeId);
+            treeInstance.setProps({ rootId: nodeIdInput.value });
         } catch (err) {
             console.error('Erro ao enraizar:', err);
         }
     });
     
-    // Rotacionar diretamente
     document.getElementById('action-rotate-direct').addEventListener('click', () => {
         if (!treeInstance) return;
-        const nodeId = nodeIdInput.value;
         try {
             const currentRotated = treeInstance.props.rotatedIds || [];
+            const nodeId = nodeIdInput.value;
             if (currentRotated.includes(nodeId)) {
-                treeInstance.setProps({ 
-                    rotatedIds: currentRotated.filter(id => id !== nodeId) 
-                });
+                treeInstance.setProps({ rotatedIds: currentRotated.filter(id => id !== nodeId) });
             } else {
-                treeInstance.setProps({ 
-                    rotatedIds: [...currentRotated, nodeId] 
-                });
+                treeInstance.setProps({ rotatedIds: [...currentRotated, nodeId] });
             }
-            console.log('Clado rotacionado:', nodeId);
         } catch (err) {
             console.error('Erro ao rotacionar:', err);
         }
     });
     
-    // Colapsar diretamente
     document.getElementById('action-collapse-direct').addEventListener('click', () => {
         if (!treeInstance) return;
-        const nodeId = nodeIdInput.value;
         try {
             const currentCollapsed = treeInstance.props.collapsedIds || [];
+            const nodeId = nodeIdInput.value;
             if (currentCollapsed.includes(nodeId)) {
-                treeInstance.setProps({ 
-                    collapsedIds: currentCollapsed.filter(id => id !== nodeId) 
-                });
+                treeInstance.setProps({ collapsedIds: currentCollapsed.filter(id => id !== nodeId) });
             } else {
-                treeInstance.setProps({ 
-                    collapsedIds: [...currentCollapsed, nodeId] 
-                });
+                treeInstance.setProps({ collapsedIds: [...currentCollapsed, nodeId] });
             }
-            console.log('Clado colapsado/expandido:', nodeId);
         } catch (err) {
             console.error('Erro ao colapsar:', err);
         }
     });
 }
 
-// Configurar controles da árvore
 function setupTreeControls() {
-    // Tipo de árvore
     const treeTypeSelect = document.getElementById('tree-type-select');
     treeTypeSelect.addEventListener('change', (e) => {
         if (!treeInstance) return;
@@ -546,26 +686,22 @@ function setupTreeControls() {
         };
         treeInstance.setProps({ type: typeMap[e.target.value] });
     });
-
-    // Zoom
+    
     document.getElementById('zoom-in').addEventListener('click', () => {
         if (!treeInstance) return;
-        const currentZoom = treeInstance.getZoom();
-        treeInstance.setProps({ zoom: currentZoom + 0.5 });
+        treeInstance.setProps({ zoom: treeInstance.getZoom() + 0.5 });
     });
-
+    
     document.getElementById('zoom-out').addEventListener('click', () => {
         if (!treeInstance) return;
-        const currentZoom = treeInstance.getZoom();
-        treeInstance.setProps({ zoom: currentZoom - 0.5 });
+        treeInstance.setProps({ zoom: treeInstance.getZoom() - 0.5 });
     });
-
+    
     document.getElementById('zoom-fit').addEventListener('click', () => {
         if (!treeInstance) return;
         treeInstance.fitInPanel();
     });
-
-    // Reset
+    
     document.getElementById('reset-tree').addEventListener('click', () => {
         if (!treeInstance) return;
         treeInstance.setProps({
@@ -576,8 +712,7 @@ function setupTreeControls() {
         });
         treeInstance.fitInPanel();
     });
-
-    // Exportar PNG
+    
     document.getElementById('export-png').addEventListener('click', () => {
         if (!treeInstance) return;
         const dataUri = treeInstance.exportPNG();
@@ -586,8 +721,7 @@ function setupTreeControls() {
         link.href = dataUri;
         link.click();
     });
-
-    // Mostrar/ocultar rótulos
+    
     document.getElementById('show-labels').addEventListener('change', (e) => {
         if (!treeInstance) return;
         treeInstance.setProps({ 
@@ -595,28 +729,22 @@ function setupTreeControls() {
             showLeafLabels: e.target.checked
         });
     });
-
-    // Alinhar rótulos
+    
     document.getElementById('align-labels').addEventListener('change', (e) => {
         if (!treeInstance) return;
         treeInstance.setProps({ alignLabels: e.target.checked });
     });
 }
 
-newAnalysisBtn.addEventListener('click', () => {
-    location.reload();
+// Event listeners para botões de nova análise e retry
+document.addEventListener('DOMContentLoaded', () => {
+    const newAnalysisBtn = document.getElementById('new-analysis');
+    const retryBtn = document.getElementById('retry-btn');
+    
+    if (newAnalysisBtn) {
+        newAnalysisBtn.addEventListener('click', () => location.reload());
+    }
+    if (retryBtn) {
+        retryBtn.addEventListener('click', () => location.reload());
+    }
 });
-
-retryBtn.addEventListener('click', () => {
-    location.reload();
-});
-
-function showError(message) {
-    document.getElementById('alignment-section').style.display = 'none';
-    document.getElementById('sequences-section').style.display = 'none';
-    document.getElementById('tree-section').style.display = 'none';
-    progressSection.style.display = 'none';
-    resultsSection.style.display = 'none';
-    errorSection.style.display = 'block';
-    errorMessage.textContent = message;
-}

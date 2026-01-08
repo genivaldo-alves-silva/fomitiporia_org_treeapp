@@ -12,70 +12,167 @@
     <div class="container">
         <header>
             <h1>🧬 Fomitiporia TreeApp</h1>
-            <p>Análise Filogenética com MAFFT e IQ-TREE/FastTree</p>
+            <p>Análise Filogenética com MAFFT, trimAl e IQ-TREE/FastTree</p>
         </header>
 
         <main>
-            <!-- Seção de Upload - Alinhamento -->
-            <section id="alignment-section" class="card">
-                <h2>1. Matriz de Alinhamento</h2>
-                <p class="section-hint">Carregue o alinhamento existente ou use o padrão fornecido</p>
+            <!-- ========================================== -->
+            <!-- SEÇÃO 0: SELEÇÃO DE WORKFLOW -->
+            <!-- ========================================== -->
+            <section id="workflow-section" class="card">
+                <h2>Escolha o tipo de análise</h2>
+                <p class="section-hint">Selecione o fluxo de trabalho adequado para seus dados</p>
                 
-                <div class="alignment-container">
-                    <div class="upload-area" id="upload-area-alignment">
-                        <input type="file" id="file-input-alignment" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
-                        <label for="file-input-alignment" class="upload-label">
+                <div class="workflow-options">
+                    <div class="workflow-card" id="workflow-1" data-mode="1">
+                        <div class="workflow-icon">📊</div>
+                        <h3>Opção 1: Matriz Alinhada</h3>
+                        <p>Já tenho uma matriz <strong>alinhada</strong>. Quero apenas construir a árvore filogenética.</p>
+                        <ul class="workflow-features">
+                            <li>✅ Upload da matriz alinhada</li>
+                            <li>✅ Pula etapa de alinhamento</li>
+                            <li>✅ Direto para construção da árvore</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="workflow-card" id="workflow-2" data-mode="2">
+                        <div class="workflow-icon">➕</div>
+                        <h3>Opção 2: Adicionar Sequências</h3>
+                        <p>Quero adicionar <strong>novas sequências</strong> a uma matriz alinhada (ex: Fomitiporia).</p>
+                        <ul class="workflow-features">
+                            <li>✅ Matriz de Fomitiporia disponível</li>
+                            <li>✅ MAFFT --add (preserva alinhamento)</li>
+                            <li>✅ Ideal para atualizar datasets</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="workflow-card" id="workflow-3" data-mode="3">
+                        <div class="workflow-icon">🔬</div>
+                        <h3>Opção 3: Alinhar do Zero</h3>
+                        <p>Tenho uma matriz <strong>não alinhada</strong>. Quero alinhar e construir a árvore.</p>
+                        <ul class="workflow-features">
+                            <li>✅ MAFFT --auto (alinhamento completo)</li>
+                            <li>✅ trimAl (curadoria automática)</li>
+                            <li>✅ Envie suas seqs separadamente</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- MODO 1: MATRIZ JÁ ALINHADA -->
+            <!-- ========================================== -->
+            <section id="mode1-section" class="card mode-section" style="display: none;">
+                <h2>📊 Modo 1: Matriz Alinhada</h2>
+                <button class="btn-back" id="back-from-mode1">← Voltar</button>
+                
+                <div class="form-section">
+                    <h3>1. Carregar matriz alinhada</h3>
+                    <div class="upload-area" id="upload-area-mode1">
+                        <input type="file" id="file-input-mode1" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
+                        <label for="file-input-mode1" class="upload-label">
                             <div class="upload-icon">📄</div>
-                            <p>Clique ou arraste para substituir o alinhamento</p>
+                            <p>Clique ou arraste seu arquivo FASTA alinhado</p>
                             <p class="upload-hint">.fasta, .fa, .fas, .faa, .fna</p>
                         </label>
                     </div>
-                    <div id="alignment-info" style="display: none;">
-                        <p><strong>Alinhamento carregado:</strong> <span id="alignment-filename"></span></p>
-                    </div>
-                    <div id="alignment-default" style="display: block;">
-                        <p style="color: #667eea; font-weight: 600;">✓ Usando alinhamento padrão</p>
+                    <div id="mode1-file-info" style="display: none;">
+                        <p><strong>Arquivo:</strong> <span id="mode1-filename"></span></p>
                     </div>
                 </div>
-            </section>
-
-            <!-- Seção de Novas Sequências -->
-            <section id="sequences-section" class="card">
-                <h2>2. Adicionar Sequências</h2>
-                <p class="section-hint">Insira novas sequências por texto ou carregue um arquivo</p>
                 
-                <div class="sequences-input-container">
-                    <div class="input-method">
-                        <h3>📝 Por Texto</h3>
-                        <p class="format-hint">Formato: >nome_da_sequência<br>AAATTTGGGCCC<br>ou: >nome\tAAAAAAAA (tab-separado)</p>
-                        <textarea id="sequences-text" placeholder=">sequence_1&#10;AAATTTGGGCCC&#10;&#10;>sequence_2&#10;GGGCCCAAATTT" rows="8"></textarea>
+                <div class="form-section">
+                    <h3>2. Configurações</h3>
+                    <div class="form-group">
+                        <label for="outgroup-mode1">Outgroup (para enraizamento):</label>
+                        <input type="text" id="outgroup-mode1" value="uncisetus" placeholder="ex: uncisetus, outgroup_species">
+                        <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tree-tool-mode1">Ferramenta:</label>
+                        <select id="tree-tool-mode1">
+                            <option value="fasttree">FastTree (rápido, ~minutos)</option>
+                            <option value="iqtree" selected>IQ-TREE (preciso, pode demorar mais)</option>
+                        </select>
                     </div>
 
-                    <div class="divider">OU</div>
+                    <div class="form-group" id="bootstrap-group-mode1">
+                        <label for="bootstrap-mode1">Bootstrap (IQ-TREE):</label>
+                        <input type="number" id="bootstrap-mode1" value="1000" min="100" max="10000" step="100">
+                        <small>Recomendado: 1000 para publicação</small>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-primary" id="submit-mode1">Iniciar Análise</button>
+            </section>
 
-                    <div class="input-method">
-                        <h3>📤 Por Upload</h3>
-                        <div class="upload-area" id="upload-area-sequences">
-                            <input type="file" id="file-input-sequences" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
-                            <label for="file-input-sequences" class="upload-label">
-                                <div class="upload-icon">📁</div>
-                                <p>Clique ou arraste arquivo FASTA</p>
+            <!-- ========================================== -->
+            <!-- MODO 2: ADICIONAR SEQUÊNCIAS (ATUAL) -->
+            <!-- ========================================== -->
+            <section id="mode2-section" class="card mode-section" style="display: none;">
+                <h2>➕ Modo 2: Adicionar Sequências</h2>
+                <button class="btn-back" id="back-from-mode2">← Voltar</button>
+                
+                <div class="form-section">
+                    <h3>1. Matriz de Alinhamento Base</h3>
+                    <p class="section-hint">Carregue sua matriz alinhada ou use a de Fomitiporia</p>
+                    
+                    <div class="alignment-container">
+                        <div class="upload-area" id="upload-area-alignment">
+                            <input type="file" id="file-input-alignment" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
+                            <label for="file-input-alignment" class="upload-label">
+                                <div class="upload-icon">📄</div>
+                                <p>Clique ou arraste para substituir o alinhamento</p>
                                 <p class="upload-hint">.fasta, .fa, .fas, .faa, .fna</p>
                             </label>
                         </div>
-                        <div id="sequences-file-info" style="display: none;">
-                            <p><strong>Arquivo:</strong> <span id="sequences-filename"></span></p>
+                        <div id="alignment-info" style="display: none;">
+                            <p><strong>Alinhamento carregado:</strong> <span id="alignment-filename"></span></p>
+                        </div>
+                        <div id="alignment-default" style="display: block;">
+                            <p style="color: #667eea; font-weight: 600;">✓ Usando alinhamento padrão de Fomitiporia</p>
                         </div>
                     </div>
                 </div>
-            </section>
 
-            <!-- Seção de Árvore -->
-            <section id="tree-section" class="card">
-                <h2>3. Construção de Árvore (Opcional)</h2>
-                <p class="section-hint">Escolha o método para construção da árvore filogenética</p>
-                
-                <form id="tree-config-form">
+                <div class="form-section">
+                    <h3>2. Adicionar Novas Sequências</h3>
+                    <p class="section-hint">Insira novas sequências por texto ou carregue um arquivo</p>
+                    
+                    <div class="sequences-input-container">
+                        <div class="input-method">
+                            <h4>📝 Por Texto</h4>
+                            <p class="format-hint">Formato: >nome_da_sequência<br>AAATTTGGGCCC</p>
+                            <textarea id="sequences-text" placeholder=">sequence_1&#10;AAATTTGGGCCC&#10;&#10;>sequence_2&#10;GGGCCCAAATTT" rows="6"></textarea>
+                        </div>
+
+                        <div class="divider">OU</div>
+
+                        <div class="input-method">
+                            <h4>📤 Por Upload</h4>
+                            <div class="upload-area upload-area-small" id="upload-area-sequences">
+                                <input type="file" id="file-input-sequences" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
+                                <label for="file-input-sequences" class="upload-label">
+                                    <div class="upload-icon">📁</div>
+                                    <p>Clique ou arraste arquivo FASTA</p>
+                                </label>
+                            </div>
+                            <div id="sequences-file-info" style="display: none;">
+                                <p><strong>Arquivo:</strong> <span id="sequences-filename"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>3. Configurações</h3>
+                    <div class="form-group">
+                        <label for="outgroup-mode2">Outgroup (para enraizamento):</label>
+                        <input type="text" id="outgroup-mode2" value="uncisetus" placeholder="ex: uncisetus">
+                        <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="tree-tool">Ferramenta:</label>
                         <select id="tree-tool">
@@ -89,9 +186,92 @@
                         <input type="number" id="bootstrap" value="1000" min="100" max="10000" step="100">
                         <small>Recomendado: 1000 para publicação</small>
                     </div>
+                </div>
 
-                    <button type="submit" class="btn btn-primary">Iniciar Análise</button>
-                </form>
+                <button type="button" class="btn btn-primary" id="submit-mode2">Iniciar Análise</button>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- MODO 3: ALINHAR DO ZERO -->
+            <!-- ========================================== -->
+            <section id="mode3-section" class="card mode-section" style="display: none;">
+                <h2>🔬 Modo 3: Alinhar do Zero</h2>
+                <button class="btn-back" id="back-from-mode3">← Voltar</button>
+                
+                <div class="form-section">
+                    <h3>1. Matriz Principal (não alinhada)</h3>
+                    <p class="section-hint">Carregue sua matriz com todas as sequências de referência</p>
+                    
+                    <div class="upload-area" id="upload-area-raw">
+                        <input type="file" id="file-input-raw" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
+                        <label for="file-input-raw" class="upload-label">
+                            <div class="upload-icon">📄</div>
+                            <p>Clique ou arraste a matriz crua (FASTA)</p>
+                            <p class="upload-hint">.fasta, .fa, .fas, .faa, .fna</p>
+                        </label>
+                    </div>
+                    <div id="raw-file-info" style="display: none;">
+                        <p><strong>Matriz carregada:</strong> <span id="raw-filename"></span></p>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>2. Suas Sequências (opcional, mas recomendado)</h3>
+                    <p class="section-hint">Envie suas sequências separadamente para serem marcadas como novas</p>
+                    
+                    <div class="sequences-input-container">
+                        <div class="input-method">
+                            <h4>📝 Por Texto</h4>
+                            <textarea id="user-sequences-text" placeholder=">minha_sequencia_1&#10;AAATTTGGGCCC&#10;&#10;>minha_sequencia_2&#10;GGGCCCAAATTT" rows="5"></textarea>
+                        </div>
+
+                        <div class="divider">OU</div>
+
+                        <div class="input-method">
+                            <h4>📤 Por Upload</h4>
+                            <div class="upload-area upload-area-small" id="upload-area-user">
+                                <input type="file" id="file-input-user" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
+                                <label for="file-input-user" class="upload-label">
+                                    <div class="upload-icon">📁</div>
+                                    <p>Clique ou arraste arquivo FASTA</p>
+                                </label>
+                            </div>
+                            <div id="user-file-info" style="display: none;">
+                                <p><strong>Arquivo:</strong> <span id="user-filename"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>3. Configurações</h3>
+                    
+                    <div class="info-box">
+                        <strong>ℹ️ Pipeline:</strong> MAFFT --auto → trimAl -automated1 → Árvore
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="outgroup-mode3">Outgroup (para enraizamento):</label>
+                        <input type="text" id="outgroup-mode3" value="uncisetus" placeholder="ex: outgroup_species">
+                        <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tree-tool-mode3">Ferramenta:</label>
+                        <select id="tree-tool-mode3">
+                            <option value="fasttree">FastTree (rápido, ~minutos)</option>
+                            <option value="iqtree" selected>IQ-TREE (preciso, pode demorar mais)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="bootstrap-group-mode3">
+                        <label for="bootstrap-mode3">Bootstrap (IQ-TREE):</label>
+                        <input type="number" id="bootstrap-mode3" value="1000" min="100" max="10000" step="100">
+                        <small>Recomendado: 1000 para publicação</small>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary" id="submit-mode3">Iniciar Análise</button>
             </section>
 
             <!-- Seção de Progresso -->
