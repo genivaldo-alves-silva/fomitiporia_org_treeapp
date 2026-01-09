@@ -53,6 +53,7 @@ header p {
     font-size: 0.95rem;
     margin-bottom: 20px;
     font-style: italic;
+    line-height: 1.6;
 }
 
 /* Workflow Selection Cards */

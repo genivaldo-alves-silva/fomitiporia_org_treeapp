@@ -21,13 +21,13 @@
             <!-- ========================================== -->
             <section id="workflow-section" class="card">
                 <h2>Escolha o tipo de análise</h2>
-                <p class="section-hint">Selecione o fluxo de trabalho adequado para seus dados</p>
+                <p class="section-hint">Selecione o fluxo de trabalho adequado para seus dados (Eu tenho: 1. matriz final alinhada; 2. minhas sequências para encaixar em uma matriz alinhada; 3. matriz não alinhada base + minhas sequências; 4. árvore em .nwk/texto e quero renderizar)</p>
                 
                 <div class="workflow-options">
                     <div class="workflow-card" id="workflow-1" data-mode="1">
                         <div class="workflow-icon"><i data-lucide="bar-chart-3"></i></div>
                         <h3>Opção 1: Matriz Alinhada</h3>
-                        <p>Já tenho uma matriz <strong>alinhada</strong>. Quero apenas construir a árvore filogenética.</p>
+                        <p>Já tenho uma matriz <strong>alinhada</strong>. Quero apenas construir a árvore filogenética e renderizar.</p>
                         <ul class="workflow-features">
                             <li>✅ Upload da matriz alinhada</li>
                             <li>✅ Pula etapa de alinhamento</li>
@@ -38,9 +38,9 @@
                     <div class="workflow-card" id="workflow-2" data-mode="2">
                         <div class="workflow-icon"><i data-lucide="plus-circle"></i></div>
                         <h3>Opção 2: Adicionar Sequências</h3>
-                        <p>Quero adicionar <strong>novas sequências</strong> a uma matriz alinhada (ex: Fomitiporia).</p>
+                        <p>Quero adicionar <strong>novas sequências</strong> a uma matriz alinhada (ex: <i>Fomitiporia</i>).</p>
                         <ul class="workflow-features">
-                            <li>✅ Matriz de Fomitiporia disponível (updated january 2026)</li>
+                            <li>✅ Matriz de <i>Fomitiporia</i> disponível (updated january 2026)</li>
                             <li>✅ MAFFT --add (preserva alinhamento)</li>
                             <li>✅ Ideal para atualizar datasets</li>
                         </ul>
@@ -127,7 +127,7 @@
                 
                 <div class="form-section">
                     <h3>1. Matriz de Alinhamento Base</h3>
-                    <p class="section-hint">Carregue sua matriz alinhada ou use a de Fomitiporia (updated january 2026)</p>
+                    <p class="section-hint">Carregue sua matriz alinhada ou use a de <i>Fomitiporia</i> (updated january 2026)</p>
                     
                     <div class="alignment-container">
                         <div class="upload-area" id="upload-area-alignment">
@@ -142,7 +142,7 @@
                             <p><strong>Alinhamento carregado:</strong> <span id="alignment-filename"></span></p>
                         </div>
                         <div id="alignment-default" style="display: block;">
-                            <p style="color: #667eea; font-weight: 600;">✓ Usando alinhamento padrão de Fomitiporia</p>
+                            <p style="color: #667eea; font-weight: 600;">✓ Usando alinhamento padrão de <i>Fomitiporia</i></p>
                         </div>
                     </div>
                 </div>
@@ -360,7 +360,7 @@
                         <div class="dimension-group">
                             <label for="svg-height">Altura (px):</label>
                             <input type="number" id="svg-height" placeholder="auto" min="500" max="20000" step="100">
-                            <small>Deixe vazio para calcular automaticamente</small>
+                            <small>Altere se necessário</small>
                         </div>
                         <button class="btn btn-primary" id="rerender-svg">
                             <i data-lucide="refresh-cw" class="btn-icon"></i> Re-renderizar

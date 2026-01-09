@@ -5,6 +5,7 @@ import html
 import toytree
 import re
 import toyplot.svg
+import toyplot.locator
 import sys
 from pathlib import Path
 from ete3 import Tree
@@ -125,20 +126,23 @@ def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_O
     tree_width = width if width is not None else DEFAULT_WIDTH
     print(f"Dimensões do SVG: {tree_width}px x {tree_height}px")
     
-    # Draw the tree
+    # Draw the tree SEM scale_bar (vamos criar uma customizada estilo FigTree)
     canvas, axes, mark = ladderized_tree.draw(
         width=tree_width,
         height=tree_height,
+        scale_bar=False,
         tip_labels_align=False,
         tip_labels_style={
             "fill": "#262626",
             "font-size": "20px",
+            "font-family": "Helvetica, Arial, sans-serif",
             "-toyplot-anchor-shift": "15px",
         },
         node_labels=node_labels,
         node_labels_style={
             "fill": "#262626",
             "font-size": "15px",
+            "font-family": "Helvetica, Arial, sans-serif",
         },
         node_sizes=None,
         node_markers=node_markers,
@@ -147,6 +151,80 @@ def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_O
             "stroke": "black", 
             "stroke-width": 1,
         },
+    )
+    
+    # Esconder todos os eixos
+    axes.show = False
+    
+    # ========================================
+    # SCALE BAR ESTILO FIGTREE (proporcional)
+    # ========================================
+    # Obter range real da árvore calculando a distância máxima da raiz até um tip
+    # Função para calcular a distância de um nó até a raiz
+    def get_distance_to_root(node):
+        dist = 0
+        current = node
+        while current.up is not None:
+            dist += current.dist if current.dist else 0
+            current = current.up
+        return dist
+    
+    # Encontrar a maior distância entre todos os tips
+    max_dist = 0
+    for leaf in ladderized_tree.treenode.get_leaves():
+        d = get_distance_to_root(leaf)
+        if d > max_dist:
+            max_dist = d
+    
+    tree_range = max_dist if max_dist > 0 else 0.1
+    
+    # Escolher um valor "bonito" para a scale bar proporcional ao range
+    scale_options = [0.001, 0.002, 0.005, 0.01, 0.02, 0.03, 0.05, 0.1, 0.2, 0.5, 1.0]
+    scale_value = scale_options[0]
+    for opt in scale_options:
+        # Escolher um valor que seja ~10-25% do range total
+        if opt >= tree_range * 0.08 and opt <= tree_range * 0.30:
+            scale_value = opt
+            break
+    
+    # Número de tips para calcular posição Y
+    ntips = ladderized_tree.ntips
+    
+    # Posição da scale bar: canto inferior esquerdo
+    bar_y = -1.5  # abaixo do último tip
+    bar_x_start = 0  # começar na raiz (esquerda)
+    bar_x_end = scale_value  # terminar em scale_value
+    
+    # Desenhar a linha horizontal da scale bar
+    axes.plot(
+        [bar_x_start, bar_x_end], 
+        [bar_y, bar_y],
+        color="black",
+        stroke_width=1
+    )
+    
+    # Formatar o número (remover zeros desnecessários)
+    if scale_value >= 0.1:
+        scale_text = f"{scale_value:.1f}".rstrip('0').rstrip('.')
+    elif scale_value >= 0.01:
+        scale_text = f"{scale_value:.2f}".rstrip('0').rstrip('.')
+    else:
+        scale_text = f"{scale_value:.3f}".rstrip('0').rstrip('.')
+    
+    # Adicionar o texto centralizado abaixo da barra
+    bar_center = (bar_x_start + bar_x_end) / 2
+    axes.text(
+        bar_center, 
+        bar_y - 1.0,
+        scale_text,
+        style={
+            "font-size": "20px",
+            "font-family": "Helvetica, Arial, sans-serif",
+            "font-weight": "500",
+            "fill": "#262626",
+            "text-anchor": "middle",
+            "-toyplot-anchor-shift": "0"
+        }
     )
     
     # Save to output directory
