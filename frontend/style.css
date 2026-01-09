@@ -97,6 +97,71 @@ header p {
     text-align: center;
 }
 
+.workflow-icon svg {
+    width: 48px;
+    height: 48px;
+    stroke: #667eea;
+    stroke-width: 1.5;
+}
+
+.workflow-card:hover .workflow-icon svg {
+    stroke: #764ba2;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+/* Ícones Lucide nos títulos */
+.header-icon {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.section-icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    margin-right: 6px;
+    stroke: #667eea;
+}
+
+/* Ícones inline (em textos e títulos pequenos) */
+.inline-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
+    stroke: currentColor;
+}
+
+/* Ícones em botões */
+.btn-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 6px;
+    stroke: currentColor;
+}
+
+/* Ícones na área de upload */
+.upload-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke: #667eea;
+    stroke-width: 1.5;
+}
+
+/* Ícones nos controles */
+.btn-control svg,
+.btn-action svg {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    margin-right: 2px;
+    stroke: currentColor;
+}
+
 .workflow-card h3 {
     color: #667eea;
     font-size: 1.1rem;
@@ -393,7 +458,8 @@ hr {
     border-left: 3px solid #667eea;
 }
 
-#sequences-text {
+#sequences-text,
+#user-sequences-text {
     width: 100%;
     padding: 12px;
     border: 2px solid #e0e0e0;
@@ -404,7 +470,8 @@ hr {
     transition: border-color 0.3s;
 }
 
-#sequences-text:focus {
+#sequences-text:focus,
+#user-sequences-text:focus {
     outline: none;
     border-color: #667eea;
 }

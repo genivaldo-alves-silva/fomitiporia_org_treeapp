@@ -97,10 +97,19 @@ def process_text_elements(text_elem, text, genus_cache):
             qualifier_tspan = ET.SubElement(text_elem, f'{{{SVG_NS}}}tspan')
             qualifier_tspan.text = f"{qualifier}." + ' '
 
-        # Italicize species (only if present)
+        # Italicize species based on qualifier type:
+        # - sp. → species NOT italicized (it's just additional info, not a real epithet)
+        # - cf. or aff. → species IS italicized (it's a real epithet with uncertainty)
+        # - no qualifier → species IS italicized
         if species:
-            italic_species = ET.SubElement(text_elem, f'{{{SVG_NS}}}tspan', attrib={'style': 'font-style:italic'})
-            italic_species.text = species + ' '
+            if qualifier and qualifier.lower() == 'sp':
+                # With "sp." qualifier - do NOT italicize what follows (not a real epithet)
+                plain_species = ET.SubElement(text_elem, f'{{{SVG_NS}}}tspan')
+                plain_species.text = species + ' '
+            else:
+                # No qualifier OR cf./aff. qualifier - italicize species
+                italic_species = ET.SubElement(text_elem, f'{{{SVG_NS}}}tspan', attrib={'style': 'font-style:italic'})
+                italic_species.text = species + ' '
 
         # Add voucher (if present)
         if voucher:

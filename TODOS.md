@@ -1,5 +1,10 @@
 - Opção de definir o outgroup para enraizamento;
 - Tamanho da árvore com toytree baseado no tamanho da matriz;
-- Construição de árvore multiloci?
+- Construção de árvore multiloci?
+- Local para o usuário mandar sugestões e pedidos que devem ser enviados para o email do administrador;
+- Balões de explicação das ferramentas;
+- Possibilidade do usuário subir .nwk e receber somente a árvore formatada e junto disso a possibilidade de alterar altura e largura;
 - Possibilidade dos usuários alimentarem o sistema com matrizes atualizadas com qualificação certificada?
-- Possibilidade dos usuários para fazer somente a árvore;
+    - Vincular a algo como treebase (com submissão auditável)/dataverse (com doi) onde podem ir subindo as matrizes alinhadas e atualizadas?
+    - Vincular ao dataset maker que está sendo construído?
+- Versão em mais de um idioma;

@@ -659,7 +659,7 @@ async def build_tree(job_id: str, aligned_file: Path, tree_file: Path, result_di
                                    text=True, timeout=7200)
         
         if result.returncode == 0:
-            generate_svg_with_outgroup(tree_file, result_dir, outgroup)
+            generate_svg_with_outgroup(tree_file, result_dir, outgroup, aligned_file)
         else:
             raise Exception(f"FastTree falhou: {result.stderr}")
             
@@ -715,17 +715,23 @@ async def build_tree(job_id: str, aligned_file: Path, tree_file: Path, result_di
         if result.returncode == 0:
             job_status[job_id] = {"status": "processing", "progress": 99, "step": "tree_building", "workflow_mode": workflow_mode}
             shutil.copy(result_dir / "iqtree.contree", tree_file)
-            generate_svg_with_outgroup(tree_file, result_dir, outgroup)
+            generate_svg_with_outgroup(tree_file, result_dir, outgroup, aligned_file)
         else:
             raise Exception(f"IQ-TREE falhou: {result.stderr}")
 
 
-def generate_svg_with_outgroup(tree_file: Path, result_dir: Path, outgroup: str):
+def generate_svg_with_outgroup(tree_file: Path, result_dir: Path, outgroup: str, alignment_file: Path = None):
     """Gera SVG da árvore passando o outgroup para tree_set_cli.py"""
     try:
         svg_script = Path(__file__).parent / "tree_set_svg_edit" / "tree_set_cli.py"
+        
+        # Montar argumentos: tree_file, output_dir, outgroup, [alignment_file]
+        svg_args = [sys.executable, str(svg_script), str(tree_file), str(result_dir), outgroup]
+        if alignment_file:
+            svg_args.append(str(alignment_file))
+        
         svg_result = subprocess.run(
-            [sys.executable, str(svg_script), str(tree_file), str(result_dir), outgroup],
+            svg_args,
             capture_output=True,
             text=True,
             timeout=120

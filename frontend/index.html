@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análise Filogenética - Fomitiporia TreeApp</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons - ícones SVG profissionais -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <!-- Phylocanvas GL para visualização de árvores -->
     <script src="https://unpkg.com/@phylocanvas/phylocanvas.gl@latest/dist/bundle.min.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🧬 Fomitiporia TreeApp</h1>
+            <h1><i data-lucide="dna" class="header-icon"></i> Fomitiporia TreeApp</h1>
             <p>Análise Filogenética com MAFFT, trimAl e IQ-TREE/FastTree</p>
         </header>
 
@@ -25,7 +27,7 @@
                 
                 <div class="workflow-options">
                     <div class="workflow-card" id="workflow-1" data-mode="1">
-                        <div class="workflow-icon">📊</div>
+                        <div class="workflow-icon"><i data-lucide="bar-chart-3"></i></div>
                         <h3>Opção 1: Matriz Alinhada</h3>
                         <p>Já tenho uma matriz <strong>alinhada</strong>. Quero apenas construir a árvore filogenética.</p>
                         <ul class="workflow-features">
@@ -36,18 +38,18 @@
                     </div>
                     
                     <div class="workflow-card" id="workflow-2" data-mode="2">
-                        <div class="workflow-icon">➕</div>
+                        <div class="workflow-icon"><i data-lucide="plus-circle"></i></div>
                         <h3>Opção 2: Adicionar Sequências</h3>
                         <p>Quero adicionar <strong>novas sequências</strong> a uma matriz alinhada (ex: Fomitiporia).</p>
                         <ul class="workflow-features">
-                            <li>✅ Matriz de Fomitiporia disponível</li>
+                            <li>✅ Matriz de Fomitiporia disponível (updated january 2026)</li>
                             <li>✅ MAFFT --add (preserva alinhamento)</li>
                             <li>✅ Ideal para atualizar datasets</li>
                         </ul>
                     </div>
                     
                     <div class="workflow-card" id="workflow-3" data-mode="3">
-                        <div class="workflow-icon">🔬</div>
+                        <div class="workflow-icon"><i data-lucide="flask-conical"></i></div>
                         <h3>Opção 3: Alinhar do Zero</h3>
                         <p>Tenho uma matriz <strong>não alinhada</strong>. Quero alinhar e construir a árvore.</p>
                         <ul class="workflow-features">
@@ -63,7 +65,7 @@
             <!-- MODO 1: MATRIZ JÁ ALINHADA -->
             <!-- ========================================== -->
             <section id="mode1-section" class="card mode-section" style="display: none;">
-                <h2>📊 Modo 1: Matriz Alinhada</h2>
+                <h2><i data-lucide="bar-chart-3" class="section-icon"></i> Modo 1: Matriz Alinhada</h2>
                 <button class="btn-back" id="back-from-mode1">← Voltar</button>
                 
                 <div class="form-section">
@@ -71,7 +73,7 @@
                     <div class="upload-area" id="upload-area-mode1">
                         <input type="file" id="file-input-mode1" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                         <label for="file-input-mode1" class="upload-label">
-                            <div class="upload-icon">📄</div>
+                            <div class="upload-icon"><i data-lucide="file-text"></i></div>
                             <p>Clique ou arraste seu arquivo FASTA alinhado</p>
                             <p class="upload-hint">.fasta, .fa, .fas, .faa, .fna</p>
                         </label>
@@ -86,7 +88,7 @@
                     <div class="form-group">
                         <label for="outgroup-mode1">Outgroup (para enraizamento):</label>
                         <input type="text" id="outgroup-mode1" value="uncisetus" placeholder="ex: uncisetus, outgroup_species">
-                        <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                        <small>Termo (ex.: genus name, epithet name, voucher) para buscar nas tips e usar como raiz da árvore</small>
                     </div>
                     
                     <div class="form-group">
@@ -111,18 +113,18 @@
             <!-- MODO 2: ADICIONAR SEQUÊNCIAS (ATUAL) -->
             <!-- ========================================== -->
             <section id="mode2-section" class="card mode-section" style="display: none;">
-                <h2>➕ Modo 2: Adicionar Sequências</h2>
+                <h2><i data-lucide="plus-circle" class="section-icon"></i> Modo 2: Adicionar Sequências</h2>
                 <button class="btn-back" id="back-from-mode2">← Voltar</button>
                 
                 <div class="form-section">
                     <h3>1. Matriz de Alinhamento Base</h3>
-                    <p class="section-hint">Carregue sua matriz alinhada ou use a de Fomitiporia</p>
+                    <p class="section-hint">Carregue sua matriz alinhada ou use a de Fomitiporia (updated january 2026)</p>
                     
                     <div class="alignment-container">
                         <div class="upload-area" id="upload-area-alignment">
                             <input type="file" id="file-input-alignment" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                             <label for="file-input-alignment" class="upload-label">
-                                <div class="upload-icon">📄</div>
+                                <div class="upload-icon"><i data-lucide="file-text"></i></div>
                                 <p>Clique ou arraste para substituir o alinhamento</p>
                                 <p class="upload-hint">.fasta, .fa, .fas, .faa, .fna</p>
                             </label>
@@ -142,7 +144,7 @@
                     
                     <div class="sequences-input-container">
                         <div class="input-method">
-                            <h4>📝 Por Texto</h4>
+                            <h4><i data-lucide="pencil" class="inline-icon"></i> Por Texto</h4>
                             <p class="format-hint">Formato: >nome_da_sequência<br>AAATTTGGGCCC</p>
                             <textarea id="sequences-text" placeholder=">sequence_1&#10;AAATTTGGGCCC&#10;&#10;>sequence_2&#10;GGGCCCAAATTT" rows="6"></textarea>
                         </div>
@@ -150,11 +152,11 @@
                         <div class="divider">OU</div>
 
                         <div class="input-method">
-                            <h4>📤 Por Upload</h4>
+                            <h4><i data-lucide="upload" class="inline-icon"></i> Por Upload</h4>
                             <div class="upload-area upload-area-small" id="upload-area-sequences">
                                 <input type="file" id="file-input-sequences" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                                 <label for="file-input-sequences" class="upload-label">
-                                    <div class="upload-icon">📁</div>
+                                    <div class="upload-icon"><i data-lucide="folder"></i></div>
                                     <p>Clique ou arraste arquivo FASTA</p>
                                 </label>
                             </div>
@@ -170,7 +172,7 @@
                     <div class="form-group">
                         <label for="outgroup-mode2">Outgroup (para enraizamento):</label>
                         <input type="text" id="outgroup-mode2" value="uncisetus" placeholder="ex: uncisetus">
-                        <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                        <small>Termo  (ex.: genus name, epithet name, voucher) para buscar nas tips e usar como raiz da árvore</small>
                     </div>
                     
                     <div class="form-group">
@@ -195,7 +197,7 @@
             <!-- MODO 3: ALINHAR DO ZERO -->
             <!-- ========================================== -->
             <section id="mode3-section" class="card mode-section" style="display: none;">
-                <h2>🔬 Modo 3: Alinhar do Zero</h2>
+                <h2><i data-lucide="flask-conical" class="section-icon"></i> Modo 3: Alinhar do Zero</h2>
                 <button class="btn-back" id="back-from-mode3">← Voltar</button>
                 
                 <div class="form-section">
@@ -205,7 +207,7 @@
                     <div class="upload-area" id="upload-area-raw">
                         <input type="file" id="file-input-raw" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                         <label for="file-input-raw" class="upload-label">
-                            <div class="upload-icon">📄</div>
+                            <div class="upload-icon"><i data-lucide="file-text"></i></div>
                             <p>Clique ou arraste a matriz crua (FASTA)</p>
                             <p class="upload-hint">.fasta, .fa, .fas, .faa, .fna</p>
                         </label>
@@ -221,18 +223,18 @@
                     
                     <div class="sequences-input-container">
                         <div class="input-method">
-                            <h4>📝 Por Texto</h4>
-                            <textarea id="user-sequences-text" placeholder=">minha_sequencia_1&#10;AAATTTGGGCCC&#10;&#10;>minha_sequencia_2&#10;GGGCCCAAATTT" rows="5"></textarea>
+                            <h4><i data-lucide="pencil" class="inline-icon"></i> Por Texto</h4>
+                            <textarea id="user-sequences-text" placeholder=">minha_sequencia_1&#10;AAATTTGGGCCC&#10;&#10;>minha_sequencia_2&#10;GGGCCCAAATTT" rows="6"></textarea>
                         </div>
 
                         <div class="divider">OU</div>
 
                         <div class="input-method">
-                            <h4>📤 Por Upload</h4>
+                            <h4><i data-lucide="upload" class="inline-icon"></i> Por Upload</h4>
                             <div class="upload-area upload-area-small" id="upload-area-user">
                                 <input type="file" id="file-input-user" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                                 <label for="file-input-user" class="upload-label">
-                                    <div class="upload-icon">📁</div>
+                                    <div class="upload-icon"><i data-lucide="folder"></i></div>
                                     <p>Clique ou arraste arquivo FASTA</p>
                                 </label>
                             </div>
@@ -247,7 +249,7 @@
                     <h3>3. Configurações</h3>
                     
                     <div class="info-box">
-                        <strong>ℹ️ Pipeline:</strong> MAFFT --auto → trimAl -gt 0.2, -cons 60 → Árvore
+                        <strong><i data-lucide="info" class="inline-icon"></i> Pipeline:</strong> MAFFT --auto → trimAl -gt 0.2, -cons 60 → Árvore
                     </div>
                     
                     <div class="form-group">
@@ -290,10 +292,10 @@
             <section id="results-section" class="card" style="display: none;">
                 <h2>5. Resultados</h2>
                 <div class="results-actions">
-                    <button class="btn btn-success" id="download-tree">⬇️ Download Árvore (.tree)</button>
-                    <button class="btn btn-success" id="download-alignment">⬇️ Download Alinhamento (.fasta)</button>
-                    <button class="btn btn-success" id="download-tree-svg">⬇️ Download Árvore SVG (.svg)</button>
-                    <button class="btn btn-secondary" id="new-analysis">🔄 Nova Análise</button>
+                    <button class="btn btn-success" id="download-tree"><i data-lucide="download" class="btn-icon"></i> Download Árvore (.tree)</button>
+                    <button class="btn btn-success" id="download-alignment"><i data-lucide="download" class="btn-icon"></i> Download Alinhamento (.fasta)</button>
+                    <button class="btn btn-success" id="download-tree-svg"><i data-lucide="download" class="btn-icon"></i> Download Árvore SVG (.svg)</button>
+                    <button class="btn btn-secondary" id="new-analysis"><i data-lucide="refresh-cw" class="btn-icon"></i> Nova Análise</button>
                 </div>
                 
                 <h3>Visualização da Árvore Filogenética</h3>
@@ -312,14 +314,14 @@
                     </div>
                     <div class="control-group">
                         <label>Zoom:</label>
-                        <button class="btn-control" id="zoom-in" title="Aumentar zoom">➕</button>
-                        <button class="btn-control" id="zoom-out" title="Diminuir zoom">➖</button>
-                        <button class="btn-control" id="zoom-fit" title="Ajustar à tela">🔲</button>
+                        <button class="btn-control" id="zoom-in" title="Aumentar zoom"><i data-lucide="zoom-in"></i></button>
+                        <button class="btn-control" id="zoom-out" title="Diminuir zoom"><i data-lucide="zoom-out"></i></button>
+                        <button class="btn-control" id="zoom-fit" title="Ajustar à tela"><i data-lucide="maximize"></i></button>
                     </div>
                     <div class="control-group">
                         <label>Ações:</label>
-                        <button class="btn-control" id="reset-tree" title="Resetar árvore">🔄 Reset</button>
-                        <button class="btn-control" id="export-png" title="Exportar PNG">📷 PNG</button>
+                        <button class="btn-control" id="reset-tree" title="Resetar árvore"><i data-lucide="refresh-cw"></i> Reset</button>
+                        <button class="btn-control" id="export-png" title="Exportar PNG"><i data-lucide="camera"></i> PNG</button>
                     </div>
                     <div class="control-group">
                         <label>
@@ -334,29 +336,29 @@
                 <!-- Ações no nó selecionado -->
                 <div id="node-actions" class="node-actions" style="display: none;">
                     <span id="selected-node-name" class="selected-node-name">Nó: </span>
-                    <button class="btn-action" id="action-reroot" title="Enraizar a árvore neste nó">🌱 Enraizar</button>
-                    <button class="btn-action" id="action-rotate" title="Rotacionar os ramos filhos">🔄 Rotacionar</button>
-                    <button class="btn-action" id="action-collapse" title="Colapsar ou expandir este clado">📁 Colapsar</button>
-                    <button class="btn-action" id="action-clear" title="Limpar seleção">✖ Limpar</button>
+                    <button class="btn-action" id="action-reroot" title="Enraizar a árvore neste nó"><i data-lucide="git-branch"></i> Enraizar</button>
+                    <button class="btn-action" id="action-rotate" title="Rotacionar os ramos filhos"><i data-lucide="rotate-cw"></i> Rotacionar</button>
+                    <button class="btn-action" id="action-collapse" title="Colapsar ou expandir este clado"><i data-lucide="folder"></i> Colapsar</button>
+                    <button class="btn-action" id="action-clear" title="Limpar seleção"><i data-lucide="x"></i> Limpar</button>
                 </div>
                 
                 <!-- Seleção manual de nó -->
                 <div id="manual-node-select" class="manual-node-select">
                     <label for="node-id-input">Nó interno (ID numérico):</label>
                     <input type="number" id="node-id-input" min="0" max="500" value="0" style="width: 80px; padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
-                    <button class="btn-control" id="action-reroot-direct">🌱 Enraizar</button>
-                    <button class="btn-control" id="action-rotate-direct">🔄 Rotacionar</button>
-                    <button class="btn-control" id="action-collapse-direct">📁 Colapsar</button>
+                    <button class="btn-control" id="action-reroot-direct"><i data-lucide="git-branch"></i> Enraizar</button>
+                    <button class="btn-control" id="action-rotate-direct"><i data-lucide="rotate-cw"></i> Rotacionar</button>
+                    <button class="btn-control" id="action-collapse-direct"><i data-lucide="folder"></i> Colapsar</button>
                 </div>
                 
-                <p class="tree-hint">💡 <strong>Dica:</strong> Os nós internos têm IDs numéricos (0, 1, 2...). Tente diferentes valores para encontrar o nó desejado.</p>
+                <p class="tree-hint"><i data-lucide="lightbulb" class="inline-icon"></i> <strong>Dica:</strong> Os nós internos têm IDs numéricos (0, 1, 2...). Tente diferentes valores para encontrar o nó desejado.</p>
                 
                 <div id="tree-container"></div>
             </section>
 
             <!-- Seção de Erro -->
             <section id="error-section" class="card error" style="display: none;">
-                <h2>⚠️ Erro</h2>
+                <h2><i data-lucide="alert-triangle" class="section-icon"></i> Erro</h2>
                 <p id="error-message"></p>
                 <button class="btn btn-secondary" id="retry-btn">Tentar Novamente</button>
             </section>
@@ -368,5 +370,6 @@
     </div>
 
     <script src="app.js"></script>
+    <script>lucide.createIcons();</script>
 </body>
 </html>

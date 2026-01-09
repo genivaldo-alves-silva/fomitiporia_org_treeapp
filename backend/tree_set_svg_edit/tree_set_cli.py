@@ -12,7 +12,51 @@ from ete3 import Tree
 # Default outgroup para enraizamento da árvore
 DEFAULT_OUTGROUP = "uncisetus"
 
-def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_OUTGROUP):
+# Altura base por sequência (multiplicador)
+HEIGHT_PER_SEQUENCE = 23
+DEFAULT_HEIGHT = 4000
+
+def count_sequences_in_alignment(alignment_file: str) -> int:
+    """
+    Conta o número de sequências em um arquivo FASTA de alinhamento.
+    Cada sequência começa com '>'.
+    
+    Args:
+        alignment_file: Caminho para o arquivo de alinhamento FASTA
+    
+    Returns:
+        Número de sequências (contagem de '>')
+    """
+    try:
+        with open(alignment_file, 'r') as f:
+            content = f.read()
+            return content.count('>')
+    except Exception as e:
+        print(f"Erro ao ler arquivo de alinhamento: {e}")
+        return 0
+
+def calculate_tree_height(alignment_file: str = None) -> int:
+    """
+    Calcula a altura da árvore baseada no número de sequências.
+    Altura = número de sequências * 23
+    
+    Args:
+        alignment_file: Caminho para o arquivo de alinhamento FASTA
+    
+    Returns:
+        Altura calculada para a árvore SVG
+    """
+    if alignment_file:
+        num_sequences = count_sequences_in_alignment(alignment_file)
+        if num_sequences > 0:
+            calculated_height = num_sequences * HEIGHT_PER_SEQUENCE
+            print(f"Altura calculada: {num_sequences} sequências * {HEIGHT_PER_SEQUENCE} = {calculated_height}px")
+            return calculated_height
+    
+    print(f"Usando altura padrão: {DEFAULT_HEIGHT}px")
+    return DEFAULT_HEIGHT
+
+def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_OUTGROUP, alignment_file: str = None):
     """
     Gera SVG da árvore filogenética com valores de suporte
     
@@ -63,10 +107,13 @@ def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_O
             node_sizes[node.idx] = 15
             node_markers[node.idx] = "s"
     
+    # Calcular altura baseada no alinhamento
+    tree_height = calculate_tree_height(alignment_file)
+    
     # Draw the tree
     canvas, axes, mark = ladderized_tree.draw(
         width=1700,
-        height=4000,
+        height=tree_height,
         tip_labels_align=False,
         tip_labels_style={
             "fill": "#262626",
@@ -96,13 +143,15 @@ def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_O
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python tree_set_cli.py <tree_file> <output_dir> [outgroup]")
+        print("Usage: python tree_set_cli.py <tree_file> <output_dir> [outgroup] [alignment_file]")
         print(f"  outgroup: String para buscar nas tips (default: '{DEFAULT_OUTGROUP}')")
+        print(f"  alignment_file: Arquivo FASTA para calcular altura (altura = nº sequências * {HEIGHT_PER_SEQUENCE})")
         sys.exit(1)
     
     tree_file = sys.argv[1]
     output_dir = sys.argv[2]
     outgroup = sys.argv[3] if len(sys.argv) > 3 else DEFAULT_OUTGROUP
+    alignment_file = sys.argv[4] if len(sys.argv) > 4 else None
     
-    output_svg = generate_tree_svg(tree_file, output_dir, outgroup)
+    output_svg = generate_tree_svg(tree_file, output_dir, outgroup, alignment_file)
     print(f"SVG generated: {output_svg}")
