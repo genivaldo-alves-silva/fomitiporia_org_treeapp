@@ -3,8 +3,6 @@ let currentJobId = null;
 let currentWorkflowMode = null;
 let pollInterval = null;
 let progressStartTime = null;
-let treeInstance = null;
-let selectedNode = null;
 
 // Arquivos para cada modo
 let mode1File = null;
@@ -427,6 +425,9 @@ async function showResults() {
     document.getElementById('download-alignment').onclick = () => downloadFile('alignment');
     document.getElementById('download-tree-svg').onclick = () => downloadFile('tree_svg');
     
+    // Configurar botão de re-renderizar
+    document.getElementById('rerender-svg').onclick = rerenderSvg;
+    
     await visualizeTree();
 }
 
@@ -435,66 +436,97 @@ async function downloadFile(type) {
     window.open(url, '_blank');
 }
 
-async function visualizeTree() {
+async function rerenderSvg() {
+    const widthInput = document.getElementById('svg-width');
+    const heightInput = document.getElementById('svg-height');
+    const rerenderBtn = document.getElementById('rerender-svg');
+    const container = document.getElementById('tree-container');
+    
+    const width = widthInput.value ? parseInt(widthInput.value) : null;
+    const height = heightInput.value ? parseInt(heightInput.value) : null;
+    
+    // Desabilitar botão e mostrar loading
+    rerenderBtn.disabled = true;
+    rerenderBtn.innerHTML = '<i data-lucide="loader" class="btn-icon spin"></i> Renderizando...';
+    container.innerHTML = '<p style="padding: 20px; color: #666;">Re-renderizando árvore com novas dimensões...</p>';
+    
     try {
-        const response = await fetch(`${API_URL}/download/${currentJobId}/tree`);
-        const newickString = await response.text();
-        
-        const container = document.getElementById('tree-container');
-        
-        if (typeof phylocanvas === 'undefined' || !phylocanvas.PhylocanvasGL) {
-            console.warn('Phylocanvas GL não carregado, usando visualização alternativa');
-            container.innerHTML = `
-                <div style="padding: 20px; background: white; border-radius: 8px;">
-                    <h3 style="margin-top: 0;">🌳 Árvore Filogenética Gerada</h3>
-                    <p style="color: #666; margin-bottom: 20px;">A árvore foi gerada com sucesso! Use o botão de download para obter o arquivo .tree e visualizá-lo em ferramentas especializadas como iTOL, FigTree ou MEGA.</p>
-                    <details style="margin-top: 20px;">
-                        <summary style="cursor: pointer; font-weight: bold; padding: 10px; background: #f0f0f0; border-radius: 4px;">📄 Ver formato Newick (clique para expandir)</summary>
-                        <pre style="background: #f8f8f8; padding: 15px; border-radius: 4px; overflow-x: auto; margin-top: 10px; font-size: 12px; line-height: 1.5;">${newickString}</pre>
-                    </details>
-                </div>
-            `;
-            document.getElementById('tree-controls').style.display = 'none';
-            return;
-        }
-        
-        container.innerHTML = '';
-        const treeDiv = document.createElement('div');
-        treeDiv.id = 'phylocanvas-tree';
-        treeDiv.style.width = '100%';
-        treeDiv.style.height = '600px';
-        treeDiv.style.background = 'white';
-        treeDiv.style.borderRadius = '8px';
-        container.appendChild(treeDiv);
-        
-        treeInstance = new phylocanvas.PhylocanvasGL(treeDiv, {
-            source: newickString,
-            type: phylocanvas.TreeTypes.Rectangular,
-            showLabels: true,
-            showLeafLabels: true,
-            interactive: true,
-            padding: 20,
-            nodeSize: 10,
-            lineWidth: 1.5,
-            fontFamily: 'Arial, sans-serif',
-            fontSize: 12,
-            size: { 
-                width: container.offsetWidth - 40, 
-                height: 600 
-            }
+        const response = await fetch(`${API_URL}/results/${currentJobId}/rerender`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ width, height })
         });
         
-        console.log('Árvore Phylocanvas GL criada com sucesso');
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Erro ao re-renderizar');
+        }
         
-        setupTreeControls();
-        setupNodeClickDetection(treeDiv);
-        setupDirectActions();
+        const data = await response.json();
+        
+        // Inserir novo SVG
+        container.innerHTML = data.svg_content;
+        
+        // Ajustar SVG
+        const svg = container.querySelector('svg');
+        if (svg) {
+            svg.style.maxWidth = '100%';
+            svg.style.height = 'auto';
+            svg.style.display = 'block';
+        }
+        
+        console.log('Árvore re-renderizada com sucesso');
+        
+    } catch (error) {
+        console.error('Erro ao re-renderizar:', error);
+        container.innerHTML = `
+            <div style="padding: 20px; background: #fff5f5; border-radius: 8px; border: 1px solid #f56565;">
+                <p style="color: #c53030;">Erro ao re-renderizar: ${error.message}</p>
+            </div>
+        `;
+    } finally {
+        // Reabilitar botão
+        rerenderBtn.disabled = false;
+        rerenderBtn.innerHTML = '<i data-lucide="refresh-cw" class="btn-icon"></i> Re-renderizar';
+        lucide.createIcons();
+    }
+}
+
+async function visualizeTree() {
+    try {
+        const container = document.getElementById('tree-container');
+        container.innerHTML = '<p style="padding: 20px; color: #666;">Carregando visualização da árvore...</p>';
+        
+        // Buscar conteúdo SVG do backend
+        const response = await fetch(`${API_URL}/results/${currentJobId}/svg-content`);
+        
+        if (!response.ok) {
+            throw new Error('Não foi possível carregar o SVG da árvore');
+        }
+        
+        const data = await response.json();
+        
+        // Inserir SVG diretamente no container
+        container.innerHTML = data.svg_content;
+        
+        // Ajustar SVG para ser responsivo
+        const svg = container.querySelector('svg');
+        if (svg) {
+            svg.style.maxWidth = '100%';
+            svg.style.height = 'auto';
+            svg.style.display = 'block';
+        }
+        
+        console.log('Árvore SVG carregada com sucesso');
         
     } catch (error) {
         console.error('Erro ao visualizar árvore:', error);
         document.getElementById('tree-container').innerHTML = `
             <div style="padding: 20px; background: white; border-radius: 8px;">
-                <p style="color: #666;">Árvore gerada com sucesso! Use o botão de download para obter o arquivo .tree</p>
+                <h3 style="margin-top: 0;">🌳 Árvore Filogenética Gerada</h3>
+                <p style="color: #666;">Use o botão de download para obter o arquivo SVG da árvore.</p>
                 <p style="color: #999; font-size: 12px;">Erro: ${error.message}</p>
             </div>
         `;
@@ -536,204 +568,6 @@ function showError(message) {
     document.getElementById('results-section').style.display = 'none';
     document.getElementById('error-section').style.display = 'block';
     document.getElementById('error-message').textContent = message;
-}
-
-// ========================================
-// CONTROLES DA ÁRVORE (mantido do original)
-// ========================================
-function setupNodeClickDetection(treeDiv) {
-    const nodeActionsDiv = document.getElementById('node-actions');
-    const selectedNodeName = document.getElementById('selected-node-name');
-    
-    let lastSelectedIds = [];
-    
-    setInterval(() => {
-        if (!treeInstance) return;
-        
-        const currentSelectedIds = treeInstance.props.selectedIds || [];
-        
-        if (JSON.stringify(currentSelectedIds) !== JSON.stringify(lastSelectedIds)) {
-            lastSelectedIds = [...currentSelectedIds];
-            
-            if (currentSelectedIds.length > 0) {
-                const nodeId = currentSelectedIds[0];
-                const node = treeInstance.findNodeById(nodeId);
-                selectedNode = node || { id: nodeId };
-                
-                const nodeName = node ? (node.label || node.id) : nodeId;
-                const displayName = nodeName.length > 35 ? nodeName.substring(0, 35) + '...' : nodeName;
-                
-                nodeActionsDiv.style.display = 'flex';
-                selectedNodeName.textContent = `Nó: ${displayName}`;
-            } else {
-                nodeActionsDiv.style.display = 'none';
-                selectedNode = null;
-            }
-        }
-    }, 200);
-    
-    document.getElementById('action-reroot').addEventListener('click', () => {
-        if (!treeInstance || !selectedNode) {
-            alert('Por favor, clique em um nó primeiro para selecioná-lo.');
-            return;
-        }
-        try {
-            treeInstance.setProps({ rootId: selectedNode.id });
-        } catch (err) {
-            console.error('Erro ao enraizar:', err);
-        }
-    });
-    
-    document.getElementById('action-rotate').addEventListener('click', () => {
-        if (!treeInstance || !selectedNode) {
-            alert('Por favor, clique em um nó primeiro para selecioná-lo.');
-            return;
-        }
-        try {
-            const currentRotated = treeInstance.props.rotatedIds || [];
-            if (currentRotated.includes(selectedNode.id)) {
-                treeInstance.setProps({ rotatedIds: currentRotated.filter(id => id !== selectedNode.id) });
-            } else {
-                treeInstance.setProps({ rotatedIds: [...currentRotated, selectedNode.id] });
-            }
-        } catch (err) {
-            console.error('Erro ao rotacionar:', err);
-        }
-    });
-    
-    document.getElementById('action-collapse').addEventListener('click', () => {
-        if (!treeInstance || !selectedNode) {
-            alert('Por favor, clique em um nó primeiro para selecioná-lo.');
-            return;
-        }
-        try {
-            const currentCollapsed = treeInstance.props.collapsedIds || [];
-            if (currentCollapsed.includes(selectedNode.id)) {
-                treeInstance.setProps({ collapsedIds: currentCollapsed.filter(id => id !== selectedNode.id) });
-            } else {
-                treeInstance.setProps({ collapsedIds: [...currentCollapsed, selectedNode.id] });
-            }
-        } catch (err) {
-            console.error('Erro ao colapsar:', err);
-        }
-    });
-    
-    document.getElementById('action-clear').addEventListener('click', () => {
-        selectedNode = null;
-        nodeActionsDiv.style.display = 'none';
-        lastSelectedIds = [];
-        if (treeInstance) {
-            treeInstance.setProps({ selectedIds: [] });
-        }
-    });
-}
-
-function setupDirectActions() {
-    if (!treeInstance) return;
-    
-    const nodeIdInput = document.getElementById('node-id-input');
-    
-    document.getElementById('action-reroot-direct').addEventListener('click', () => {
-        if (!treeInstance) return;
-        try {
-            treeInstance.setProps({ rootId: nodeIdInput.value });
-        } catch (err) {
-            console.error('Erro ao enraizar:', err);
-        }
-    });
-    
-    document.getElementById('action-rotate-direct').addEventListener('click', () => {
-        if (!treeInstance) return;
-        try {
-            const currentRotated = treeInstance.props.rotatedIds || [];
-            const nodeId = nodeIdInput.value;
-            if (currentRotated.includes(nodeId)) {
-                treeInstance.setProps({ rotatedIds: currentRotated.filter(id => id !== nodeId) });
-            } else {
-                treeInstance.setProps({ rotatedIds: [...currentRotated, nodeId] });
-            }
-        } catch (err) {
-            console.error('Erro ao rotacionar:', err);
-        }
-    });
-    
-    document.getElementById('action-collapse-direct').addEventListener('click', () => {
-        if (!treeInstance) return;
-        try {
-            const currentCollapsed = treeInstance.props.collapsedIds || [];
-            const nodeId = nodeIdInput.value;
-            if (currentCollapsed.includes(nodeId)) {
-                treeInstance.setProps({ collapsedIds: currentCollapsed.filter(id => id !== nodeId) });
-            } else {
-                treeInstance.setProps({ collapsedIds: [...currentCollapsed, nodeId] });
-            }
-        } catch (err) {
-            console.error('Erro ao colapsar:', err);
-        }
-    });
-}
-
-function setupTreeControls() {
-    const treeTypeSelect = document.getElementById('tree-type-select');
-    treeTypeSelect.addEventListener('change', (e) => {
-        if (!treeInstance) return;
-        const typeMap = {
-            'rectangular': phylocanvas.TreeTypes.Rectangular,
-            'circular': phylocanvas.TreeTypes.Circular,
-            'radial': phylocanvas.TreeTypes.Radial,
-            'diagonal': phylocanvas.TreeTypes.Diagonal,
-            'hierarchical': phylocanvas.TreeTypes.Hierarchical
-        };
-        treeInstance.setProps({ type: typeMap[e.target.value] });
-    });
-    
-    document.getElementById('zoom-in').addEventListener('click', () => {
-        if (!treeInstance) return;
-        treeInstance.setProps({ zoom: treeInstance.getZoom() + 0.5 });
-    });
-    
-    document.getElementById('zoom-out').addEventListener('click', () => {
-        if (!treeInstance) return;
-        treeInstance.setProps({ zoom: treeInstance.getZoom() - 0.5 });
-    });
-    
-    document.getElementById('zoom-fit').addEventListener('click', () => {
-        if (!treeInstance) return;
-        treeInstance.fitInPanel();
-    });
-    
-    document.getElementById('reset-tree').addEventListener('click', () => {
-        if (!treeInstance) return;
-        treeInstance.setProps({
-            rootId: null,
-            collapsedIds: [],
-            rotatedIds: [],
-            selectedIds: []
-        });
-        treeInstance.fitInPanel();
-    });
-    
-    document.getElementById('export-png').addEventListener('click', () => {
-        if (!treeInstance) return;
-        const dataUri = treeInstance.exportPNG();
-        const link = document.createElement('a');
-        link.download = 'phylogenetic_tree.png';
-        link.href = dataUri;
-        link.click();
-    });
-    
-    document.getElementById('show-labels').addEventListener('change', (e) => {
-        if (!treeInstance) return;
-        treeInstance.setProps({ 
-            showLabels: e.target.checked,
-            showLeafLabels: e.target.checked
-        });
-    });
-    
-    document.getElementById('align-labels').addEventListener('change', (e) => {
-        if (!treeInstance) return;
-        treeInstance.setProps({ alignLabels: e.target.checked });
-    });
 }
 
 // Event listeners para botões de nova análise e retry

@@ -475,6 +475,88 @@ async def download_result(job_id: str, file_type: str):
         filename=filename
     )
 
+
+@app.get("/results/{job_id}/svg-content")
+async def get_svg_content(job_id: str):
+    """Retorna o conteúdo SVG como texto para exibição inline no frontend"""
+    
+    if job_id not in job_status:
+        raise HTTPException(status_code=404, detail="Job não encontrado")
+    
+    if job_status[job_id]["status"] != "completed":
+        raise HTTPException(status_code=400, detail="Análise ainda não completada")
+    
+    svg_path = RESULTS_DIR / job_id / "supportvalue_output.svg"
+    
+    if not svg_path.exists():
+        raise HTTPException(status_code=404, detail="Arquivo SVG não encontrado")
+    
+    with open(svg_path, "r", encoding="utf-8") as f:
+        svg_content = f.read()
+    
+    return {
+        "svg_content": svg_content,
+        "job_id": job_id
+    }
+
+
+class RerenderRequest(BaseModel):
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+
+@app.post("/results/{job_id}/rerender")
+async def rerender_svg(job_id: str, request: RerenderRequest):
+    """
+    Re-renderiza o SVG da árvore com novas dimensões.
+    Mantém o arquivo .tree original e apenas regenera o SVG.
+    """
+    if job_id not in job_status:
+        raise HTTPException(status_code=404, detail="Job não encontrado")
+    
+    if job_status[job_id]["status"] != "completed":
+        raise HTTPException(status_code=400, detail="Análise ainda não completada")
+    
+    result_dir = RESULTS_DIR / job_id
+    tree_file = result_dir / "tree.tre"
+    aligned_file = UPLOAD_DIR / job_id / "aligned.fasta"
+    
+    if not tree_file.exists():
+        raise HTTPException(status_code=404, detail="Arquivo de árvore não encontrado")
+    
+    # Obter outgroup do job_status (se disponível)
+    outgroup = job_status[job_id].get("outgroup", DEFAULT_OUTGROUP)
+    
+    try:
+        # Re-gerar SVG com novas dimensões
+        generate_svg_with_outgroup(
+            tree_file, 
+            result_dir, 
+            outgroup, 
+            aligned_file if aligned_file.exists() else None,
+            width=request.width,
+            height=request.height
+        )
+        
+        # Retornar novo conteúdo SVG
+        svg_path = result_dir / "supportvalue_output.svg"
+        if not svg_path.exists():
+            raise HTTPException(status_code=500, detail="Falha ao gerar SVG")
+        
+        with open(svg_path, "r", encoding="utf-8") as f:
+            svg_content = f.read()
+        
+        return {
+            "svg_content": svg_content,
+            "job_id": job_id,
+            "width": request.width,
+            "height": request.height
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao re-renderizar: {str(e)}")
+
+
 async def run_phylogenetic_analysis(job_id: str, workflow_mode: str, outgroup: str,
                                      tree_tool: str, bootstrap: int, 
                                      mafft_options: dict):
@@ -556,14 +638,15 @@ async def run_phylogenetic_analysis(job_id: str, workflow_mode: str, outgroup: s
             "status": "completed", 
             "progress": 100,
             "workflow_mode": workflow_mode,
+            "outgroup": outgroup,
             "tree_file": str(tree_file) if tree_tool != "skip" else None,
             "aligned_file": str(aligned_file)
         }
         
     except subprocess.TimeoutExpired:
-        job_status[job_id] = {"status": "error", "message": "Timeout: análise muito longa", "workflow_mode": workflow_mode}
+        job_status[job_id] = {"status": "error", "message": "Timeout: análise muito longa", "workflow_mode": workflow_mode, "outgroup": outgroup}
     except Exception as e:
-        job_status[job_id] = {"status": "error", "message": str(e), "workflow_mode": workflow_mode}
+        job_status[job_id] = {"status": "error", "message": str(e), "workflow_mode": workflow_mode, "outgroup": outgroup}
 
 
 def build_mafft_add_command(mafft_options: dict, new_sequences: Path, existing_alignment: Path) -> list:
@@ -720,15 +803,26 @@ async def build_tree(job_id: str, aligned_file: Path, tree_file: Path, result_di
             raise Exception(f"IQ-TREE falhou: {result.stderr}")
 
 
-def generate_svg_with_outgroup(tree_file: Path, result_dir: Path, outgroup: str, alignment_file: Path = None):
+def generate_svg_with_outgroup(tree_file: Path, result_dir: Path, outgroup: str, 
+                                alignment_file: Path = None, width: int = None, height: int = None):
     """Gera SVG da árvore passando o outgroup para tree_set_cli.py"""
     try:
         svg_script = Path(__file__).parent / "tree_set_svg_edit" / "tree_set_cli.py"
         
-        # Montar argumentos: tree_file, output_dir, outgroup, [alignment_file]
+        # Montar argumentos: tree_file, output_dir, outgroup, [alignment_file], [width], [height]
         svg_args = [sys.executable, str(svg_script), str(tree_file), str(result_dir), outgroup]
+        
+        # alignment_file (pode ser None, mas precisamos passar algo se width/height forem especificados)
         if alignment_file:
             svg_args.append(str(alignment_file))
+        elif width is not None or height is not None:
+            # Passar string vazia ou placeholder se não há alignment mas há width/height
+            svg_args.append("")
+        
+        # Adicionar width e height se especificados
+        if width is not None or height is not None:
+            svg_args.append(str(width) if width is not None else "")
+            svg_args.append(str(height) if height is not None else "")
         
         svg_result = subprocess.run(
             svg_args,

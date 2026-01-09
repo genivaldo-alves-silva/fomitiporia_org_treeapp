@@ -607,13 +607,103 @@ hr {
 
 #tree-container {
     width: 100%;
-    min-height: 600px;
+    min-height: 400px;
+    max-height: 80vh;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
-    background: #fafafa;
+    background: white;
     overflow: auto;
     position: relative;
+}
+
+#tree-container svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.svg-tree-container {
+    background: white;
+}
+
+/* SVG Dimension Controls */
+.svg-dimension-controls {
+    background: #f8f9ff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+}
+
+.dimension-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.dimension-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dimension-group label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.dimension-group input {
+    width: 120px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.dimension-group input:focus {
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.dimension-group small {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.dimension-hint {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dimension-hint .inline-icon {
+    width: 16px;
+    height: 16px;
+}
+
+#rerender-svg {
+    height: fit-content;
+}
+
+#rerender-svg:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* Error */

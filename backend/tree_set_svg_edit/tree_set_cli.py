@@ -12,9 +12,12 @@ from ete3 import Tree
 # Default outgroup para enraizamento da árvore
 DEFAULT_OUTGROUP = "uncisetus"
 
+# Dimensões padrão do SVG
+DEFAULT_WIDTH = 1700
+DEFAULT_HEIGHT = 4000
+
 # Altura base por sequência (multiplicador)
 HEIGHT_PER_SEQUENCE = 23
-DEFAULT_HEIGHT = 4000
 
 def count_sequences_in_alignment(alignment_file: str) -> int:
     """
@@ -56,7 +59,8 @@ def calculate_tree_height(alignment_file: str = None) -> int:
     print(f"Usando altura padrão: {DEFAULT_HEIGHT}px")
     return DEFAULT_HEIGHT
 
-def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_OUTGROUP, alignment_file: str = None):
+def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_OUTGROUP, 
+                      alignment_file: str = None, width: int = None, height: int = None):
     """
     Gera SVG da árvore filogenética com valores de suporte
     
@@ -64,6 +68,9 @@ def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_O
         tree_file: Caminho para arquivo .tre (Newick)
         output_dir: Diretório onde salvar o SVG
         outgroup: String para buscar nas tips e usar como outgroup para enraizamento
+        alignment_file: Arquivo FASTA para calcular altura automática
+        width: Largura do SVG em pixels (default: 1700)
+        height: Altura do SVG em pixels (se None, calcula baseado no alinhamento)
     """
     t = Tree(tree_file, format=0)
     t.write(outfile=output_dir + "/temp.tre", format=0)
@@ -107,12 +114,20 @@ def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_O
             node_sizes[node.idx] = 15
             node_markers[node.idx] = "s"
     
-    # Calcular altura baseada no alinhamento
-    tree_height = calculate_tree_height(alignment_file)
+    # Calcular altura baseada no alinhamento (se height não foi especificado)
+    if height is None:
+        tree_height = calculate_tree_height(alignment_file)
+    else:
+        tree_height = height
+        print(f"Usando altura customizada: {tree_height}px")
+    
+    # Usar width padrão se não especificado
+    tree_width = width if width is not None else DEFAULT_WIDTH
+    print(f"Dimensões do SVG: {tree_width}px x {tree_height}px")
     
     # Draw the tree
     canvas, axes, mark = ladderized_tree.draw(
-        width=1700,
+        width=tree_width,
         height=tree_height,
         tip_labels_align=False,
         tip_labels_style={
@@ -143,15 +158,23 @@ def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_O
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python tree_set_cli.py <tree_file> <output_dir> [outgroup] [alignment_file]")
+        print("Usage: python tree_set_cli.py <tree_file> <output_dir> [outgroup] [alignment_file] [width] [height]")
         print(f"  outgroup: String para buscar nas tips (default: '{DEFAULT_OUTGROUP}')")
         print(f"  alignment_file: Arquivo FASTA para calcular altura (altura = nº sequências * {HEIGHT_PER_SEQUENCE})")
+        print(f"  width: Largura do SVG em pixels (default: {DEFAULT_WIDTH})")
+        print(f"  height: Altura do SVG em pixels (default: calculado ou {DEFAULT_HEIGHT})")
         sys.exit(1)
     
     tree_file = sys.argv[1]
     output_dir = sys.argv[2]
     outgroup = sys.argv[3] if len(sys.argv) > 3 else DEFAULT_OUTGROUP
-    alignment_file = sys.argv[4] if len(sys.argv) > 4 else None
     
-    output_svg = generate_tree_svg(tree_file, output_dir, outgroup, alignment_file)
+    # alignment_file pode ser string vazia (quando width/height são passados sem alignment)
+    alignment_file = sys.argv[4] if len(sys.argv) > 4 and sys.argv[4] else None
+    
+    # width e height podem ser strings vazias
+    width = int(sys.argv[5]) if len(sys.argv) > 5 and sys.argv[5] else None
+    height = int(sys.argv[6]) if len(sys.argv) > 6 and sys.argv[6] else None
+    
+    output_svg = generate_tree_svg(tree_file, output_dir, outgroup, alignment_file, width, height)
     print(f"SVG generated: {output_svg}")
