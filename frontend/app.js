@@ -10,6 +10,7 @@ let alignmentFile = null;
 let sequencesFile = null;
 let rawMatrixFile = null;
 let userSequencesFile = null;
+let mode4TreeFile = null;
 
 // ========================================
 // INICIALIZAÇÃO
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMode1();
     setupMode2();
     setupMode3();
+    setupMode4();
     setupBackButtons();
 });
 
@@ -47,7 +49,7 @@ function selectWorkflow(mode) {
 }
 
 function setupBackButtons() {
-    ['mode1', 'mode2', 'mode3'].forEach(mode => {
+    ['mode1', 'mode2', 'mode3', 'mode4'].forEach(mode => {
         const btn = document.getElementById(`back-from-${mode}`);
         if (btn) {
             btn.addEventListener('click', () => {
@@ -304,6 +306,110 @@ async function handleSubmitMode3() {
 }
 
 // ========================================
+// MODO 4: RENDERIZAR ÁRVORE PRONTA
+// ========================================
+function setupMode4() {
+    const fileInput = document.getElementById('file-input-mode4');
+    const uploadArea = document.getElementById('upload-area-mode4');
+    
+    if (!fileInput) return;
+    
+    setupDragDrop(uploadArea, fileInput);
+    
+    fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (file) {
+            mode4TreeFile = file;
+            document.getElementById('mode4-file-info').style.display = 'block';
+            document.getElementById('mode4-filename').textContent = file.name;
+        }
+    });
+    
+    document.getElementById('submit-mode4').addEventListener('click', handleSubmitMode4);
+}
+
+async function handleSubmitMode4() {
+    if (!mode4TreeFile) {
+        showError('Por favor, carregue seu arquivo de árvore (.nwk ou .tre)');
+        return;
+    }
+    
+    const outgroup = document.getElementById('outgroup-mode4').value || 'uncisetus';
+    
+    try {
+        const formData = new FormData();
+        formData.append('workflow_mode', '4');
+        formData.append('outgroup', outgroup);
+        formData.append('tree_file', mode4TreeFile);
+        
+        const response = await fetch(`${API_URL}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Erro no upload');
+        }
+        
+        const data = await response.json();
+        currentJobId = data.job_id;
+        currentWorkflowMode = '4';
+        
+        // Para modo 4, a renderização é instantânea, mas usamos o mesmo fluxo
+        await startRenderOnly();
+        
+    } catch (error) {
+        showError(`Erro: ${error.message}`);
+    }
+}
+
+async function startRenderOnly() {
+    console.log('startRenderOnly chamada para modo 4');
+    
+    try {
+        // Esconder todas as seções de modo
+        document.getElementById('workflow-section').style.display = 'none';
+        ['mode1', 'mode2', 'mode3', 'mode4'].forEach(mode => {
+            const section = document.getElementById(`${mode}-section`);
+            if (section) section.style.display = 'none';
+        });
+        
+        // Mostrar progresso
+        const progressSection = document.getElementById('progress-section');
+        progressSection.style.display = 'block';
+        
+        // Inicializar barra
+        setProgress(30, 'Renderizando árvore...');
+        
+        // Para modo 4, tree_tool é skip mas a renderização acontece diretamente
+        const url = `${API_URL}/analyze/${currentJobId}?tree_tool=skip&bootstrap=1000`;
+        const response = await fetch(url, { method: 'POST' });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Erro ao renderizar');
+        }
+        
+        const result = await response.json();
+        
+        if (result.status === 'completed') {
+            setProgress(100, 'Renderização concluída!');
+            setTimeout(() => showResults(), 500);
+        } else if (result.status === 'error') {
+            throw new Error(result.message || 'Erro na renderização');
+        } else {
+            // Caso ainda esteja processando (não esperado para modo 4)
+            startPolling();
+        }
+        
+    } catch (error) {
+        console.error('Erro em startRenderOnly:', error);
+        showError(`Erro ao renderizar: ${error.message}`);
+    }
+}
+
+// ========================================
 // ANÁLISE E PROGRESSO
 // ========================================
 async function startAnalysis(treeTool, bootstrap) {
@@ -312,7 +418,7 @@ async function startAnalysis(treeTool, bootstrap) {
     try {
         // Esconder todas as seções de modo
         document.getElementById('workflow-section').style.display = 'none';
-        ['mode1', 'mode2', 'mode3'].forEach(mode => {
+        ['mode1', 'mode2', 'mode3', 'mode4'].forEach(mode => {
             const section = document.getElementById(`${mode}-section`);
             if (section) section.style.display = 'none';
         });

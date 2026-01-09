@@ -118,12 +118,13 @@ def add_new_label_to_fasta(fasta_path: Path) -> None:
 async def root():
     return {
         "message": "Phylogenetic Analysis API",
-        "version": "3.0.0",
+        "version": "4.0.0",
         "tools": ["MAFFT", "IQ-TREE", "FastTree", "trimAl"],
         "workflow_modes": {
             "1": "Matriz alinhada -> Árvore",
             "2": "Matriz alinhada + novas seqs (--add) -> Árvore",
-            "3": "Matriz crua -> MAFFT --auto -> trimAl -> Árvore"
+            "3": "Matriz crua -> MAFFT --auto -> trimAl -> Árvore",
+            "4": "Árvore pronta (.nwk/.tre) -> Renderização SVG"
         }
     }
 
@@ -269,13 +270,16 @@ async def upload_files(
     raw_matrix: Optional[UploadFile] = File(None),
     user_sequences: Optional[UploadFile] = File(None),
     user_sequences_text: Optional[UploadFile] = File(None),
+    # Modo 4: árvore pronta
+    tree_file: Optional[UploadFile] = File(None),
 ):
     """
-    Upload de arquivos para os 3 modos de workflow:
+    Upload de arquivos para os 4 modos de workflow:
     
     - Modo 1: Matriz já alinhada -> direto para árvore
     - Modo 2: Matriz alinhada + novas seqs -> MAFFT --add -> árvore  
     - Modo 3: Matriz crua + seqs usuário -> juntar -> MAFFT --auto -> trimAl -> árvore
+    - Modo 4: Árvore pronta (.nwk/.tre) -> apenas renderização SVG
     """
     job_id = str(uuid.uuid4())
     job_dir = UPLOAD_DIR / job_id
@@ -355,8 +359,23 @@ async def upload_files(
                 f.write(norm_text)
             add_new_label_to_fasta(path_user)
             files_uploaded.append("user_sequences_text")
+    
+    elif workflow_mode == "4":
+        # Modo 4: Árvore pronta - apenas renderização
+        if not tree_file:
+            raise HTTPException(status_code=400, detail="Modo 4 requer arquivo de árvore (.nwk ou .tre)")
+        
+        # Salvar árvore no diretório de resultados também
+        result_dir = RESULTS_DIR / job_id
+        result_dir.mkdir(exist_ok=True)
+        
+        path_tree = result_dir / "tree.tre"
+        with open(path_tree, "wb") as buffer:
+            shutil.copyfileobj(tree_file.file, buffer)
+        files_uploaded.append("tree_file")
+    
     else:
-        raise HTTPException(status_code=400, detail="workflow_mode deve ser 1, 2 ou 3")
+        raise HTTPException(status_code=400, detail="workflow_mode deve ser 1, 2, 3 ou 4")
     
     job_status[job_id] = {
         "status": "uploaded", 
@@ -413,6 +432,34 @@ async def analyze(job_id: str, background_tasks: BackgroundTasks,
         raw_matrix = job_dir / "raw_matrix.fasta"
         if not raw_matrix.exists():
             raise HTTPException(status_code=404, detail="Matriz crua não encontrada")
+    elif workflow_mode == "4":
+        # Modo 4: apenas renderização - árvore já foi salva no /upload
+        result_dir = RESULTS_DIR / job_id
+        tree_file = result_dir / "tree.tre"
+        if not tree_file.exists():
+            raise HTTPException(status_code=404, detail="Arquivo de árvore não encontrado")
+        
+        # Executar apenas renderização (síncrono, rápido)
+        job_status[job_id] = {"status": "processing", "progress": 50, "step": "rendering", "workflow_mode": workflow_mode}
+        
+        try:
+            generate_svg_with_outgroup(tree_file, result_dir, outgroup)
+            job_status[job_id] = {
+                "status": "completed", 
+                "progress": 100,
+                "workflow_mode": workflow_mode,
+                "outgroup": outgroup,
+                "tree_file": str(tree_file)
+            }
+        except Exception as e:
+            job_status[job_id] = {"status": "error", "message": str(e), "workflow_mode": workflow_mode, "outgroup": outgroup}
+        
+        return {
+            "job_id": job_id,
+            "status": "completed" if job_status[job_id]["status"] == "completed" else "error",
+            "workflow_mode": workflow_mode,
+            "message": "Renderização concluída" if job_status[job_id]["status"] == "completed" else "Erro na renderização"
+        }
     
     # Opções MAFFT
     mafft_options = {

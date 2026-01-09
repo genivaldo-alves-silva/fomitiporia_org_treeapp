@@ -56,6 +56,17 @@
                             <li>✅ Envie suas seqs separadamente</li>
                         </ul>
                     </div>
+                    
+                    <div class="workflow-card" id="workflow-4" data-mode="4">
+                        <div class="workflow-icon"><i data-lucide="git-branch"></i></div>
+                        <h3>Opção 4: Renderizar Árvore</h3>
+                        <p>Já tenho uma <strong>árvore pronta</strong> (.nwk ou .tre). Quero apenas renderizar em SVG.</p>
+                        <ul class="workflow-features">
+                            <li>✅ Upload de arquivo Newick</li>
+                            <li>✅ Pula alinhamento e construção</li>
+                            <li>✅ Visualização SVG instantânea</li>
+                        </ul>
+                    </div>
                 </div>
             </section>
 
@@ -272,6 +283,47 @@
                 </div>
 
                 <button type="button" class="btn btn-primary" id="submit-mode3">Iniciar Análise</button>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- MODO 4: RENDERIZAR ÁRVORE PRONTA -->
+            <!-- ========================================== -->
+            <section id="mode4-section" class="card mode-section" style="display: none;">
+                <h2><i data-lucide="git-branch" class="section-icon"></i> Modo 4: Renderizar Árvore</h2>
+                <button class="btn-back" id="back-from-mode4">← Voltar</button>
+                
+                <div class="form-section">
+                    <h3>1. Carregar arquivo de árvore</h3>
+                    <p class="section-hint">Formato Newick (.nwk, .tre, .tree)</p>
+                    
+                    <div class="upload-area" id="upload-area-mode4">
+                        <input type="file" id="file-input-mode4" accept=".nwk,.tre,.tree,.newick" style="display: none;">
+                        <label for="file-input-mode4" class="upload-label">
+                            <div class="upload-icon"><i data-lucide="git-branch"></i></div>
+                            <p>Clique ou arraste seu arquivo de árvore</p>
+                            <p class="upload-hint">.nwk, .tre, .tree, .newick</p>
+                        </label>
+                    </div>
+                    <div id="mode4-file-info" style="display: none;">
+                        <p><strong>Arquivo:</strong> <span id="mode4-filename"></span></p>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>2. Configurações</h3>
+                    
+                    <div class="info-box">
+                        <strong><i data-lucide="info" class="inline-icon"></i> Pipeline:</strong> Árvore Newick → Renderização SVG com valores de suporte
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="outgroup-mode4">Outgroup (para enraizamento):</label>
+                        <input type="text" id="outgroup-mode4" value="uncisetus" placeholder="ex: uncisetus, outgroup_species">
+                        <small>Termo (ex.: genus name, epithet name, voucher) para buscar nas tips e usar como raiz da árvore</small>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-primary" id="submit-mode4">Renderizar Árvore</button>
             </section>
 
             <!-- Seção de Progresso -->
