@@ -1,7 +1,10 @@
 - Construção de árvore multiloci?
 - Local para o usuário mandar sugestões e pedidos que devem ser enviados para o email do administrador;
 - Balões de explicação das ferramentas;
+- Botão para download do .iqtree (sumário geral e modelos);
+- Disponibilizar árvore em PDF;
 - Possibilidade dos usuários alimentarem o sistema com matrizes atualizadas com qualificação certificada?
     - Vincular a algo como treebase (com submissão auditável)/dataverse (com doi) onde podem ir subindo as matrizes alinhadas e atualizadas?
     - Vincular ao dataset maker que está sendo construído?
 - Versão em mais de um idioma;
+- Dar a opção de arquivos de amostra para o usuário testar qualquer opção do app;
