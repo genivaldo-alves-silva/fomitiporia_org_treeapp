@@ -18,6 +18,7 @@ backend/results/
 uploads/
 results/
 oracle/
+sandbox_4frontend/
 
 # IDE
 .vscode/
