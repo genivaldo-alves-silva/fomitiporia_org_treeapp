@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+venv/
+uploads/
+results/
+sandbox_4frontend/
+backup/
+oracle/
+deploy-notes.md
+deploy.sh
+.env.example
+TODOS.md

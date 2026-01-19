@@ -10,12 +10,14 @@ ENV/
 *.egg-info/
 dist/
 build/
+.env.example
 
 # Uploads e Resultados
 backend/uploads/
 backend/results/
 uploads/
 results/
+oracle/
 
 # IDE
 .vscode/
@@ -37,10 +39,12 @@ Thumbs.db
 # Env
 .env
 .env.local
-
+.env.example
 # Backups
 backup/
 *.tar.gz
 
 # Documentation
 COMO_ATUALIZAR_ALINHAMENTO.md
+deploy-notes.md
+deploy.sh

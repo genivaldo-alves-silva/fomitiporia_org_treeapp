@@ -8,3 +8,4 @@
     - Vincular ao dataset maker que está sendo construído?
 - Versão em mais de um idioma;
 - Dar a opção de arquivos de amostra para o usuário testar qualquer opção do app;
+- Adicionar uma página de FAQ;

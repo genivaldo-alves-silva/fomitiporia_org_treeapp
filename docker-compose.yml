@@ -1,26 +1,25 @@
-version: '3.8'
-
 services:
   backend:
-    build: .
-    container_name: phylo-backend
-    ports:
-      - "8000:8000"
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      DEBUG: "False"
     volumes:
       - ./backend:/app
-      - ./uploads:/app/uploads
-      - ./results:/app/results
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: unless-stopped
+      - ./backend/uploads:/app/uploads
+      - ./backend/results:/app/results
+    expose:
+      - "8000"
 
-  frontend:
-    image: nginx:alpine
-    container_name: phylo-frontend
-    ports:
-      - "8080:80"
-    volumes:
-      - ./frontend:/usr/share/nginx/html:ro
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
     depends_on:
       - backend
     restart: unless-stopped
+    ports:
+      - "80:80"

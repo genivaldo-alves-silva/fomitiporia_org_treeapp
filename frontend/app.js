@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8000';
+const API_URL = '/api';
 let currentJobId = null;
 let currentWorkflowMode = null;
 let pollInterval = null;
@@ -11,6 +11,24 @@ let sequencesFile = null;
 let rawMatrixFile = null;
 let userSequencesFile = null;
 let mode4TreeFile = null;
+
+async function readErrorDetail(response, fallbackMessage) {
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+        try {
+            const data = await response.json();
+            return data.detail || data.message || fallbackMessage;
+        } catch (error) {
+            return fallbackMessage;
+        }
+    }
+    try {
+        const text = await response.text();
+        return text ? text.slice(0, 300) : fallbackMessage;
+    } catch (error) {
+        return fallbackMessage;
+    }
+}
 
 // ========================================
 // INICIALIZAÇÃO
@@ -112,8 +130,8 @@ async function handleSubmitMode1() {
         });
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Erro no upload');
+            const message = await readErrorDetail(response, 'Erro no upload');
+            throw new Error(message);
         }
         
         const data = await response.json();
@@ -205,8 +223,8 @@ async function handleSubmitMode2() {
         });
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Erro no upload');
+            const message = await readErrorDetail(response, 'Erro no upload');
+            throw new Error(message);
         }
         
         const data = await response.json();
@@ -291,8 +309,8 @@ async function handleSubmitMode3() {
         });
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Erro no upload');
+            const message = await readErrorDetail(response, 'Erro no upload');
+            throw new Error(message);
         }
         
         const data = await response.json();
@@ -348,8 +366,8 @@ async function handleSubmitMode4() {
         });
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Erro no upload');
+            const message = await readErrorDetail(response, 'Erro no upload');
+            throw new Error(message);
         }
         
         const data = await response.json();
@@ -387,8 +405,8 @@ async function startRenderOnly() {
         const response = await fetch(url, { method: 'POST' });
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Erro ao renderizar');
+            const message = await readErrorDetail(response, 'Erro ao renderizar');
+            throw new Error(message);
         }
         
         const result = await response.json();
@@ -434,8 +452,8 @@ async function startAnalysis(treeTool, bootstrap) {
         const response = await fetch(url, { method: 'POST' });
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Erro ao iniciar análise');
+            const message = await readErrorDetail(response, 'Erro ao iniciar análise');
+            throw new Error(message);
         }
         
         startPolling();
@@ -645,8 +663,8 @@ async function rerenderSvg() {
         });
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Erro ao re-renderizar');
+            const message = await readErrorDetail(response, 'Erro ao re-renderizar');
+            throw new Error(message);
         }
         
         const data = await response.json();

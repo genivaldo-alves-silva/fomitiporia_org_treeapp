@@ -66,7 +66,7 @@ def run_trimal(input_fasta: Path, output_fasta: Path) -> bool:
     """
     try:
         command = ["trimal", "-in", str(input_fasta), "-out", str(output_fasta), "-gt", "0.2", "-cons", "60"]
-        result = subprocess.run(command, capture_output=True, text=True, timeout=600)
+        result = subprocess.run(command, capture_output=True, text=True, timeout=1800)
         if result.returncode != 0:
             print(f"Erro trimAl: {result.stderr}")
             return False
@@ -463,7 +463,7 @@ async def analyze(job_id: str, background_tasks: BackgroundTasks,
     
     # Opções MAFFT
     mafft_options = {
-        "threads": 8,
+        "threads": 1,
         "reorder": True,
         "adjustdirection": True,
         "keeplength": False,
@@ -765,7 +765,7 @@ async def run_mafft_with_monitoring(job_id: str, mafft_cmd: list, output_file: P
         for line in process.stdout:
             out.write(line)
     
-    process.wait(timeout=3600)
+    process.wait(timeout=9000)
     
     monitor_active[0] = False
     monitor_thread.join(timeout=1)
@@ -786,7 +786,7 @@ async def build_tree(job_id: str, aligned_file: Path, tree_file: Path, result_di
         tree_cmd = ["FastTree", "-gtr","-nt", str(aligned_file)]
         with open(tree_file, "w") as out:
             result = subprocess.run(tree_cmd, stdout=out, stderr=subprocess.PIPE,
-                                   text=True, timeout=7200)
+                                   text=True, timeout=11000)
         
         if result.returncode == 0:
             generate_svg_with_outgroup(tree_file, result_dir, outgroup, aligned_file)
@@ -798,7 +798,7 @@ async def build_tree(job_id: str, aligned_file: Path, tree_file: Path, result_di
             "iqtree", 
             "-s", str(aligned_file), 
             "-B", str(bootstrap),
-            "-T", "2",
+            "-T", "1",
             "-pre", str(result_dir / "iqtree")
         ]
         
@@ -837,7 +837,7 @@ async def build_tree(job_id: str, aligned_file: Path, tree_file: Path, result_di
         monitor_thread = threading.Thread(target=monitor_iqtree_log, daemon=True)
         monitor_thread.start()
         
-        result = subprocess.run(tree_cmd, capture_output=True, text=True, timeout=7200)
+        result = subprocess.run(tree_cmd, capture_output=True, text=True, timeout=11000)
         
         monitor_active[0] = False
         monitor_thread.join(timeout=1)
@@ -875,7 +875,7 @@ def generate_svg_with_outgroup(tree_file: Path, result_dir: Path, outgroup: str,
             svg_args,
             capture_output=True,
             text=True,
-            timeout=120
+            timeout=1200
         )
         if svg_result.returncode != 0:
             print(f"Aviso: Falha ao gerar SVG: {svg_result.stderr}")
@@ -889,7 +889,7 @@ def generate_svg_with_outgroup(tree_file: Path, result_dir: Path, outgroup: str,
                 [sys.executable, str(svg_edit_script), str(input_svg), str(output_svg)],
                 capture_output=True,
                 text=True,
-                timeout=60
+                timeout=6000
             )
             if edit_result.returncode != 0:
                 print(f"Aviso: Falha ao processar SVG: {edit_result.stderr}")
