@@ -2,6 +2,8 @@
 
 Web application for phylogenetic analysis with an automated pipeline (MAFFT, trimAl, FastTree/IQ-TREE) and SVG tree rendering. The frontend sends data to the API, which processes the workflow and returns the tree file and final SVG.
 
+The TreeApp is running in [phylogentree.org](https://www.phylogentree.org/).
+
 ## Highlights
 - 4 workflow modes: aligned matrix, add sequences, align from scratch, or render an existing tree.
 - Tree engine choice: FastTree (fast) or IQ-TREE (with bootstrap).
