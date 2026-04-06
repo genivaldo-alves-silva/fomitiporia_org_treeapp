@@ -1,7 +1,0 @@
-.git/
-**/__pycache__/
-*.pyc
-uploads/
-results/
-data/
-certbot/

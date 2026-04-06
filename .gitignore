@@ -7,10 +7,10 @@ __pycache__/
 venv/
 env/
 ENV/
+.venv/
 *.egg-info/
 dist/
 build/
-.env.example
 
 # Uploads e Resultados
 backend/uploads/
@@ -39,8 +39,18 @@ Thumbs.db
 
 # Env
 .env
-.env.local
-.env.example
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Secrets / keys
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
 # Backups
 backup/
 *.tar.gz
