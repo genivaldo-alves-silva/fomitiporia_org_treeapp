@@ -36,7 +36,14 @@ def check_genus(genus_name):
 
     try:
         if response.status_code == 200:
-            return genus_name.lower() in response.text.lower()
+            text = response.text
+            text_lower = text.lower()
+            if "no records found" in text_lower or "no records match" in text_lower:
+                return False
+            # IndexFungorum muda o HTML com frequência. Se nao houver mensagem
+            # explicita de "sem registros", consideramos o genero valido para
+            # nao perder italicizacao por falso negativo.
+            return True
         else:
             print(f"Error accessing IndexFungorum: Status {response.status_code}")
             return False

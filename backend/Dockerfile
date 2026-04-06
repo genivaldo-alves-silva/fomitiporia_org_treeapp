@@ -13,9 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     mafft \
     fasttree \
     iqtree \
+    librsvg2-bin \
     build-essential \
     ca-certificates \
     curl \
+    && ln -s /usr/bin/iqtree2 /usr/local/bin/iqtree \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl -L -o /tmp/trimal.tar.gz https://github.com/inab/trimal/archive/refs/tags/v1.4.1.tar.gz \
@@ -30,7 +32,7 @@ RUN python3 -m venv /opt/venv \
 
 COPY . /app
 
-RUN mkdir -p /app/uploads /app/results
+RUN mkdir -p /app/uploads /app/results /app/data
 
 EXPOSE 8000
 

@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análise Filogenética - Fomitiporia TreeApp</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Gere árvores filogenéticas em alta resolução (PDF/SVG) prontas para publicação. Interface intuitiva e exportação imediata para artigos científicos.">
+    <title>Análise Filogenética - TreeApp</title>
+    <link rel="stylesheet" href="/style.css">
     <!-- Phosphor Icons - ícones SVG com design limpo e consistente -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -14,10 +15,10 @@
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-logo">
+                <a href="/" class="sidebar-logo" aria-label="TreeApp home">
                     <i class="ph ph-dna" class="logo-icon"></i>
                     <span class="logo-text">TreeApp</span>
-                </div>
+                </a>
             </div>
             
             <nav class="sidebar-nav">
@@ -27,25 +28,36 @@
                         <i class="ph ph-squares-four"></i>
                         <span>Nova Análise</span>
                     </a>
-                    <a href="#" class="nav-item" data-nav="history">
-                        <i class="ph ph-clock"></i>
-                        <span>Histórico</span>
-                    </a>
                 </div>
                 
                 <div class="nav-section">
                     <span class="nav-section-label">Ferramentas</span>
-                    <a href="#" class="nav-item" data-nav="alignment">
+                    <a href="#" class="nav-item" data-nav="mode1">
+                        <i class="ph ph-text-align-justify"></i>
+                        <span>Matriz Alinhada</span>
+                    </a>
+                    <a href="#" class="nav-item" data-nav="mode2">
+                        <i class="ph ph-plus-circle"></i>
+                        <span>Adicionar Sequências</span>
+                    </a>
+                    <a href="#" class="nav-item" data-nav="mode3">
                         <i class="ph ph-text-align-center"></i>
-                        <span>Alinhamento</span>
+                        <span>Alinhar do Zero</span>
                     </a>
-                    <a href="#" class="nav-item" data-nav="tree">
+                    <a href="#" class="nav-item" data-nav="mode4">
                         <i class="ph ph-git-branch"></i>
-                        <span>Árvore</span>
+                        <span>Renderizar Árvore</span>
                     </a>
-                    <a href="#" class="nav-item" data-nav="render">
-                        <i class="ph ph-image"></i>
-                        <span>Renderizar</span>
+                </div>
+                <div class="nav-section">
+                    <span class="nav-section-label">Ajuda</span>
+                    <a href="/manual.html" class="nav-item">
+                        <i class="ph ph-book-open-text"></i>
+                        <span>Manual</span>
+                    </a>
+                    <a href="/testers.html" class="nav-item">
+                        <i class="ph ph-megaphone-simple"></i>
+                        <span>Testes</span>
                     </a>
                 </div>
             </nav>
@@ -58,15 +70,7 @@
                     <span class="theme-label">Tema</span>
                 </button>
                 
-                <div class="user-info">
-                    <div class="user-avatar">
-                        <i class="ph ph-user"></i>
-                    </div>
-                    <div class="user-details">
-                        <span class="user-name">Pesquisador</span>
-                        <span class="user-role">Local Session</span>
-                    </div>
-                </div>
+                <!-- user-info removido ate implementacao de login -->
             </div>
         </aside>
         
@@ -77,9 +81,13 @@
                 <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
                     <i class="ph ph-list"></i>
                 </button>
+                <a href="/" class="mobile-brand" aria-label="TreeApp home">
+                    <i class="ph ph-dna"></i>
+                    <span>TreeApp</span>
+                </a>
                 <div class="header-content">
                     <div class="breadcrumb">
-                        <span class="breadcrumb-item">Fomitiporia TreeApp</span>
+                        <span class="breadcrumb-item">TreeApp</span>
                         <i class="ph ph-caret-right" class="breadcrumb-separator"></i>
                         <span class="breadcrumb-item current" id="current-page">Nova Análise</span>
                     </div>
@@ -168,6 +176,8 @@
                                 <span class="step-indicator step-active">trimAl</span>
                                 <span class="step-arrow">→</span>
                                 <span class="step-indicator step-active">Árvore</span>
+                                <span class="step-arrow">→</span>
+                                <span class="step-indicator step-active">SVG</span>
                             </div>
                         </div>
                     </div>
@@ -216,6 +226,7 @@
                 
                 <div class="form-section">
                     <h3><span class="step-number">1</span> Carregar matriz alinhada</h3>
+                    <p class="section-hint">Carregue sua matriz alinhada. <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     <div class="upload-area" id="upload-area-mode1">
                         <input type="file" id="file-input-mode1" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                         <label for="file-input-mode1" class="upload-label">
@@ -242,6 +253,15 @@
                         <label for="outgroup-mode1" class="label">Outgroup (para enraizamento)</label>
                         <input type="text" id="outgroup-mode1" class="font-mono" value="uncisetus" placeholder="ex: uncisetus, outgroup_species">
                         <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="job-name-mode1" class="label">Nome do job (opcional)</label>
+                        <input type="text" id="job-name-mode1" placeholder="Ex: Fomitiporia ITS - amostras maio">
+                    </div>
+                    <div class="form-group">
+                        <label for="email-mode1" class="label">Email (opcional)</label>
+                        <input type="email" id="email-mode1" placeholder="voce@exemplo.com">
+                        <small>Receba o link de resultados quando finalizar</small>
                     </div>
                     
                     <div class="form-row">
@@ -288,7 +308,7 @@
                 
                 <div class="form-section">
                     <h3><span class="step-number">1</span> Matriz de Alinhamento Base</h3>
-                    <p class="section-hint">Carregue sua matriz alinhada ou use a de <i>Fomitiporia</i> (updated january 2026)</p>
+                    <p class="section-hint">Carregue sua matriz alinhada ou use a de <i>Fomitiporia</i> (updated january 2026) - <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     
                     <div class="alignment-container">
                         <div class="upload-area" id="upload-area-alignment">
@@ -310,7 +330,7 @@
 
                 <div class="form-section">
                     <h3><span class="step-number">2</span> Adicionar Novas Sequências</h3>
-                    <p class="section-hint">Insira novas sequências por texto ou carregue um arquivo</p>
+                    <p class="section-hint">Insira novas sequências por texto ou carregue um arquivo. <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     
                     <div class="sequences-input-container">
                         <div class="input-method">
@@ -350,6 +370,15 @@
                         <label for="outgroup-mode2">Outgroup (para enraizamento)</label>
                         <input type="text" id="outgroup-mode2" value="uncisetus" placeholder="ex: uncisetus">
                         <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="job-name-mode2" class="label">Nome do job (opcional)</label>
+                        <input type="text" id="job-name-mode2" placeholder="Ex: Adicionar sequencias 2024">
+                    </div>
+                    <div class="form-group">
+                        <label for="email-mode2" class="label">Email (opcional)</label>
+                        <input type="email" id="email-mode2" placeholder="voce@exemplo.com">
+                        <small>Receba o link de resultados quando finalizar</small>
                     </div>
                     
                     <div class="form-row">
@@ -397,7 +426,7 @@
                 
                 <div class="form-section">
                     <h3><span class="step-number">1</span> Matriz principal (não alinhada)</h3>
-                    <p class="section-hint">Carregue sua matriz com todas as sequências de referência</p>
+                    <p class="section-hint">Carregue sua matriz com todas as sequências de referência. <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     
                     <div class="upload-area" id="upload-area-raw">
                         <input type="file" id="file-input-raw" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
@@ -415,7 +444,7 @@
 
                 <div class="form-section">
                     <h3><span class="step-number">2</span> Suas sequências <span class="badge badge-optional">opcional</span></h3>
-                    <p class="section-hint">Envie suas sequências separadamente para serem marcadas como novas</p>
+                    <p class="section-hint">Envie suas sequências separadamente para serem marcadas como novas. <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     
                     <div class="sequences-input-container">
                         <div class="input-method">
@@ -455,6 +484,15 @@
                         <label for="outgroup-mode3" class="label">Outgroup (para enraizamento)</label>
                         <input type="text" id="outgroup-mode3" class="font-mono" value="uncisetus" placeholder="ex: outgroup_species">
                         <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="job-name-mode3" class="label">Nome do job (opcional)</label>
+                        <input type="text" id="job-name-mode3" placeholder="Ex: Alinhamento completo - lote A">
+                    </div>
+                    <div class="form-group">
+                        <label for="email-mode3" class="label">Email (opcional)</label>
+                        <input type="email" id="email-mode3" placeholder="voce@exemplo.com">
+                        <small>Receba o link de resultados quando finalizar</small>
                     </div>
                     
                     <div class="form-row">
@@ -530,6 +568,15 @@
                         <input type="text" id="outgroup-mode4" class="font-mono" value="uncisetus" placeholder="ex: uncisetus, outgroup_species">
                         <small>Termo para buscar nas tips e usar como raiz da árvore</small>
                     </div>
+                    <div class="form-group">
+                        <label for="job-name-mode4" class="label">Nome do job (opcional)</label>
+                        <input type="text" id="job-name-mode4" placeholder="Ex: Renderizacao rapida 01">
+                    </div>
+                    <div class="form-group">
+                        <label for="email-mode4" class="label">Email (opcional)</label>
+                        <input type="email" id="email-mode4" placeholder="voce@exemplo.com">
+                        <small>Receba o link de resultados quando finalizar</small>
+                    </div>
                 </div>
                 
                 <button type="button" class="btn btn-primary btn-lg" id="submit-mode4">
@@ -546,6 +593,11 @@
                         <p class="mode-subtitle">Aguarde enquanto a análise é executada</p>
                     </div>
                 </header>
+
+                <div id="job-name-display" class="job-name-display" style="display: none;">
+                    <i class="ph ph-tag"></i>
+                    <span id="job-name-text"></span>
+                </div>
                 
                 <!-- Pipeline Steps Visual -->
                 <div class="pipeline-steps">
@@ -586,6 +638,10 @@
                 </div>
                 
                 <div class="progress-container">
+                    <div class="job-status-row">
+                        <span id="job-status-badge" class="status-badge status-queued">Em fila</span>
+                        <span id="job-queue-text" class="queue-text"></span>
+                    </div>
                     <div class="progress-bar">
                         <div id="progress-fill" class="progress-fill"></div>
                     </div>
@@ -598,7 +654,21 @@
                 
                 <div class="progress-tip">
                     <i class="ph ph-lightbulb"></i>
-                    <span>Análises com IQ-TREE podem levar alguns minutos dependendo do tamanho da matriz.</span>
+                    <span>Análises com IQ-TREE podem levar alguns minutos dependendo do tamanho da matriz. Se estiver na fila ou o job está demorando, use o link abaixo para acesso ao resultado posteriormente. Este mesmo link será mandado por email caso tenha o inserido na página anterior</span>
+                </div>
+
+                <div id="job-link-box" class="job-link-box" style="display: none;">
+                    <div class="job-link-label">
+                        <i class="ph ph-link"></i>
+                        <span>Link de resultados</span>
+                    </div>
+                    <div class="job-link-row">
+                        <input type="text" id="job-link-input" readonly>
+                        <button class="btn btn-secondary btn-sm" id="copy-job-link">
+                            <i class="ph ph-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <small>O link expira 3 dias após a conclusão.</small>
                 </div>
             </section>
 
@@ -613,6 +683,25 @@
                         <p class="mode-subtitle">Análise concluída com sucesso</p>
                     </div>
                 </header>
+
+                <div id="job-name-display-results" class="job-name-display" style="display: none;">
+                    <i class="ph ph-tag"></i>
+                    <span id="job-name-text-results"></span>
+                </div>
+
+                <div id="job-link-box-results" class="job-link-box" style="display: none;">
+                    <div class="job-link-label">
+                        <i class="ph ph-link"></i>
+                        <span>Link de resultados</span>
+                    </div>
+                    <div class="job-link-row">
+                        <input type="text" id="job-link-input-results" readonly>
+                        <button class="btn btn-secondary btn-sm" id="copy-job-link-results">
+                            <i class="ph ph-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <small>O link expira 3 dias após a conclusão.</small>
+                </div>
                 
                 <!-- Download Cards -->
                 <div class="download-grid">
@@ -663,6 +752,38 @@
                             <i class="ph ph-download-simple"></i> Download
                         </button>
                     </div>
+                    
+                    <div class="download-card" id="download-iqtree">
+                        <div class="download-card-icon">
+                            <i class="ph ph-file-text"></i>
+                        </div>
+                        <div class="download-card-info">
+                            <h4>Resumo IQ-TREE</h4>
+                            <p class="download-meta">
+                                <span class="file-ext">.iqtree</span>
+                                <span class="file-format">Modelos e sumário</span>
+                            </p>
+                        </div>
+                        <button class="btn btn-success btn-sm">
+                            <i class="ph ph-download-simple"></i> Download
+                        </button>
+                    </div>
+                    
+                    <div class="download-card" id="download-tree-pdf">
+                        <div class="download-card-icon">
+                            <i class="ph ph-file-pdf"></i>
+                        </div>
+                        <div class="download-card-info">
+                            <h4>Árvore em PDF</h4>
+                            <p class="download-meta">
+                                <span class="file-ext">.pdf</span>
+                                <span class="file-format">Alta resolução</span>
+                            </p>
+                        </div>
+                        <button class="btn btn-success btn-sm">
+                            <i class="ph ph-download-simple"></i> Download
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="results-divider">
@@ -704,6 +825,10 @@
                                     <input type="number" id="svg-height" class="tabular-nums" placeholder="auto" min="500" max="20000" step="100">
                                     <span class="input-unit font-mono">px</span>
                                 </div>
+                            </div>
+                            <div class="dimension-group">
+                                <label for="svg-outgroup" class="label">Outgroup (opcional)</label>
+                                <input type="text" id="svg-outgroup" placeholder="Manter padrão">
                             </div>
                             <button class="btn btn-primary btn-sm" id="rerender-svg">
                                 <i class="ph ph-arrows-clockwise"></i> Re-renderizar
@@ -748,12 +873,32 @@
         
         <!-- Footer -->
         <footer class="main-footer">
-            <p>Desenvolvido para análises filogenéticas de <em>Fomitiporia</em> e outros organismos</p>
+            <div class="footer-content">
+                <div class="footer-copy">
+                    <p>Desenvolvido por <a href="https://github.com/genivaldo-alves-silva" target="_blank" rel="noopener noreferrer">Genivaldo Alves-Silva</a> para análises filogenéticas de fungos e outros organismos</p>
+                </div>
+                <div class="footer-feedback">
+                    <h4>Envie sugestões ou pedidos <i class="ph ph-arrow-down"></i></h4>
+                    <form id="feedback-form" class="feedback-form">
+                        <div class="feedback-row">
+                            <input type="text" id="feedback-name" placeholder="Nome (opcional)">
+                            <input type="email" id="feedback-email" placeholder="Email (opcional)">
+                        </div>
+                        <textarea id="feedback-message" rows="3" placeholder="Escreva sua mensagem" required></textarea>
+                        <div class="feedback-actions">
+                            <button type="submit" class="btn btn-secondary btn-sm" id="feedback-submit">
+                                <i class="ph ph-paper-plane-tilt"></i> Enviar
+                            </button>
+                            <span id="feedback-status" class="feedback-status" role="status"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </footer>
     </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="/app.js"></script>
     <script>
         // Theme Management
         (function() {

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manual de uso do TreeApp: fluxo de trabalho, status dos jobs, downloads e perguntas frequentes.">
+    <title>Manual de Uso - TreeApp</title>
+    <link rel="stylesheet" href="/style.css">
+    <!-- Phosphor Icons - ícones SVG com design limpo e consistente -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="sidebar-logo" aria-label="TreeApp home">
+                    <i class="ph ph-dna" class="logo-icon"></i>
+                    <span class="logo-text">TreeApp</span>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-section-label">Análises</span>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-squares-four"></i>
+                        <span>Nova Análise</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-label">Ferramentas</span>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-text-align-justify"></i>
+                        <span>Matriz Alinhada</span>
+                    </a>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-plus-circle"></i>
+                        <span>Adicionar Sequências</span>
+                    </a>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-text-align-center"></i>
+                        <span>Alinhar do Zero</span>
+                    </a>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-git-branch"></i>
+                        <span>Renderizar Árvore</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-label">Ajuda</span>
+                    <a href="/manual.html" class="nav-item active">
+                        <i class="ph ph-book-open-text"></i>
+                        <span>Manual</span>
+                    </a>
+                    <a href="/testers.html" class="nav-item">
+                        <i class="ph ph-megaphone-simple"></i>
+                        <span>Testes</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <i class="ph ph-sun theme-icon-light"></i>
+                    <i class="ph ph-moon theme-icon-dark"></i>
+                    <span class="theme-label">Tema</span>
+                </button>
+            </div>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-header">
+                <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+                    <i class="ph ph-list"></i>
+                </button>
+                <a href="/" class="mobile-brand" aria-label="TreeApp home">
+                    <i class="ph ph-dna"></i>
+                    <span>TreeApp</span>
+                </a>
+                <div class="header-content">
+                    <div class="breadcrumb">
+                        <span class="breadcrumb-item">TreeApp</span>
+                        <i class="ph ph-caret-right" class="breadcrumb-separator"></i>
+                        <span class="breadcrumb-item current" id="current-page">Manual</span>
+                    </div>
+                    <p class="header-subtitle">Guia rápido + FAQ</p>
+                </div>
+            </header>
+
+            <main class="main-content manual-page">
+                <section class="card manual-hero">
+                    <div class="card-header">
+                        <span class="manual-eyebrow">Manual de uso</span>
+                        <h2 class="manual-title">Do upload ao download da árvore em poucos passos</h2>
+                        <p class="section-hint">
+                            Este guia resume os fluxos disponíveis, o ciclo do job e onde baixar os resultados.
+                        </p>
+                    </div>
+                    <div class="manual-quicklinks">
+                        <a href="#fluxos">Fluxos</a>
+                        <a href="#passo-a-passo">Passo a passo</a>
+                        <a href="#status">Status</a>
+                        <a href="#resultados">Downloads</a>
+                        <a href="#faq">FAQ</a>
+                    </div>
+                </section>
+
+                <section id="fluxos" class="card manual-section">
+                    <div class="card-header">
+                        <h2>Fluxos de trabalho</h2>
+                        <p class="section-hint">Escolha o fluxo que combina com o seu tipo de dado.</p>
+                    </div>
+                    <div class="manual-grid">
+                        <article class="manual-tile">
+                            <i class="ph ph-text-align-justify"></i>
+                            <h3>Matriz Alinhada</h3>
+                            <p>Envie uma matriz já alinhada e gere a árvore direto.</p>
+                        </article>
+                        <article class="manual-tile">
+                            <i class="ph ph-plus-circle"></i>
+                            <h3>Adicionar Sequências</h3>
+                            <p>Inclua novas sequências a uma matriz base com MAFFT --add.</p>
+                        </article>
+                        <article class="manual-tile">
+                            <i class="ph ph-text-align-center"></i>
+                            <h3>Alinhar do Zero</h3>
+                            <p>Pipeline completo: MAFFT → trimAl → árvore.</p>
+                        </article>
+                        <article class="manual-tile">
+                            <i class="ph ph-git-branch"></i>
+                            <h3>Renderizar Árvore</h3>
+                            <p>Suba um .nwk/.tre e gere o SVG pronto para publicação.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section id="passo-a-passo" class="card manual-section">
+                    <div class="card-header">
+                        <h2>Passo a passo rápido</h2>
+                        <p class="section-hint">Fluxo sugerido para a maioria dos usuários.</p>
+                    </div>
+                    <ol class="manual-steps">
+                        <li>Escolha o fluxo de trabalho e envie seus arquivos.</li>
+                        <li>Opcional: informe um e-mail e um nome para o job.</li>
+                        <li>Acompanhe o status (fila, execução, erro, concluído).</li>
+                        <li>Baixe SVG/PDF e arquivos do IQ-TREE quando disponíveis.</li>
+                        <li>Use o link público para compartilhar o resultado.</li>
+                    </ol>
+                </section>
+
+                <section id="status" class="card manual-section">
+                    <div class="card-header">
+                        <h2>Status do job</h2>
+                        <p class="section-hint">O painel mostra em que etapa o processamento está.</p>
+                    </div>
+                    <div class="manual-status">
+                        <div class="manual-status-item">
+                            <span class="status-pill">queue</span>
+                            <p>Na fila aguardando recursos do servidor.</p>
+                        </div>
+                        <div class="manual-status-item">
+                            <span class="status-pill">running</span>
+                            <p>Processando alinhamento, árvore e/ou renderização.</p>
+                        </div>
+                        <div class="manual-status-item">
+                            <span class="status-pill">failed</span>
+                            <p>Ocorreu um erro. O e-mail também é enviado em falha.</p>
+                        </div>
+                        <div class="manual-status-item">
+                            <span class="status-pill">completed</span>
+                            <p>Resultados disponíveis para download e re-render.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="resultados" class="card manual-section">
+                    <div class="card-header">
+                        <h2>Resultados e downloads</h2>
+                        <p class="section-hint">Arquivos principais disponibilizados após a conclusão.</p>
+                    </div>
+                    <ul class="manual-list">
+                        <li><strong>SVG</strong> com suporte e estilos do TreeApp.</li>
+                        <li><strong>PDF</strong> com a árvore para publicação.</li>
+                        <li><strong>IQ-TREE</strong> (sumário e modelos) quando aplicável.</li>
+                        <li><strong>Link público</strong> para compartilhar o resultado.</li>
+                    </ul>
+                    <p class="manual-note">
+                        Links públicos e dados expiram 3 dias após a conclusão do job.
+                    </p>
+                </section>
+
+                <section id="faq" class="card manual-section">
+                    <div class="card-header">
+                        <h2>FAQ</h2>
+                        <p class="section-hint">Dúvidas comuns e respostas rápidas.</p>
+                    </div>
+                    <div class="faq-list">
+                        <details>
+                            <summary>Meu e-mail não chegou. O que fazer?</summary>
+                            <p>Verifique a caixa de spam e confirme se o endereço foi digitado corretamente.</p>
+                        </details>
+                        <details>
+                            <summary>Posso compartilhar o link com outras pessoas?</summary>
+                            <p>Sim. O link público abre a mesma página de resultados com opção de re-render.</p>
+                        </details>
+                        <details>
+                            <summary>O que fazer se o job falhar?</summary>
+                            <p>Revise o formato dos arquivos e tente novamente. Se persistir, envie uma sugestão no formulário.</p>
+                        </details>
+                        <details>
+                            <summary>Quanto tempo os resultados ficam disponíveis?</summary>
+                            <p>Os arquivos são mantidos por 3 dias após o job ser concluído.</p>
+                        </details>
+                    </div>
+                </section>
+            </main>
+
+            <footer class="main-footer">
+                <div class="footer-content">
+                    <div class="footer-copy">
+                        <p>Desenvolvido por <a href="https://github.com/genivaldo-alves-silva" target="_blank" rel="noopener noreferrer">Genivaldo Alves-Silva</a> para análises filogenéticas de fungos e outros organismos</p>
+                    </div>
+                    <div class="footer-feedback">
+                        <h4>Envie sugestões ou pedidos <i class="ph ph-arrow-down"></i></h4>
+                        <form id="feedback-form" class="feedback-form">
+                            <div class="feedback-row">
+                                <input type="text" id="feedback-name" placeholder="Nome (opcional)">
+                                <input type="email" id="feedback-email" placeholder="Email (opcional)">
+                            </div>
+                            <textarea id="feedback-message" rows="3" placeholder="Escreva sua mensagem" required></textarea>
+                            <div class="feedback-actions">
+                                <button type="submit" class="btn btn-secondary btn-sm" id="feedback-submit">
+                                    <i class="ph ph-paper-plane-tilt"></i> Enviar
+                                </button>
+                                <span id="feedback-status" class="feedback-status" role="status"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+    <script>
+        // Theme Management
+        (function() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+
+            function getPreferredTheme() {
+                const saved = localStorage.getItem('theme');
+                if (saved) return saved;
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+
+            function setTheme(theme) {
+                html.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                updateToggleIcon(theme);
+            }
+
+            function updateToggleIcon(theme) {
+                if (!themeToggle) return;
+                const lightIcon = themeToggle.querySelector('.theme-icon-light');
+                const darkIcon = themeToggle.querySelector('.theme-icon-dark');
+                if (theme === 'dark') {
+                    lightIcon.style.display = 'block';
+                    darkIcon.style.display = 'none';
+                } else {
+                    lightIcon.style.display = 'none';
+                    darkIcon.style.display = 'block';
+                }
+            }
+
+            const initialTheme = getPreferredTheme();
+            setTheme(initialTheme);
+
+            themeToggle?.addEventListener('click', () => {
+                const current = html.getAttribute('data-theme') || 'light';
+                setTheme(current === 'dark' ? 'light' : 'dark');
+            });
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    setTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+        })();
+
+        document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+            document.querySelector('.app-layout').classList.toggle('sidebar-open');
+        });
+    </script>
+</body>
+</html>

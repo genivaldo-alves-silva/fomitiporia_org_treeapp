@@ -15,9 +15,13 @@ Web application for phylogenetic analysis with an automated pipeline (MAFFT, tri
 - Proxy/serving: Nginx (routes `/api/` to the backend)
 
 ## Repository structure
-- `backend/`: FastAPI API and pipeline
-- `frontend/`: static UI
+- `backend/`: FastAPI API and phylogenetic pipeline
+  - `tree_set_svg_edit/`: modules for SVG manipulation and tree processing
+- `frontend/`: static UI (HTML/CSS/JS)
 - `nginx/`: proxy configuration and frontend delivery
+- `deploy/`: deployment scripts and production configurations
+- `certbot/`: SSL certificate management with Let's Encrypt
+- `sandbox_4frontend/`: development/testing environment
 - `docker-compose.yml`: local orchestration
 
 ## Run with Docker
@@ -59,3 +63,24 @@ uvicorn backend.main:app --reload --port 8000
 ```
 
 Then serve `frontend/` with a static server and point `/api` to the backend.
+
+## Production deployment
+The `deploy/` folder contains scripts for deploying to a production server:
+
+```bash
+cd deploy
+./deploy.sh   # Full deployment
+./sync.sh     # Sync files only
+```
+
+SSL certificates are managed via Certbot in the `certbot/` folder with automatic renewal configured through systemd timers.
+
+## Roadmap
+- Multilocus tree construction
+- Tooltip explanations for tools
+- Multi-language support
+- Sample files for testing all app features
+- Citation paragraph for phylogeny reconstruction
+- More analysis customization options (see [genome.jp/tools/ete](https://www.genome.jp/tools/ete/))
+- Proportional width based on tips and branches
+- Dark mode on mobile

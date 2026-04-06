@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Convite para testers do TreeApp: checklist de testes, dados recomendados e como enviar feedback.">
+    <title>Convite para Testes - TreeApp</title>
+    <link rel="stylesheet" href="/style.css">
+    <!-- Phosphor Icons - ícones SVG com design limpo e consistente -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="sidebar-logo" aria-label="TreeApp home">
+                    <i class="ph ph-dna" class="logo-icon"></i>
+                    <span class="logo-text">TreeApp</span>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-section-label">Análises</span>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-squares-four"></i>
+                        <span>Nova Análise</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-label">Ferramentas</span>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-text-align-justify"></i>
+                        <span>Matriz Alinhada</span>
+                    </a>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-plus-circle"></i>
+                        <span>Adicionar Sequências</span>
+                    </a>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-text-align-center"></i>
+                        <span>Alinhar do Zero</span>
+                    </a>
+                    <a href="/" class="nav-item">
+                        <i class="ph ph-git-branch"></i>
+                        <span>Renderizar Árvore</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-label">Ajuda</span>
+                    <a href="/manual.html" class="nav-item">
+                        <i class="ph ph-book-open-text"></i>
+                        <span>Manual</span>
+                    </a>
+                    <a href="/testers.html" class="nav-item active">
+                        <i class="ph ph-megaphone-simple"></i>
+                        <span>Testes</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <i class="ph ph-sun theme-icon-light"></i>
+                    <i class="ph ph-moon theme-icon-dark"></i>
+                    <span class="theme-label">Tema</span>
+                </button>
+            </div>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-header">
+                <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+                    <i class="ph ph-list"></i>
+                </button>
+                <a href="/" class="mobile-brand" aria-label="TreeApp home">
+                    <i class="ph ph-dna"></i>
+                    <span>TreeApp</span>
+                </a>
+                <div class="header-content">
+                    <div class="breadcrumb">
+                        <span class="breadcrumb-item">TreeApp</span>
+                        <i class="ph ph-caret-right" class="breadcrumb-separator"></i>
+                        <span class="breadcrumb-item current" id="current-page">Convite para Testes</span>
+                    </div>
+                    <p class="header-subtitle">Ajude a melhorar a experiência antes do lançamento</p>
+                </div>
+            </header>
+
+            <main class="main-content manual-page">
+                <section class="card manual-hero invite-hero">
+                    <div class="card-header">
+                        <span class="manual-eyebrow">Beta fechado</span>
+                        <h2 class="manual-title">Convite para testers do TreeApp</h2>
+                        <p class="section-hint">
+                            Buscamos feedback rápido sobre usabilidade, estabilidade e qualidade dos resultados.
+                        </p>
+                    </div>
+                    <div class="manual-quicklinks">
+                        <a href="#objetivo">Objetivo</a>
+                        <a href="#checklist">Checklist</a>
+                        <a href="#dados">Dados sugeridos</a>
+                        <a href="#como-reportar">Como reportar</a>
+                        <a href="/manual.html">Manual completo</a>
+                    </div>
+                    <div class="invite-actions">
+                        <a class="btn btn-primary" href="/">Começar um teste</a>
+                        <a class="btn btn-secondary" href="/manual.html">Ver manual</a>
+                    </div>
+                </section>
+
+                <section id="objetivo" class="card manual-section">
+                    <div class="card-header">
+                        <h2>Objetivo desta fase</h2>
+                        <p class="section-hint">Validar as principais jornadas de uso antes da divulgação ampla.</p>
+                    </div>
+                    <ul class="manual-list">
+                        <li>Confirmar se o fluxo de upload está claro.</li>
+                        <li>Testar a estabilidade dos jobs em fila e execução.</li>
+                        <li>Avaliar clareza dos downloads (SVG, PDF, IQ-TREE).</li>
+                        <li>Coletar feedback de interface e melhorias.</li>
+                    </ul>
+                </section>
+
+                <section id="checklist" class="card manual-section">
+                    <div class="card-header">
+                        <h2>Checklist do tester</h2>
+                        <p class="section-hint">Marque o que conseguiu validar durante o uso.</p>
+                    </div>
+                    <div class="manual-checklist">
+                        <div class="check-item">
+                            <i class="ph ph-check-circle"></i>
+                            <span>Upload de arquivo em pelo menos um modo.</span>
+                        </div>
+                        <div class="check-item">
+                            <i class="ph ph-check-circle"></i>
+                            <span>Visualização do status (queue/running/failed/completed).</span>
+                        </div>
+                        <div class="check-item">
+                            <i class="ph ph-check-circle"></i>
+                            <span>Download de SVG e PDF.</span>
+                        </div>
+                        <div class="check-item">
+                            <i class="ph ph-check-circle"></i>
+                            <span>Link público funcionando em outro navegador.</span>
+                        </div>
+                        <div class="check-item">
+                            <i class="ph ph-check-circle"></i>
+                            <span>Re-renderização com novas dimensões.</span>
+                        </div>
+                        <div class="check-item">
+                            <i class="ph ph-check-circle"></i>
+                            <span>Recebimento de e-mail (quando informado).</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="dados" class="card manual-section">
+                    <div class="card-header">
+                        <h2>Dados sugeridos</h2>
+                        <p class="section-hint">Se possível, utilize um conjunto pequeno e outro médio.</p>
+                    </div>
+                    <div class="manual-grid">
+                        <article class="manual-tile">
+                            <i class="ph ph-files"></i>
+                            <h3>Conjunto pequeno</h3>
+                            <p>Até 20 sequências, ideal para validar tempo e visual.</p>
+                        </article>
+                        <article class="manual-tile">
+                            <i class="ph ph-stack"></i>
+                            <h3>Conjunto médio</h3>
+                            <p>20-100 sequências para testar fila e estabilidade.</p>
+                        </article>
+                        <article class="manual-tile">
+                            <i class="ph ph-warning-circle"></i>
+                            <h3>Casos limites</h3>
+                            <p>Arquivos com nomes longos ou caracteres especiais.</p>
+                        </article>
+                    </div>
+                    <p class="manual-note">
+                        Se tiver dúvidas sobre formato, consulte o <a href="/manual.html">manual completo</a>.
+                    </p>
+                </section>
+
+                <section id="como-reportar" class="card manual-section">
+                    <div class="card-header">
+                        <h2>Como reportar feedback</h2>
+                        <p class="section-hint">Quanto mais detalhes, mais rápido corrigimos.</p>
+                    </div>
+                    <ol class="manual-steps">
+                        <li>Envie o link do job gerado.</li>
+                        <li>Informe o navegador/sistema usado.</li>
+                        <li>Descreva os passos que levou ao problema.</li>
+                        <li>Anexe prints quando possível.</li>
+                    </ol>
+                    <div class="invite-callout">
+                        <i class="ph ph-chat-dots"></i>
+                        <p>Você pode usar o formulário abaixo para enviar a sugestão diretamente.</p>
+                    </div>
+                </section>
+            </main>
+
+            <footer class="main-footer">
+                <div class="footer-content">
+                    <div class="footer-copy">
+                        <p>Desenvolvido por <a href="https://github.com/genivaldo-alves-silva" target="_blank" rel="noopener noreferrer">Genivaldo Alves-Silva</a> para análises filogenéticas de fungos e outros organismos</p>
+                    </div>
+                    <div class="footer-feedback">
+                        <h4>Envie sugestões ou pedidos <i class="ph ph-arrow-down"></i></h4>
+                        <form id="feedback-form" class="feedback-form">
+                            <div class="feedback-row">
+                                <input type="text" id="feedback-name" placeholder="Nome (opcional)">
+                                <input type="email" id="feedback-email" placeholder="Email (opcional)">
+                            </div>
+                            <textarea id="feedback-message" rows="3" placeholder="Escreva sua mensagem" required></textarea>
+                            <div class="feedback-actions">
+                                <button type="submit" class="btn btn-secondary btn-sm" id="feedback-submit">
+                                    <i class="ph ph-paper-plane-tilt"></i> Enviar
+                                </button>
+                                <span id="feedback-status" class="feedback-status" role="status"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+    <script>
+        // Theme Management
+        (function() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+
+            function getPreferredTheme() {
+                const saved = localStorage.getItem('theme');
+                if (saved) return saved;
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+
+            function setTheme(theme) {
+                html.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                updateToggleIcon(theme);
+            }
+
+            function updateToggleIcon(theme) {
+                if (!themeToggle) return;
+                const lightIcon = themeToggle.querySelector('.theme-icon-light');
+                const darkIcon = themeToggle.querySelector('.theme-icon-dark');
+                if (theme === 'dark') {
+                    lightIcon.style.display = 'block';
+                    darkIcon.style.display = 'none';
+                } else {
+                    lightIcon.style.display = 'none';
+                    darkIcon.style.display = 'block';
+                }
+            }
+
+            const initialTheme = getPreferredTheme();
+            setTheme(initialTheme);
+
+            themeToggle?.addEventListener('click', () => {
+                const current = html.getAttribute('data-theme') || 'light';
+                setTheme(current === 'dark' ? 'light' : 'dark');
+            });
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    setTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+        })();
+
+        document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+            document.querySelector('.app-layout').classList.toggle('sidebar-open');
+        });
+    </script>
+</body>
+</html>

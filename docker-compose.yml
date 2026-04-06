@@ -7,10 +7,26 @@ services:
       API_HOST: 0.0.0.0
       API_PORT: 8000
       DEBUG: "False"
+      PUBLIC_BASE_URL: "https://phylogentree.org"
+      JOB_RETENTION_DAYS: "3"
+      MODE4_INLINE_TIMEOUT_SEC: "30"
+      SENDGRID_API_KEY: "${SENDGRID_API_KEY}"
+      SENDGRID_FROM: "${SENDGRID_FROM}"
+      SMTP_HOST: "${SMTP_HOST}"
+      SMTP_PORT: "${SMTP_PORT:-587}"
+      SMTP_USER: "${SMTP_USER}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD}"
+      SMTP_FROM: "${SMTP_FROM}"
+      SMTP_USE_TLS: "${SMTP_USE_TLS:-true}"
+      SMTP_USE_SSL: "${SMTP_USE_SSL:-false}"
+      FEEDBACK_TO: "${FEEDBACK_TO}"
+      PURGE_EMAIL_ON_COMPLETION: "${PURGE_EMAIL_ON_COMPLETION:-true}"
+      PURGE_EMAIL_ON_EXPIRY: "${PURGE_EMAIL_ON_EXPIRY:-true}"
     volumes:
       - ./backend:/app
       - ./backend/uploads:/app/uploads
       - ./backend/results:/app/results
+      - ./backend/data:/app/data
     expose:
       - "8000"
 
@@ -23,3 +39,22 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+
+  certbot:
+    build:
+      context: ./certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: /bin/sh -c
+    command: >
+      "trap exit TERM;
+      while :; do
+        certbot renew --webroot -w /var/www/certbot --deploy-hook /usr/local/bin/reload-nginx.sh;
+        sleep 12h;
+      done"

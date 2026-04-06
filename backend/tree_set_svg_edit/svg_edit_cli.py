@@ -10,6 +10,9 @@ import requests
 
 # Import local check_genus module
 try:
+    SCRIPT_DIR = Path(__file__).resolve().parent
+    if str(SCRIPT_DIR) not in sys.path:
+        sys.path.insert(0, str(SCRIPT_DIR))
     from check_genus import check_genus
     HAS_GENUS_CHECK = True
 except ImportError:
