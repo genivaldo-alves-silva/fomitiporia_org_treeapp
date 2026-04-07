@@ -230,6 +230,26 @@
     background: var(--color-surface);
 }
 
+/* Tree viewer SVG contrast (dark mode only, medium contrast) */
+[data-theme="dark"] .tree-viewer svg .toytree-Edges {
+    stroke: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .tree-viewer svg .toytree-TipLabels,
+[data-theme="dark"] .tree-viewer svg .toytree-NodeLabels,
+[data-theme="dark"] .tree-viewer svg .toyplot-mark-Text {
+    fill: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .tree-viewer svg .toyplot-mark-Plot path {
+    stroke: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .tree-viewer svg .toyplot-mark-Text,
+[data-theme="dark"] .tree-viewer svg .toyplot-mark-Text * {
+    fill: var(--color-text-primary) !important;
+}
+
 /* Smooth theme transitions */
 body,
 .sidebar,
@@ -870,6 +890,40 @@ small, .small {
 
 .footer-copy p {
     margin: 0;
+}
+
+.footer-copy a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+    transition: color var(--duration-fast) var(--easing);
+}
+
+.footer-copy a:hover {
+    color: var(--color-accent-hover);
+}
+
+[data-theme="dark"] .footer-copy a {
+    color: var(--color-accent-hover);
+    text-decoration-color: var(--color-accent-hover);
+}
+
+[data-theme="dark"] .footer-copy a:hover {
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+}
+
+@supports (color: color-mix(in srgb, black 50%, white 50%)) {
+    [data-theme="dark"] .footer-copy a {
+        color: color-mix(in srgb, var(--color-accent-hover) 55%, var(--color-text-secondary) 45%);
+        text-decoration-color: color-mix(in srgb, var(--color-accent-hover) 72%, var(--color-text-secondary) 28%);
+    }
+
+    [data-theme="dark"] .footer-copy a:hover {
+        color: color-mix(in srgb, var(--color-accent-hover) 75%, var(--color-text-primary) 25%);
+        text-decoration-color: color-mix(in srgb, var(--color-accent-hover) 88%, var(--color-text-primary) 12%);
+    }
 }
 
 .footer-feedback h4 {
