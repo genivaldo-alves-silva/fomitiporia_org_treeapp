@@ -14,6 +14,9 @@ Web application for phylogenetic analysis with an automated pipeline (MAFFT, tri
 - Frontend: static HTML/CSS/JS
 - Proxy/serving: Nginx (routes `/api/` to the backend)
 
+## Frontend conventions for AI collaboration
+- See `AGENTS.md` for mandatory patterns when creating/incrementing pages (HTML/CSS/JS, i18n, and validation checklist).
+
 ## Repository structure
 - `backend/`: FastAPI API and phylogenetic pipeline
   - `tree_set_svg_edit/`: modules for SVG manipulation and tree processing

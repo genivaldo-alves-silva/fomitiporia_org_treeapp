@@ -659,6 +659,20 @@ small, .small {
     gap: var(--space-2);
 }
 
+.language-switcher-header {
+    margin-left: auto;
+    align-items: flex-end;
+    gap: var(--space-1);
+}
+
+.language-switcher-header .language-label {
+    font-size: 10px;
+}
+
+.language-switcher-header .language-toggle {
+    min-width: 96px;
+}
+
 .language-label {
     font-size: var(--text-xs);
     font-weight: var(--font-medium);
@@ -961,6 +975,14 @@ small, .small {
     }
 
     .header-content {
+        display: none;
+    }
+
+    .language-switcher-header {
+        margin-left: auto;
+    }
+
+    .language-switcher-header .language-label {
         display: none;
     }
 }

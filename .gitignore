@@ -64,3 +64,4 @@ deploy.sh
 Build da imagem do backend.txt
 rsync-ignore.txt
 verificar jobs.txt
+AGENTS.md
