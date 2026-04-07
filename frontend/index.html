@@ -93,11 +93,17 @@
                     </div>
                     <p class="header-subtitle" data-i18n="header.subtitle">Análise Filogenética com MAFFT, trimAl e IQ-TREE/FastTree</p>
                 </div>
-                <div class="language-switcher language-switcher-header">
-                    <span class="language-label" data-i18n="language.label">Idioma</span>
-                    <div class="language-toggle" role="group" aria-label="Selecionar idioma" data-i18n-aria-label="language.aria">
-                        <button type="button" class="language-btn" data-lang="pt-BR" aria-pressed="false">PT</button>
-                        <button type="button" class="language-btn" data-lang="en-US" aria-pressed="false">EN</button>
+                <div class="header-actions">
+                    <button class="theme-toggle theme-toggle-header" type="button" aria-label="Toggle theme" data-i18n-aria-label="theme.toggleAria">
+                        <i class="ph ph-sun theme-icon-light"></i>
+                        <i class="ph ph-moon theme-icon-dark"></i>
+                    </button>
+                    <div class="language-switcher language-switcher-header">
+                        <span class="language-label" data-i18n="language.label">Idioma</span>
+                        <div class="language-toggle" role="group" aria-label="Selecionar idioma" data-i18n-aria-label="language.aria">
+                            <button type="button" class="language-btn" data-lang="pt-BR" aria-pressed="false">PT</button>
+                            <button type="button" class="language-btn" data-lang="en-US" aria-pressed="false">EN</button>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -910,7 +916,7 @@
     <script>
         // Theme Management
         (function() {
-            const themeToggle = document.getElementById('theme-toggle');
+            const themeToggles = Array.from(document.querySelectorAll('.theme-toggle'));
             const html = document.documentElement;
             
             // Get saved theme or detect from OS
@@ -929,16 +935,18 @@
             
             // Update toggle button icon
             function updateToggleIcon(theme) {
-                if (!themeToggle) return;
-                const lightIcon = themeToggle.querySelector('.theme-icon-light');
-                const darkIcon = themeToggle.querySelector('.theme-icon-dark');
-                if (theme === 'dark') {
-                    lightIcon.style.display = 'block';
-                    darkIcon.style.display = 'none';
-                } else {
-                    lightIcon.style.display = 'none';
-                    darkIcon.style.display = 'block';
-                }
+                themeToggles.forEach((themeToggle) => {
+                    const lightIcon = themeToggle.querySelector('.theme-icon-light');
+                    const darkIcon = themeToggle.querySelector('.theme-icon-dark');
+                    if (!lightIcon || !darkIcon) return;
+                    if (theme === 'dark') {
+                        lightIcon.style.display = 'block';
+                        darkIcon.style.display = 'none';
+                    } else {
+                        lightIcon.style.display = 'none';
+                        darkIcon.style.display = 'block';
+                    }
+                });
             }
             
             // Initialize theme
@@ -946,9 +954,11 @@
             setTheme(initialTheme);
             
             // Toggle handler
-            themeToggle?.addEventListener('click', () => {
-                const current = html.getAttribute('data-theme') || 'light';
-                setTheme(current === 'dark' ? 'light' : 'dark');
+            themeToggles.forEach((themeToggle) => {
+                themeToggle.addEventListener('click', () => {
+                    const current = html.getAttribute('data-theme') || 'light';
+                    setTheme(current === 'dark' ? 'light' : 'dark');
+                });
             });
             
             // Listen for OS theme changes

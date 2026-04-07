@@ -81,9 +81,7 @@ SSL certificates are managed via Certbot in the `certbot/` folder with automatic
 ## Roadmap
 - Multilocus tree construction
 - Tooltip explanations for tools
-- Multi-language support
 - Sample files for testing all app features
 - Citation paragraph for phylogeny reconstruction
 - More analysis customization options (see [genome.jp/tools/ete](https://www.genome.jp/tools/ete/))
 - Proportional width based on tips and branches
-- Dark mode on mobile
