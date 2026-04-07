@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Convite para testers do TreeApp: checklist de testes, dados recomendados e como enviar feedback.">
-    <title>Convite para Testes - TreeApp</title>
+    <meta name="description" content="Convite para testers do TreeApp: checklist de testes, dados recomendados e como enviar feedback." data-i18n-content="meta.testers.description">
+    <title data-i18n-title="meta.testers.title">Convite para Testes - TreeApp</title>
     <link rel="stylesheet" href="/style.css">
     <!-- Phosphor Icons - ícones SVG com design limpo e consistente -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
@@ -21,52 +21,60 @@
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <span class="nav-section-label">Análises</span>
+                    <span class="nav-section-label" data-i18n="nav.section.analysis">Análises</span>
                     <a href="/" class="nav-item">
                         <i class="ph ph-squares-four"></i>
-                        <span>Nova Análise</span>
+                        <span data-i18n="nav.newAnalysis">Nova Análise</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <span class="nav-section-label">Ferramentas</span>
+                    <span class="nav-section-label" data-i18n="nav.section.tools">Ferramentas</span>
                     <a href="/" class="nav-item">
                         <i class="ph ph-text-align-justify"></i>
-                        <span>Matriz Alinhada</span>
+                        <span data-i18n="nav.mode1">Matriz Alinhada</span>
                     </a>
                     <a href="/" class="nav-item">
                         <i class="ph ph-plus-circle"></i>
-                        <span>Adicionar Sequências</span>
+                        <span data-i18n="nav.mode2">Adicionar Sequências</span>
                     </a>
                     <a href="/" class="nav-item">
                         <i class="ph ph-text-align-center"></i>
-                        <span>Alinhar do Zero</span>
+                        <span data-i18n="nav.mode3">Alinhar do Zero</span>
                     </a>
                     <a href="/" class="nav-item">
                         <i class="ph ph-git-branch"></i>
-                        <span>Renderizar Árvore</span>
+                        <span data-i18n="nav.mode4">Renderizar Árvore</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <span class="nav-section-label">Ajuda</span>
+                    <span class="nav-section-label" data-i18n="nav.section.help">Ajuda</span>
                     <a href="/manual.html" class="nav-item">
                         <i class="ph ph-book-open-text"></i>
-                        <span>Manual</span>
+                        <span data-i18n="nav.manual">Manual</span>
                     </a>
                     <a href="/testers.html" class="nav-item active">
                         <i class="ph ph-megaphone-simple"></i>
-                        <span>Testes</span>
+                        <span data-i18n="nav.testers">Testes</span>
                     </a>
                 </div>
             </nav>
 
             <div class="sidebar-footer">
-                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" data-i18n-aria-label="theme.toggleAria">
                     <i class="ph ph-sun theme-icon-light"></i>
                     <i class="ph ph-moon theme-icon-dark"></i>
-                    <span class="theme-label">Tema</span>
+                    <span class="theme-label" data-i18n="theme.label">Tema</span>
                 </button>
+
+                <div class="language-switcher">
+                    <span class="language-label" data-i18n="language.label">Idioma</span>
+                    <div class="language-toggle" role="group" aria-label="Selecionar idioma" data-i18n-aria-label="language.aria">
+                        <button type="button" class="language-btn" data-lang="pt-BR" aria-pressed="false">PT</button>
+                        <button type="button" class="language-btn" data-lang="en-US" aria-pressed="false">EN</button>
+                    </div>
+                </div>
             </div>
         </aside>
 
@@ -83,121 +91,122 @@
                     <div class="breadcrumb">
                         <span class="breadcrumb-item">TreeApp</span>
                         <i class="ph ph-caret-right" class="breadcrumb-separator"></i>
-                        <span class="breadcrumb-item current" id="current-page">Convite para Testes</span>
+                        <span class="breadcrumb-item current" id="current-page" data-i18n="testers.breadcrumb.current">Convite para Testes</span>
                     </div>
-                    <p class="header-subtitle">Ajude a melhorar a experiência antes do lançamento</p>
+                    <p class="header-subtitle" data-i18n="testers.header.subtitle">Ajude a melhorar a experiência antes do lançamento</p>
                 </div>
             </header>
 
             <main class="main-content manual-page">
                 <section class="card manual-hero invite-hero">
                     <div class="card-header">
-                        <span class="manual-eyebrow">Beta fechado</span>
-                        <h2 class="manual-title">Convite para testers do TreeApp</h2>
-                        <p class="section-hint">
+                        <span class="manual-eyebrow" data-i18n="testers.hero.eyebrow">Beta fechado</span>
+                        <h2 class="manual-title" data-i18n="testers.hero.title">Convite para testers do TreeApp</h2>
+                        <p class="section-hint" data-i18n="testers.hero.hint">
                             Buscamos feedback rápido sobre usabilidade, estabilidade e qualidade dos resultados.
                         </p>
                     </div>
                     <div class="manual-quicklinks">
-                        <a href="#objetivo">Objetivo</a>
-                        <a href="#checklist">Checklist</a>
-                        <a href="#dados">Dados sugeridos</a>
-                        <a href="#como-reportar">Como reportar</a>
-                        <a href="/manual.html">Manual completo</a>
+                        <a href="#objetivo" data-i18n="testers.quicklinks.objective">Objetivo</a>
+                        <a href="#checklist" data-i18n="testers.quicklinks.checklist">Checklist</a>
+                        <a href="#dados" data-i18n="testers.quicklinks.data">Dados sugeridos</a>
+                        <a href="#como-reportar" data-i18n="testers.quicklinks.report">Como reportar</a>
+                        <a href="/manual.html" data-i18n="testers.quicklinks.fullManual">Manual completo</a>
                     </div>
                     <div class="invite-actions">
-                        <a class="btn btn-primary" href="/">Começar um teste</a>
-                        <a class="btn btn-secondary" href="/manual.html">Ver manual</a>
+                        <a class="btn btn-primary" href="/" data-i18n="testers.actions.startTest">Começar um teste</a>
+                        <a class="btn btn-secondary" href="/manual.html" data-i18n="testers.actions.viewManual">Ver manual</a>
                     </div>
                 </section>
 
                 <section id="objetivo" class="card manual-section">
                     <div class="card-header">
-                        <h2>Objetivo desta fase</h2>
-                        <p class="section-hint">Validar as principais jornadas de uso antes da divulgação ampla.</p>
+                        <h2 data-i18n="testers.objective.title">Objetivo desta fase</h2>
+                        <p class="section-hint" data-i18n="testers.objective.hint">Validar as principais jornadas de uso antes da divulgação ampla.</p>
                     </div>
                     <ul class="manual-list">
-                        <li>Confirmar se o fluxo de upload está claro.</li>
-                        <li>Testar a estabilidade dos jobs em fila e execução.</li>
-                        <li>Avaliar clareza dos downloads (SVG, PDF, IQ-TREE).</li>
-                        <li>Coletar feedback de interface e melhorias.</li>
+                        <li data-i18n="testers.objective.item1">Confirmar se o fluxo de upload está claro.</li>
+                        <li data-i18n="testers.objective.item2">Testar a estabilidade dos jobs em fila e execução.</li>
+                        <li data-i18n="testers.objective.item3">Avaliar clareza dos downloads (SVG, PDF, IQ-TREE).</li>
+                        <li data-i18n="testers.objective.item4">Coletar feedback de interface e melhorias.</li>
                     </ul>
                 </section>
 
                 <section id="checklist" class="card manual-section">
                     <div class="card-header">
-                        <h2>Checklist do tester</h2>
-                        <p class="section-hint">Marque o que conseguiu validar durante o uso.</p>
+                        <h2 data-i18n="testers.checklist.title">Checklist do tester</h2>
+                        <p class="section-hint" data-i18n="testers.checklist.hint">Marque o que conseguiu validar durante o uso.</p>
                     </div>
                     <div class="manual-checklist">
                         <div class="check-item">
                             <i class="ph ph-check-circle"></i>
-                            <span>Upload de arquivo em pelo menos um modo.</span>
+                            <span data-i18n="testers.checklist.item1">Upload de arquivo em pelo menos um modo.</span>
                         </div>
                         <div class="check-item">
                             <i class="ph ph-check-circle"></i>
-                            <span>Visualização do status (queue/running/failed/completed).</span>
+                            <span data-i18n="testers.checklist.item2">Visualização do status (queue/running/failed/completed).</span>
                         </div>
                         <div class="check-item">
                             <i class="ph ph-check-circle"></i>
-                            <span>Download de SVG e PDF.</span>
+                            <span data-i18n="testers.checklist.item3">Download de SVG e PDF.</span>
                         </div>
                         <div class="check-item">
                             <i class="ph ph-check-circle"></i>
-                            <span>Link público funcionando em outro navegador.</span>
+                            <span data-i18n="testers.checklist.item4">Link público funcionando em outro navegador.</span>
                         </div>
                         <div class="check-item">
                             <i class="ph ph-check-circle"></i>
-                            <span>Re-renderização com novas dimensões.</span>
+                            <span data-i18n="testers.checklist.item5">Re-renderização com novas dimensões.</span>
                         </div>
                         <div class="check-item">
                             <i class="ph ph-check-circle"></i>
-                            <span>Recebimento de e-mail (quando informado).</span>
+                            <span data-i18n="testers.checklist.item6">Recebimento de e-mail (quando informado).</span>
                         </div>
                     </div>
                 </section>
 
                 <section id="dados" class="card manual-section">
                     <div class="card-header">
-                        <h2>Dados sugeridos</h2>
-                        <p class="section-hint">Se possível, utilize um conjunto pequeno e outro médio.</p>
+                        <h2 data-i18n="testers.data.title">Dados sugeridos</h2>
+                        <p class="section-hint" data-i18n="testers.data.hint">Se possível, utilize um conjunto pequeno e outro médio.</p>
                     </div>
                     <div class="manual-grid">
                         <article class="manual-tile">
                             <i class="ph ph-files"></i>
-                            <h3>Conjunto pequeno</h3>
-                            <p>Até 20 sequências, ideal para validar tempo e visual.</p>
+                            <h3 data-i18n="testers.data.small.title">Conjunto pequeno</h3>
+                            <p data-i18n="testers.data.small.desc">Até 20 sequências, ideal para validar tempo e visual.</p>
                         </article>
                         <article class="manual-tile">
                             <i class="ph ph-stack"></i>
-                            <h3>Conjunto médio</h3>
-                            <p>20-100 sequências para testar fila e estabilidade.</p>
+                            <h3 data-i18n="testers.data.medium.title">Conjunto médio</h3>
+                            <p data-i18n="testers.data.medium.desc">20-100 sequências para testar fila e estabilidade.</p>
                         </article>
                         <article class="manual-tile">
                             <i class="ph ph-warning-circle"></i>
-                            <h3>Casos limites</h3>
-                            <p>Arquivos com nomes longos ou caracteres especiais.</p>
+                            <h3 data-i18n="testers.data.edge.title">Casos limites</h3>
+                            <p data-i18n="testers.data.edge.desc">Arquivos com nomes longos ou caracteres especiais.</p>
                         </article>
                     </div>
                     <p class="manual-note">
-                        Se tiver dúvidas sobre formato, consulte o <a href="/manual.html">manual completo</a>.
+                        <span data-i18n="testers.data.notePrefix">Se tiver dúvidas sobre formato, consulte o</span>
+                        <a href="/manual.html" data-i18n="testers.quicklinks.fullManual">manual completo</a>.
                     </p>
                 </section>
 
                 <section id="como-reportar" class="card manual-section">
                     <div class="card-header">
-                        <h2>Como reportar feedback</h2>
-                        <p class="section-hint">Quanto mais detalhes, mais rápido corrigimos.</p>
+                        <h2 data-i18n="testers.report.title">Como reportar feedback</h2>
+                        <p class="section-hint" data-i18n="testers.report.hint">Quanto mais detalhes, mais rápido corrigimos.</p>
                     </div>
                     <ol class="manual-steps">
-                        <li>Envie o link do job gerado.</li>
-                        <li>Informe o navegador/sistema usado.</li>
-                        <li>Descreva os passos que levou ao problema.</li>
-                        <li>Anexe prints quando possível.</li>
+                        <li data-i18n="testers.report.item1">Envie o link do job gerado.</li>
+                        <li data-i18n="testers.report.item2">Informe o navegador/sistema usado.</li>
+                        <li data-i18n="testers.report.item3">Descreva os passos que levou ao problema.</li>
+                        <li data-i18n="testers.report.item4">Anexe prints quando possível.</li>
                     </ol>
                     <div class="invite-callout">
                         <i class="ph ph-chat-dots"></i>
-                        <p>Você pode usar o formulário abaixo para enviar a sugestão diretamente.</p>
+                        <p data-i18n="testers.report.callout">Você pode usar o formulário abaixo para enviar a sugestão diretamente.</p>
                     </div>
                 </section>
             </main>
@@ -205,19 +214,19 @@
             <footer class="main-footer">
                 <div class="footer-content">
                     <div class="footer-copy">
-                        <p>Desenvolvido por <a href="https://github.com/genivaldo-alves-silva" target="_blank" rel="noopener noreferrer">Genivaldo Alves-Silva</a> para análises filogenéticas de fungos e outros organismos</p>
+                        <p><span data-i18n="footer.copy.prefix">Desenvolvido por</span> <a href="https://github.com/genivaldo-alves-silva" target="_blank" rel="noopener noreferrer">Genivaldo Alves-Silva</a> <span data-i18n="footer.copy.suffix">para análises filogenéticas de fungos e outros organismos</span></p>
                     </div>
                     <div class="footer-feedback">
-                        <h4>Envie sugestões ou pedidos <i class="ph ph-arrow-down"></i></h4>
+                        <h4><span data-i18n="footer.feedback.title">Envie sugestões ou pedidos</span> <i class="ph ph-arrow-down"></i></h4>
                         <form id="feedback-form" class="feedback-form">
                             <div class="feedback-row">
-                                <input type="text" id="feedback-name" placeholder="Nome (opcional)">
-                                <input type="email" id="feedback-email" placeholder="Email (opcional)">
+                                <input type="text" id="feedback-name" placeholder="Nome (opcional)" data-i18n-placeholder="footer.feedback.namePlaceholder">
+                                <input type="email" id="feedback-email" placeholder="Email (opcional)" data-i18n-placeholder="footer.feedback.emailPlaceholder">
                             </div>
-                            <textarea id="feedback-message" rows="3" placeholder="Escreva sua mensagem" required></textarea>
+                            <textarea id="feedback-message" rows="3" placeholder="Escreva sua mensagem" required data-i18n-placeholder="footer.feedback.messagePlaceholder"></textarea>
                             <div class="feedback-actions">
                                 <button type="submit" class="btn btn-secondary btn-sm" id="feedback-submit">
-                                    <i class="ph ph-paper-plane-tilt"></i> Enviar
+                                    <i class="ph ph-paper-plane-tilt"></i> <span data-i18n="footer.feedback.send">Enviar</span>
                                 </button>
                                 <span id="feedback-status" class="feedback-status" role="status"></span>
                             </div>
@@ -228,6 +237,7 @@
         </div>
     </div>
 
+    <script src="/i18n.js"></script>
     <script src="/app.js"></script>
     <script>
         // Theme Management

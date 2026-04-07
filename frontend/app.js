@@ -10,6 +10,17 @@ let currentOutgroup = null;
 const POLL_INTERVAL_MS = 2000;
 const ERROR_MESSAGE_CHAR_LIMIT = 4000;
 
+function t(key, params = null, fallback = '') {
+    if (window.TreeI18n && typeof window.TreeI18n.t === 'function') {
+        return window.TreeI18n.t(key, params, fallback);
+    }
+    if (!fallback) return key;
+    if (!params) return fallback;
+    return fallback.replace(/\{(\w+)\}/g, (_, paramKey) => {
+        return Object.prototype.hasOwnProperty.call(params, paramKey) ? String(params[paramKey]) : `{${paramKey}}`;
+    });
+}
+
 // Arquivos para cada modo
 let mode1File = null;
 let alignmentFile = null;
@@ -213,12 +224,12 @@ function setupFeedbackForm() {
         const message = document.getElementById('feedback-message').value.trim();
 
         if (message.length < 5) {
-            setFeedbackStatus('Mensagem muito curta.', 'error', statusEl);
+            setFeedbackStatus(t('feedback.tooShort', null, 'Mensagem muito curta.'), 'error', statusEl);
             return;
         }
 
         submitBtn.disabled = true;
-        setFeedbackStatus('Enviando...', '', statusEl);
+        setFeedbackStatus(t('feedback.sending', null, 'Enviando...'), '', statusEl);
 
         try {
             const response = await fetch(`${API_URL}/feedback`, {
@@ -229,13 +240,13 @@ function setupFeedbackForm() {
                 body: JSON.stringify({ name, email, message })
             });
             if (!response.ok) {
-                const messageText = await readErrorDetail(response, 'Erro ao enviar');
+                const messageText = await readErrorDetail(response, t('feedback.sendError', null, 'Erro ao enviar'));
                 throw new Error(messageText);
             }
-            setFeedbackStatus('Enviado com sucesso.', 'success', statusEl);
+            setFeedbackStatus(t('feedback.sendSuccess', null, 'Enviado com sucesso.'), 'success', statusEl);
             form.reset();
         } catch (error) {
-            setFeedbackStatus(`Falha ao enviar: ${error.message}`, 'error', statusEl);
+            setFeedbackStatus(t('feedback.sendFailed', { message: error.message }, `Falha ao enviar: ${error.message}`), 'error', statusEl);
         } finally {
             submitBtn.disabled = false;
         }
@@ -297,10 +308,10 @@ function setCopyButtonFeedback(button, state) {
     }
     button.classList.remove('copy-success', 'copy-error');
     if (state === 'success') {
-        button.innerHTML = '<i class="ph ph-check"></i> Copiado';
+        button.innerHTML = `<i class="ph ph-check"></i> ${t('copy.success', null, 'Copiado')}`;
         button.classList.add('copy-success');
     } else {
-        button.innerHTML = '<i class="ph ph-warning-circle"></i> Falha';
+        button.innerHTML = `<i class="ph ph-warning-circle"></i> ${t('copy.failed', null, 'Falha')}`;
         button.classList.add('copy-error');
     }
     button._copyTimeout = setTimeout(() => {
@@ -355,7 +366,7 @@ function setupMode1() {
 
 async function handleSubmitMode1() {
     if (!mode1File) {
-        showError('Por favor, carregue sua matriz alinhada');
+        showError(t('validation.mode1.fileRequired', null, 'Carregue sua matriz alinhada para prosseguir.'));
         return;
     }
     
@@ -383,7 +394,7 @@ async function handleSubmitMode1() {
         });
         
         if (!response.ok) {
-            const message = await readErrorDetail(response, 'Erro no upload');
+            const message = await readErrorDetail(response, t('errors.upload', null, 'Erro no upload'));
             throw new Error(message);
         }
         
@@ -398,7 +409,7 @@ async function handleSubmitMode1() {
         await startAnalysis(treeTool, bootstrap);
         
     } catch (error) {
-        showError(`Erro: ${error.message}`);
+        showError(t('errors.generic', { message: error.message }, `Erro: ${error.message}`));
     }
 }
 
@@ -449,7 +460,7 @@ async function handleSubmitMode2() {
     const textSequences = document.getElementById('sequences-text').value.trim();
     
     if (!textSequences && !sequencesFile) {
-        showError('Por favor, insira sequências em texto ou carregue um arquivo');
+        showError(t('validation.mode2.sequencesRequired', null, 'Insira sequências em texto ou carregue um arquivo.'));
         return;
     }
     
@@ -489,7 +500,7 @@ async function handleSubmitMode2() {
         });
         
         if (!response.ok) {
-            const message = await readErrorDetail(response, 'Erro no upload');
+            const message = await readErrorDetail(response, t('errors.upload', null, 'Erro no upload'));
             throw new Error(message);
         }
         
@@ -504,7 +515,7 @@ async function handleSubmitMode2() {
         await startAnalysis(treeTool, bootstrap);
         
     } catch (error) {
-        showError(`Erro: ${error.message}`);
+        showError(t('errors.generic', { message: error.message }, `Erro: ${error.message}`));
     }
 }
 
@@ -552,7 +563,7 @@ function setupMode3() {
 
 async function handleSubmitMode3() {
     if (!rawMatrixFile) {
-        showError('Por favor, carregue sua matriz crua (não alinhada)');
+        showError(t('validation.mode3.rawRequired', null, 'Carregue sua matriz crua (não alinhada).'));
         return;
     }
     
@@ -588,7 +599,7 @@ async function handleSubmitMode3() {
         });
         
         if (!response.ok) {
-            const message = await readErrorDetail(response, 'Erro no upload');
+            const message = await readErrorDetail(response, t('errors.upload', null, 'Erro no upload'));
             throw new Error(message);
         }
         
@@ -603,7 +614,7 @@ async function handleSubmitMode3() {
         await startAnalysis(treeTool, bootstrap);
         
     } catch (error) {
-        showError(`Erro: ${error.message}`);
+        showError(t('errors.generic', { message: error.message }, `Erro: ${error.message}`));
     }
 }
 
@@ -632,7 +643,7 @@ function setupMode4() {
 
 async function handleSubmitMode4() {
     if (!mode4TreeFile) {
-        showError('Por favor, carregue seu arquivo de árvore (.nwk ou .tre)');
+        showError(t('validation.mode4.treeRequired', null, 'Carregue seu arquivo de árvore (.nwk ou .tre).'));
         return;
     }
     
@@ -658,7 +669,7 @@ async function handleSubmitMode4() {
         });
         
         if (!response.ok) {
-            const message = await readErrorDetail(response, 'Erro no upload');
+            const message = await readErrorDetail(response, t('errors.upload', null, 'Erro no upload'));
             throw new Error(message);
         }
         
@@ -675,7 +686,7 @@ async function handleSubmitMode4() {
         await startRenderOnly();
         
     } catch (error) {
-        showError(`Erro: ${error.message}`);
+        showError(t('errors.generic', { message: error.message }, `Erro: ${error.message}`));
     }
 }
 
@@ -696,14 +707,14 @@ async function startRenderOnly() {
         
         // Inicializar barra
         updateStatusBadge('running');
-        setProgress(30, 'Renderizando árvore...');
+        setProgress(30, t('progress.renderingTree', null, 'Renderizando árvore...'));
         
         // Para modo 4, tree_tool é skip mas a renderização acontece diretamente
         const url = `${API_URL}/analyze/${currentJobId}?tree_tool=skip&bootstrap=1000`;
         const response = await fetch(url, { method: 'POST' });
         
         if (!response.ok) {
-            const message = await readErrorDetail(response, 'Erro ao renderizar');
+            const message = await readErrorDetail(response, t('errors.render', null, 'Erro ao renderizar'));
             throw new Error(message);
         }
         
@@ -715,20 +726,20 @@ async function startRenderOnly() {
         }
         
         if (result.status === 'completed') {
-            setProgress(100, 'Renderização concluída!');
+            setProgress(100, t('progress.renderingCompleted', null, 'Renderização concluída!'));
             setTimeout(() => showResults(), 500);
         } else if (result.status === 'queued') {
             updateStatusBadge('queued', result.queue_position);
             startPolling();
         } else if (result.status === 'failed') {
-            throw new Error(result.message || 'Erro na renderização');
+            throw new Error(result.message || t('errors.render', null, 'Erro ao renderizar'));
         } else {
             startPolling();
         }
         
     } catch (error) {
         console.error('Erro em startRenderOnly:', error);
-        showError(`Erro ao renderizar: ${error.message}`);
+        showError(t('errors.renderWithDetail', { message: error.message }, `Erro ao renderizar: ${error.message}`));
     }
 }
 
@@ -752,13 +763,13 @@ async function startAnalysis(treeTool, bootstrap) {
         
         // Inicializar barra
         updateStatusBadge('queued');
-        setProgress(10, 'Iniciando análise...');
+        setProgress(10, t('progress.startingAnalysis', null, 'Iniciando análise...'));
         
         const url = `${API_URL}/analyze/${currentJobId}?tree_tool=${treeTool}&bootstrap=${bootstrap}`;
         const response = await fetch(url, { method: 'POST' });
         
         if (!response.ok) {
-            const message = await readErrorDetail(response, 'Erro ao iniciar análise');
+            const message = await readErrorDetail(response, t('errors.startAnalysis', null, 'Erro ao iniciar análise'));
             throw new Error(message);
         }
 
@@ -771,17 +782,17 @@ async function startAnalysis(treeTool, bootstrap) {
             updateStatusBadge('queued', result.queue_position);
             startPolling();
         } else if (result.status === 'completed') {
-            setProgress(100, 'Análise concluída!');
+            setProgress(100, t('progress.analysisCompleted', null, 'Análise concluída!'));
             setTimeout(() => showResults(), 500);
         } else if (result.status === 'failed') {
-            throw new Error(result.message || 'Erro na análise');
+            throw new Error(result.message || t('errors.analysisDefault', null, 'Erro na análise'));
         } else {
             startPolling();
         }
         
     } catch (error) {
         console.error('Erro em startAnalysis:', error);
-        showError(`Erro ao iniciar análise: ${error.message}`);
+        showError(t('errors.startAnalysisWithDetail', { message: error.message }, `Erro ao iniciar análise: ${error.message}`));
     }
 }
 
@@ -805,7 +816,7 @@ function setProgress(value, stepText) {
     const progressPercent = document.getElementById('progress-percent');
     
     progressFill.style.width = `${value}%`;
-    progressText.textContent = `${value.toFixed(0)}% completo`;
+    progressText.textContent = t('progress.percentComplete', { percent: value.toFixed(0) }, `${value.toFixed(0)}% completo`);
     if (progressPercent) {
         progressPercent.textContent = `${value.toFixed(0)}%`;
     }
@@ -819,19 +830,19 @@ function updateStatusBadge(status, queuePosition) {
     const queueText = document.getElementById('job-queue-text');
     if (!badge) return;
     const labels = {
-        uploaded: 'Aguardando',
-        queued: 'Em fila',
-        running: 'Em execução',
-        completed: 'Concluído',
-        failed: 'Falhou',
-        expired: 'Expirado'
+        uploaded: t('status.uploaded', null, 'Aguardando'),
+        queued: t('status.queued', null, 'Em fila'),
+        running: t('status.running', null, 'Em execução'),
+        completed: t('status.completed', null, 'Concluído'),
+        failed: t('status.failed', null, 'Falhou'),
+        expired: t('status.expired', null, 'Expirado')
     };
     badge.textContent = labels[status] || status;
     badge.classList.remove('status-queued', 'status-running', 'status-completed', 'status-failed', 'status-expired');
     badge.classList.add(`status-${status}`);
     if (queueText) {
         if (status === 'queued' && queuePosition) {
-            queueText.textContent = `Posição na fila: ${queuePosition}`;
+            queueText.textContent = t('status.queuePosition', { queuePosition }, `Posição na fila: ${queuePosition}`);
         } else {
             queueText.textContent = '';
         }
@@ -880,7 +891,7 @@ async function checkStatus() {
         const response = await fetch(getStatusUrl());
         
         if (!response.ok) {
-            throw new Error('Erro ao verificar status');
+            throw new Error(t('errors.checkStatus', null, 'Erro ao verificar status'));
         }
         
         const status = await response.json();
@@ -897,19 +908,19 @@ async function checkStatus() {
         }
         
         const stepNames = {
-            'uploaded': 'Aguardando envio...',
-            'queued': 'Na fila de processamento...',
-            'running': 'Processando...',
-            'alignment': 'Alinhando sequências com MAFFT...',
-            'alignment_done': 'Alinhamento concluído!',
-            'merging_files': 'Juntando arquivos...',
-            'trimming': 'Curadoria do alinhamento com trimAl...',
-            'trimming_done': 'Curadoria concluída!',
-            'skipping_alignment': 'Matriz já alinhada, pulando...',
-            'tree_building': 'Construindo árvore filogenética...',
-            'rendering': 'Renderizando árvore...'
+            'uploaded': t('progress.uploaded', null, 'Aguardando envio...'),
+            'queued': t('progress.queued', null, 'Na fila de processamento...'),
+            'running': t('progress.running', null, 'Processando...'),
+            'alignment': t('progress.alignment', null, 'Alinhando sequências com MAFFT...'),
+            'alignment_done': t('progress.alignment_done', null, 'Alinhamento concluído!'),
+            'merging_files': t('progress.merging_files', null, 'Juntando arquivos...'),
+            'trimming': t('progress.trimming', null, 'Curadoria do alinhamento com trimAl...'),
+            'trimming_done': t('progress.trimming_done', null, 'Curadoria concluída!'),
+            'skipping_alignment': t('progress.skipping_alignment', null, 'Matriz já alinhada, pulando...'),
+            'tree_building': t('progress.tree_building', null, 'Construindo árvore filogenética...'),
+            'rendering': t('progress.rendering', null, 'Renderizando árvore...')
         };
-        const stepText = stepNames[status.step] || status.step || 'Processando...';
+        const stepText = stepNames[status.step] || status.step || t('progress.default', null, 'Processando...');
 
         updateStatusBadge(status.status, status.queue_position);
         if (status.status === 'queued') {
@@ -923,7 +934,7 @@ async function checkStatus() {
             const elapsed = Date.now() - (progressStartTime || Date.now());
             const minDisplay = 1200;
             
-            setProgress(100, 'Finalizando...');
+            setProgress(100, t('progress.finalizing', null, 'Finalizando...'));
             
             if (elapsed < minDisplay) {
                 setTimeout(() => {
@@ -936,15 +947,15 @@ async function checkStatus() {
             }
         } else if (status.status === 'failed') {
             stopPolling();
-            showError(status.error_message || 'Erro desconhecido na análise');
+            showError(status.error_message || t('errors.unknownAnalysis', null, 'Erro desconhecido na análise'));
         } else if (status.status === 'expired') {
             stopPolling();
-            showError('Este link expirou e os dados foram removidos.');
+            showError(t('errors.expiredLink', null, 'Este link expirou e os dados foram removidos.'));
         }
         
     } catch (error) {
         stopPolling();
-        showError(`Erro ao verificar status: ${error.message}`);
+        showError(t('errors.checkStatusWithDetail', { message: error.message }, `Erro ao verificar status: ${error.message}`));
     }
 }
 
@@ -1031,8 +1042,8 @@ async function rerenderSvg() {
     
     // Desabilitar botão e mostrar loading
     rerenderBtn.disabled = true;
-    rerenderBtn.innerHTML = '<i class="ph ph-circle-notch btn-icon spin"></i> Renderizando...';
-    container.innerHTML = '<p style="padding: 20px; color: #666;">Re-renderizando árvore com novas dimensões...</p>';
+    rerenderBtn.innerHTML = `<i class="ph ph-circle-notch btn-icon spin"></i> ${t('progress.rendering', null, 'Renderizando árvore...')}`;
+    container.innerHTML = `<p style="padding: 20px; color: #666;">${t('tree.rerendering', null, 'Re-renderizando árvore com novas dimensões...')}</p>`;
     
     try {
         const response = await fetch(getRerenderUrl(), {
@@ -1044,7 +1055,7 @@ async function rerenderSvg() {
         });
         
         if (!response.ok) {
-            const message = await readErrorDetail(response, 'Erro ao re-renderizar');
+            const message = await readErrorDetail(response, t('errors.rerender', null, 'Erro ao re-renderizar'));
             throw new Error(message);
         }
         
@@ -1068,26 +1079,26 @@ async function rerenderSvg() {
         console.error('Erro ao re-renderizar:', error);
         container.innerHTML = `
             <div style="padding: 20px; background: #fff5f5; border-radius: 8px; border: 1px solid #f56565;">
-                <p style="color: #c53030;">Erro ao re-renderizar: ${error.message}</p>
+                <p style="color: #c53030;">${t('errors.rerenderWithDetail', { message: error.message }, `Erro ao re-renderizar: ${error.message}`)}</p>
             </div>
         `;
     } finally {
         // Reabilitar botão
         rerenderBtn.disabled = false;
-        rerenderBtn.innerHTML = '<i class="ph ph-arrow-clockwise btn-icon"></i> Re-renderizar';
+        rerenderBtn.innerHTML = `<i class="ph ph-arrow-clockwise btn-icon"></i> ${t('results.svgDimensions.rerender', null, 'Re-renderizar')}`;
     }
 }
 
 async function visualizeTree() {
     try {
         const container = document.getElementById('tree-container');
-        container.innerHTML = '<p style="padding: 20px; color: #666;">Carregando visualização da árvore...</p>';
+        container.innerHTML = `<p style="padding: 20px; color: #666;">${t('tree.loading', null, 'Carregando visualização da árvore...')}</p>`;
         
         // Buscar conteúdo SVG do backend
         const response = await fetch(getSvgContentUrl());
         
         if (!response.ok) {
-            throw new Error('Não foi possível carregar o SVG da árvore');
+            throw new Error(t('tree.loadFailed', null, 'Não foi possível carregar o SVG da árvore'));
         }
         
         const data = await response.json();
@@ -1109,8 +1120,8 @@ async function visualizeTree() {
         console.error('Erro ao visualizar árvore:', error);
         document.getElementById('tree-container').innerHTML = `
             <div style="padding: 20px; background: white; border-radius: 8px;">
-                <h3 style="margin-top: 0;">🌳 Árvore Filogenética Gerada</h3>
-                <p style="color: #666;">Use o botão de download para obter o arquivo SVG da árvore.</p>
+                <h3 style="margin-top: 0;">${t('tree.fallbackTitle', null, 'Árvore Filogenética Gerada')}</h3>
+                <p style="color: #666;">${t('tree.fallbackDownloadHint', null, 'Use o botão de download para obter o arquivo SVG da árvore.')}</p>
                 <p style="color: #999; font-size: 12px;">Erro: ${error.message}</p>
             </div>
         `;

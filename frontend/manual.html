@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Manual de uso do TreeApp: fluxo de trabalho, status dos jobs, downloads e perguntas frequentes.">
-    <title>Manual de Uso - TreeApp</title>
+    <meta name="description" content="Manual de uso do TreeApp: fluxo de trabalho, status dos jobs, downloads e perguntas frequentes." data-i18n-content="meta.manual.description">
+    <title data-i18n-title="meta.manual.title">Manual de Uso - TreeApp</title>
     <link rel="stylesheet" href="/style.css">
     <!-- Phosphor Icons - ícones SVG com design limpo e consistente -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
@@ -21,52 +21,60 @@
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <span class="nav-section-label">Análises</span>
+                    <span class="nav-section-label" data-i18n="nav.section.analysis">Análises</span>
                     <a href="/" class="nav-item">
                         <i class="ph ph-squares-four"></i>
-                        <span>Nova Análise</span>
+                        <span data-i18n="nav.newAnalysis">Nova Análise</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <span class="nav-section-label">Ferramentas</span>
+                    <span class="nav-section-label" data-i18n="nav.section.tools">Ferramentas</span>
                     <a href="/" class="nav-item">
                         <i class="ph ph-text-align-justify"></i>
-                        <span>Matriz Alinhada</span>
+                        <span data-i18n="nav.mode1">Matriz Alinhada</span>
                     </a>
                     <a href="/" class="nav-item">
                         <i class="ph ph-plus-circle"></i>
-                        <span>Adicionar Sequências</span>
+                        <span data-i18n="nav.mode2">Adicionar Sequências</span>
                     </a>
                     <a href="/" class="nav-item">
                         <i class="ph ph-text-align-center"></i>
-                        <span>Alinhar do Zero</span>
+                        <span data-i18n="nav.mode3">Alinhar do Zero</span>
                     </a>
                     <a href="/" class="nav-item">
                         <i class="ph ph-git-branch"></i>
-                        <span>Renderizar Árvore</span>
+                        <span data-i18n="nav.mode4">Renderizar Árvore</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <span class="nav-section-label">Ajuda</span>
+                    <span class="nav-section-label" data-i18n="nav.section.help">Ajuda</span>
                     <a href="/manual.html" class="nav-item active">
                         <i class="ph ph-book-open-text"></i>
-                        <span>Manual</span>
+                        <span data-i18n="nav.manual">Manual</span>
                     </a>
                     <a href="/testers.html" class="nav-item">
                         <i class="ph ph-megaphone-simple"></i>
-                        <span>Testes</span>
+                        <span data-i18n="nav.testers">Testes</span>
                     </a>
                 </div>
             </nav>
 
             <div class="sidebar-footer">
-                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" data-i18n-aria-label="theme.toggleAria">
                     <i class="ph ph-sun theme-icon-light"></i>
                     <i class="ph ph-moon theme-icon-dark"></i>
-                    <span class="theme-label">Tema</span>
+                    <span class="theme-label" data-i18n="theme.label">Tema</span>
                 </button>
+
+                <div class="language-switcher">
+                    <span class="language-label" data-i18n="language.label">Idioma</span>
+                    <div class="language-toggle" role="group" aria-label="Selecionar idioma" data-i18n-aria-label="language.aria">
+                        <button type="button" class="language-btn" data-lang="pt-BR" aria-pressed="false">PT</button>
+                        <button type="button" class="language-btn" data-lang="en-US" aria-pressed="false">EN</button>
+                    </div>
+                </div>
             </div>
         </aside>
 
@@ -83,135 +91,135 @@
                     <div class="breadcrumb">
                         <span class="breadcrumb-item">TreeApp</span>
                         <i class="ph ph-caret-right" class="breadcrumb-separator"></i>
-                        <span class="breadcrumb-item current" id="current-page">Manual</span>
+                        <span class="breadcrumb-item current" id="current-page" data-i18n="manual.breadcrumb.current">Manual</span>
                     </div>
-                    <p class="header-subtitle">Guia rápido + FAQ</p>
+                    <p class="header-subtitle" data-i18n="manual.header.subtitle">Guia rápido + FAQ</p>
                 </div>
             </header>
 
             <main class="main-content manual-page">
                 <section class="card manual-hero">
                     <div class="card-header">
-                        <span class="manual-eyebrow">Manual de uso</span>
-                        <h2 class="manual-title">Do upload ao download da árvore em poucos passos</h2>
-                        <p class="section-hint">
+                        <span class="manual-eyebrow" data-i18n="manual.hero.eyebrow">Manual de uso</span>
+                        <h2 class="manual-title" data-i18n="manual.hero.title">Do upload ao download da árvore em poucos passos</h2>
+                        <p class="section-hint" data-i18n="manual.hero.hint">
                             Este guia resume os fluxos disponíveis, o ciclo do job e onde baixar os resultados.
                         </p>
                     </div>
                     <div class="manual-quicklinks">
-                        <a href="#fluxos">Fluxos</a>
-                        <a href="#passo-a-passo">Passo a passo</a>
-                        <a href="#status">Status</a>
-                        <a href="#resultados">Downloads</a>
+                        <a href="#fluxos" data-i18n="manual.quicklinks.flows">Fluxos</a>
+                        <a href="#passo-a-passo" data-i18n="manual.quicklinks.stepByStep">Passo a passo</a>
+                        <a href="#status" data-i18n="manual.quicklinks.status">Status</a>
+                        <a href="#resultados" data-i18n="manual.quicklinks.downloads">Downloads</a>
                         <a href="#faq">FAQ</a>
                     </div>
                 </section>
 
                 <section id="fluxos" class="card manual-section">
                     <div class="card-header">
-                        <h2>Fluxos de trabalho</h2>
-                        <p class="section-hint">Escolha o fluxo que combina com o seu tipo de dado.</p>
+                        <h2 data-i18n="manual.flows.title">Fluxos de trabalho</h2>
+                        <p class="section-hint" data-i18n="manual.flows.hint">Escolha o fluxo que combina com o seu tipo de dado.</p>
                     </div>
                     <div class="manual-grid">
                         <article class="manual-tile">
                             <i class="ph ph-text-align-justify"></i>
-                            <h3>Matriz Alinhada</h3>
-                            <p>Envie uma matriz já alinhada e gere a árvore direto.</p>
+                            <h3 data-i18n="workflow.mode1.title">Matriz Alinhada</h3>
+                            <p data-i18n="manual.flows.mode1">Envie uma matriz já alinhada e gere a árvore direto.</p>
                         </article>
                         <article class="manual-tile">
                             <i class="ph ph-plus-circle"></i>
-                            <h3>Adicionar Sequências</h3>
-                            <p>Inclua novas sequências a uma matriz base com MAFFT --add.</p>
+                            <h3 data-i18n="workflow.mode2.title">Adicionar Sequências</h3>
+                            <p data-i18n="manual.flows.mode2">Inclua novas sequências a uma matriz base com MAFFT --add.</p>
                         </article>
                         <article class="manual-tile">
                             <i class="ph ph-text-align-center"></i>
-                            <h3>Alinhar do Zero</h3>
-                            <p>Pipeline completo: MAFFT → trimAl → árvore.</p>
+                            <h3 data-i18n="workflow.mode3.title">Alinhar do Zero</h3>
+                            <p data-i18n="manual.flows.mode3">Pipeline completo: MAFFT → trimAl → árvore.</p>
                         </article>
                         <article class="manual-tile">
                             <i class="ph ph-git-branch"></i>
-                            <h3>Renderizar Árvore</h3>
-                            <p>Suba um .nwk/.tre e gere o SVG pronto para publicação.</p>
+                            <h3 data-i18n="workflow.mode4.title">Renderizar Árvore</h3>
+                            <p data-i18n="manual.flows.mode4">Suba um .nwk/.tre e gere o SVG pronto para publicação.</p>
                         </article>
                     </div>
                 </section>
 
                 <section id="passo-a-passo" class="card manual-section">
                     <div class="card-header">
-                        <h2>Passo a passo rápido</h2>
-                        <p class="section-hint">Fluxo sugerido para a maioria dos usuários.</p>
+                        <h2 data-i18n="manual.stepByStep.title">Passo a passo rápido</h2>
+                        <p class="section-hint" data-i18n="manual.stepByStep.hint">Fluxo sugerido para a maioria dos usuários.</p>
                     </div>
                     <ol class="manual-steps">
-                        <li>Escolha o fluxo de trabalho e envie seus arquivos.</li>
-                        <li>Opcional: informe um e-mail e um nome para o job.</li>
-                        <li>Acompanhe o status (fila, execução, erro, concluído).</li>
-                        <li>Baixe SVG/PDF e arquivos do IQ-TREE quando disponíveis.</li>
-                        <li>Use o link público para compartilhar o resultado.</li>
+                        <li data-i18n="manual.stepByStep.item1">Escolha o fluxo de trabalho e envie seus arquivos.</li>
+                        <li data-i18n="manual.stepByStep.item2">Opcional: informe um e-mail e um nome para o job.</li>
+                        <li data-i18n="manual.stepByStep.item3">Acompanhe o status (fila, execução, erro, concluído).</li>
+                        <li data-i18n="manual.stepByStep.item4">Baixe SVG/PDF e arquivos do IQ-TREE quando disponíveis.</li>
+                        <li data-i18n="manual.stepByStep.item5">Use o link público para compartilhar o resultado.</li>
                     </ol>
                 </section>
 
                 <section id="status" class="card manual-section">
                     <div class="card-header">
-                        <h2>Status do job</h2>
-                        <p class="section-hint">O painel mostra em que etapa o processamento está.</p>
+                        <h2 data-i18n="manual.status.title">Status do job</h2>
+                        <p class="section-hint" data-i18n="manual.status.hint">O painel mostra em que etapa o processamento está.</p>
                     </div>
                     <div class="manual-status">
                         <div class="manual-status-item">
-                            <span class="status-pill">queue</span>
-                            <p>Na fila aguardando recursos do servidor.</p>
+                            <span class="status-pill" data-i18n="manual.status.pill.queue">queue</span>
+                            <p data-i18n="manual.status.queue">Na fila aguardando recursos do servidor.</p>
                         </div>
                         <div class="manual-status-item">
-                            <span class="status-pill">running</span>
-                            <p>Processando alinhamento, árvore e/ou renderização.</p>
+                            <span class="status-pill" data-i18n="manual.status.pill.running">running</span>
+                            <p data-i18n="manual.status.running">Processando alinhamento, árvore e/ou renderização.</p>
                         </div>
                         <div class="manual-status-item">
-                            <span class="status-pill">failed</span>
-                            <p>Ocorreu um erro. O e-mail também é enviado em falha.</p>
+                            <span class="status-pill" data-i18n="manual.status.pill.failed">failed</span>
+                            <p data-i18n="manual.status.failed">Ocorreu um erro. O e-mail também é enviado em falha.</p>
                         </div>
                         <div class="manual-status-item">
-                            <span class="status-pill">completed</span>
-                            <p>Resultados disponíveis para download e re-render.</p>
+                            <span class="status-pill" data-i18n="manual.status.pill.completed">completed</span>
+                            <p data-i18n="manual.status.completed">Resultados disponíveis para download e re-render.</p>
                         </div>
                     </div>
                 </section>
 
                 <section id="resultados" class="card manual-section">
                     <div class="card-header">
-                        <h2>Resultados e downloads</h2>
-                        <p class="section-hint">Arquivos principais disponibilizados após a conclusão.</p>
+                        <h2 data-i18n="manual.results.title">Resultados e downloads</h2>
+                        <p class="section-hint" data-i18n="manual.results.hint">Arquivos principais disponibilizados após a conclusão.</p>
                     </div>
                     <ul class="manual-list">
-                        <li><strong>SVG</strong> com suporte e estilos do TreeApp.</li>
-                        <li><strong>PDF</strong> com a árvore para publicação.</li>
-                        <li><strong>IQ-TREE</strong> (sumário e modelos) quando aplicável.</li>
-                        <li><strong>Link público</strong> para compartilhar o resultado.</li>
+                        <li data-i18n="manual.results.item1">SVG com suporte e estilos do TreeApp.</li>
+                        <li data-i18n="manual.results.item2">PDF com a árvore para publicação.</li>
+                        <li data-i18n="manual.results.item3">IQ-TREE (sumário e modelos) quando aplicável.</li>
+                        <li data-i18n="manual.results.item4">Link público para compartilhar o resultado.</li>
                     </ul>
-                    <p class="manual-note">
+                    <p class="manual-note" data-i18n="manual.results.note">
                         Links públicos e dados expiram 3 dias após a conclusão do job.
                     </p>
                 </section>
 
                 <section id="faq" class="card manual-section">
                     <div class="card-header">
-                        <h2>FAQ</h2>
-                        <p class="section-hint">Dúvidas comuns e respostas rápidas.</p>
+                        <h2 data-i18n="manual.faq.title">FAQ</h2>
+                        <p class="section-hint" data-i18n="manual.faq.hint">Dúvidas comuns e respostas rápidas.</p>
                     </div>
                     <div class="faq-list">
                         <details>
-                            <summary>Meu e-mail não chegou. O que fazer?</summary>
-                            <p>Verifique a caixa de spam e confirme se o endereço foi digitado corretamente.</p>
+                            <summary data-i18n="manual.faq.q1">Meu e-mail não chegou. O que fazer?</summary>
+                            <p data-i18n="manual.faq.a1">Verifique a caixa de spam e confirme se o endereço foi digitado corretamente.</p>
                         </details>
                         <details>
-                            <summary>Posso compartilhar o link com outras pessoas?</summary>
-                            <p>Sim. O link público abre a mesma página de resultados com opção de re-render.</p>
+                            <summary data-i18n="manual.faq.q2">Posso compartilhar o link com outras pessoas?</summary>
+                            <p data-i18n="manual.faq.a2">Sim. O link público abre a mesma página de resultados com opção de re-render.</p>
                         </details>
                         <details>
-                            <summary>O que fazer se o job falhar?</summary>
-                            <p>Revise o formato dos arquivos e tente novamente. Se persistir, envie uma sugestão no formulário.</p>
+                            <summary data-i18n="manual.faq.q3">O que fazer se o job falhar?</summary>
+                            <p data-i18n="manual.faq.a3">Revise o formato dos arquivos e tente novamente. Se persistir, envie uma sugestão no formulário.</p>
                         </details>
                         <details>
-                            <summary>Quanto tempo os resultados ficam disponíveis?</summary>
-                            <p>Os arquivos são mantidos por 3 dias após o job ser concluído.</p>
+                            <summary data-i18n="manual.faq.q4">Quanto tempo os resultados ficam disponíveis?</summary>
+                            <p data-i18n="manual.faq.a4">Os arquivos são mantidos por 3 dias após o job ser concluído.</p>
                         </details>
                     </div>
                 </section>
@@ -220,19 +228,19 @@
             <footer class="main-footer">
                 <div class="footer-content">
                     <div class="footer-copy">
-                        <p>Desenvolvido por <a href="https://github.com/genivaldo-alves-silva" target="_blank" rel="noopener noreferrer">Genivaldo Alves-Silva</a> para análises filogenéticas de fungos e outros organismos</p>
+                        <p><span data-i18n="footer.copy.prefix">Desenvolvido por</span> <a href="https://github.com/genivaldo-alves-silva" target="_blank" rel="noopener noreferrer">Genivaldo Alves-Silva</a> <span data-i18n="footer.copy.suffix">para análises filogenéticas de fungos e outros organismos</span></p>
                     </div>
                     <div class="footer-feedback">
-                        <h4>Envie sugestões ou pedidos <i class="ph ph-arrow-down"></i></h4>
+                        <h4><span data-i18n="footer.feedback.title">Envie sugestões ou pedidos</span> <i class="ph ph-arrow-down"></i></h4>
                         <form id="feedback-form" class="feedback-form">
                             <div class="feedback-row">
-                                <input type="text" id="feedback-name" placeholder="Nome (opcional)">
-                                <input type="email" id="feedback-email" placeholder="Email (opcional)">
+                                <input type="text" id="feedback-name" placeholder="Nome (opcional)" data-i18n-placeholder="footer.feedback.namePlaceholder">
+                                <input type="email" id="feedback-email" placeholder="Email (opcional)" data-i18n-placeholder="footer.feedback.emailPlaceholder">
                             </div>
-                            <textarea id="feedback-message" rows="3" placeholder="Escreva sua mensagem" required></textarea>
+                            <textarea id="feedback-message" rows="3" placeholder="Escreva sua mensagem" required data-i18n-placeholder="footer.feedback.messagePlaceholder"></textarea>
                             <div class="feedback-actions">
                                 <button type="submit" class="btn btn-secondary btn-sm" id="feedback-submit">
-                                    <i class="ph ph-paper-plane-tilt"></i> Enviar
+                                    <i class="ph ph-paper-plane-tilt"></i> <span data-i18n="footer.feedback.send">Enviar</span>
                                 </button>
                                 <span id="feedback-status" class="feedback-status" role="status"></span>
                             </div>
@@ -243,6 +251,7 @@
         </div>
     </div>
 
+    <script src="/i18n.js"></script>
     <script src="/app.js"></script>
     <script>
         // Theme Management

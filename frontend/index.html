@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Gere árvores filogenéticas em alta resolução (PDF/SVG) prontas para publicação. Interface intuitiva e exportação imediata para artigos científicos.">
-    <title>Análise Filogenética - TreeApp</title>
+    <meta name="description" content="Gere árvores filogenéticas em alta resolução (PDF/SVG) prontas para publicação. Interface intuitiva e exportação imediata para artigos científicos." data-i18n-content="meta.home.description">
+    <title data-i18n-title="meta.home.title">Análise Filogenética - TreeApp</title>
     <link rel="stylesheet" href="/style.css">
     <!-- Phosphor Icons - ícones SVG com design limpo e consistente -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
@@ -23,52 +23,60 @@
             
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <span class="nav-section-label">Análises</span>
+                    <span class="nav-section-label" data-i18n="nav.section.analysis">Análises</span>
                     <a href="#" class="nav-item active" data-nav="workflow">
                         <i class="ph ph-squares-four"></i>
-                        <span>Nova Análise</span>
+                        <span data-i18n="nav.newAnalysis">Nova Análise</span>
                     </a>
                 </div>
                 
                 <div class="nav-section">
-                    <span class="nav-section-label">Ferramentas</span>
+                    <span class="nav-section-label" data-i18n="nav.section.tools">Ferramentas</span>
                     <a href="#" class="nav-item" data-nav="mode1">
                         <i class="ph ph-text-align-justify"></i>
-                        <span>Matriz Alinhada</span>
+                        <span data-i18n="nav.mode1">Matriz Alinhada</span>
                     </a>
                     <a href="#" class="nav-item" data-nav="mode2">
                         <i class="ph ph-plus-circle"></i>
-                        <span>Adicionar Sequências</span>
+                        <span data-i18n="nav.mode2">Adicionar Sequências</span>
                     </a>
                     <a href="#" class="nav-item" data-nav="mode3">
                         <i class="ph ph-text-align-center"></i>
-                        <span>Alinhar do Zero</span>
+                        <span data-i18n="nav.mode3">Alinhar do Zero</span>
                     </a>
                     <a href="#" class="nav-item" data-nav="mode4">
                         <i class="ph ph-git-branch"></i>
-                        <span>Renderizar Árvore</span>
+                        <span data-i18n="nav.mode4">Renderizar Árvore</span>
                     </a>
                 </div>
                 <div class="nav-section">
-                    <span class="nav-section-label">Ajuda</span>
+                    <span class="nav-section-label" data-i18n="nav.section.help">Ajuda</span>
                     <a href="/manual.html" class="nav-item">
                         <i class="ph ph-book-open-text"></i>
-                        <span>Manual</span>
+                        <span data-i18n="nav.manual">Manual</span>
                     </a>
                     <a href="/testers.html" class="nav-item">
                         <i class="ph ph-megaphone-simple"></i>
-                        <span>Testes</span>
+                        <span data-i18n="nav.testers">Testes</span>
                     </a>
                 </div>
             </nav>
             
             <div class="sidebar-footer">
                 <!-- Theme Toggle -->
-                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" data-i18n-aria-label="theme.toggleAria">
                     <i class="ph ph-sun theme-icon-light"></i>
                     <i class="ph ph-moon theme-icon-dark"></i>
-                    <span class="theme-label">Tema</span>
+                    <span class="theme-label" data-i18n="theme.label">Tema</span>
                 </button>
+
+                <div class="language-switcher">
+                    <span class="language-label" data-i18n="language.label">Idioma</span>
+                    <div class="language-toggle" role="group" aria-label="Selecionar idioma" data-i18n-aria-label="language.aria">
+                        <button type="button" class="language-btn" data-lang="pt-BR" aria-pressed="false">PT</button>
+                        <button type="button" class="language-btn" data-lang="en-US" aria-pressed="false">EN</button>
+                    </div>
+                </div>
                 
                 <!-- user-info removido ate implementacao de login -->
             </div>
@@ -89,9 +97,9 @@
                     <div class="breadcrumb">
                         <span class="breadcrumb-item">TreeApp</span>
                         <i class="ph ph-caret-right" class="breadcrumb-separator"></i>
-                        <span class="breadcrumb-item current" id="current-page">Nova Análise</span>
+                        <span class="breadcrumb-item current" id="current-page" data-i18n="header.currentPage.newAnalysis">Nova Análise</span>
                     </div>
-                    <p class="header-subtitle">Análise Filogenética com MAFFT, trimAl e IQ-TREE/FastTree</p>
+                    <p class="header-subtitle" data-i18n="header.subtitle">Análise Filogenética com MAFFT, trimAl e IQ-TREE/FastTree</p>
                 </div>
             </header>
 
@@ -102,8 +110,8 @@
             <!-- ========================================== -->
             <section id="workflow-section" class="card">
                 <div class="card-header">
-                    <h2>Escolha o tipo de análise</h2>
-                    <p class="section-hint">Selecione o fluxo de trabalho adequado para seus dados</p>
+                    <h2 data-i18n="workflow.title">Escolha o tipo de análise</h2>
+                    <p class="section-hint" data-i18n="workflow.hint">Selecione o fluxo de trabalho adequado para seus dados</p>
                 </div>
                 
                 <div class="workflow-options">
@@ -113,19 +121,19 @@
                             <div class="workflow-icon-wrapper">
                                 <i class="ph ph-text-align-justify"></i>
                             </div>
-                            <span class="workflow-badge badge-fast">Rápido</span>
+                            <span class="workflow-badge badge-fast" data-i18n="workflow.badge.fast">Rápido</span>
                         </div>
                         <div class="workflow-card-body">
-                            <h3>Matriz Alinhada</h3>
-                            <p class="workflow-desc">Já tenho uma matriz alinhada. Construir árvore direto.</p>
+                            <h3 data-i18n="workflow.mode1.title">Matriz Alinhada</h3>
+                            <p class="workflow-desc" data-i18n="workflow.mode1.desc">Já tenho uma matriz alinhada. Construir árvore direto.</p>
                         </div>
                         <div class="workflow-card-footer">
                             <div class="workflow-steps">
-                                <span class="step-indicator step-skip">Alinhar</span>
+                                <span class="step-indicator step-skip" data-i18n="workflow.steps.align">Alinhar</span>
                                 <span class="step-arrow">→</span>
-                                <span class="step-indicator step-active">Árvore</span>
+                                <span class="step-indicator step-active" data-i18n="workflow.steps.tree">Árvore</span>
                                 <span class="step-arrow">→</span>
-                                <span class="step-indicator step-active">SVG</span>
+                                <span class="step-indicator step-active" data-i18n="workflow.steps.svg">SVG</span>
                             </div>
                         </div>
                     </div>
@@ -136,23 +144,23 @@
                             <div class="workflow-icon-wrapper">
                                 <i class="ph ph-plus-circle"></i>
                             </div>
-                            <span class="workflow-badge badge-recommended">Recomendado</span>
+                            <span class="workflow-badge badge-recommended" data-i18n="workflow.badge.recommended">Recomendado</span>
                         </div>
                         <div class="workflow-card-body">
-                            <h3>Adicionar Sequências</h3>
-                            <p class="workflow-desc">Adicionar novas sequências a uma matriz base.</p>
+                            <h3 data-i18n="workflow.mode2.title">Adicionar Sequências</h3>
+                            <p class="workflow-desc" data-i18n="workflow.mode2.desc">Adicionar novas sequências a uma matriz base.</p>
                             <div class="workflow-highlight">
                                 <i class="ph ph-database" class="highlight-icon"></i>
-                                <span><em>Fomitiporia</em> dataset disponível</span>
+                                <span><em>Fomitiporia</em> <span data-i18n="workflow.mode2.dataset">dataset disponível</span></span>
                             </div>
                         </div>
                         <div class="workflow-card-footer">
                             <div class="workflow-steps">
-                                <span class="step-indicator step-active">MAFFT --add</span>
+                                <span class="step-indicator step-active" data-i18n="workflow.steps.mafftAdd">MAFFT --add</span>
                                 <span class="step-arrow">→</span>
-                                <span class="step-indicator step-active">Árvore</span>
+                                <span class="step-indicator step-active" data-i18n="workflow.steps.tree">Árvore</span>
                                 <span class="step-arrow">→</span>
-                                <span class="step-indicator step-active">SVG</span>
+                                <span class="step-indicator step-active" data-i18n="workflow.steps.svg">SVG</span>
                             </div>
                         </div>
                     </div>
@@ -163,21 +171,21 @@
                             <div class="workflow-icon-wrapper">
                                 <i class="ph ph-text-align-center"></i>
                             </div>
-                            <span class="workflow-badge badge-complete">Completo</span>
+                            <span class="workflow-badge badge-complete" data-i18n="workflow.badge.complete">Completo</span>
                         </div>
                         <div class="workflow-card-body">
-                            <h3>Alinhar do Zero</h3>
-                            <p class="workflow-desc">Matriz não alinhada. Pipeline completo.</p>
+                            <h3 data-i18n="workflow.mode3.title">Alinhar do Zero</h3>
+                            <p class="workflow-desc" data-i18n="workflow.mode3.desc">Matriz não alinhada. Pipeline completo.</p>
                         </div>
                         <div class="workflow-card-footer">
                             <div class="workflow-steps">
-                                <span class="step-indicator step-active">MAFFT</span>
+                                <span class="step-indicator step-active" data-i18n="workflow.steps.mafft">MAFFT</span>
                                 <span class="step-arrow">→</span>
-                                <span class="step-indicator step-active">trimAl</span>
+                                <span class="step-indicator step-active" data-i18n="workflow.steps.trimAl">trimAl</span>
                                 <span class="step-arrow">→</span>
-                                <span class="step-indicator step-active">Árvore</span>
+                                <span class="step-indicator step-active" data-i18n="workflow.steps.tree">Árvore</span>
                                 <span class="step-arrow">→</span>
-                                <span class="step-indicator step-active">SVG</span>
+                                <span class="step-indicator step-active" data-i18n="workflow.steps.svg">SVG</span>
                             </div>
                         </div>
                     </div>
@@ -188,16 +196,16 @@
                             <div class="workflow-icon-wrapper">
                                 <i class="ph ph-git-branch"></i>
                             </div>
-                            <span class="workflow-badge badge-instant">Instantâneo</span>
+                            <span class="workflow-badge badge-instant" data-i18n="workflow.badge.instant">Instantâneo</span>
                         </div>
                         <div class="workflow-card-body">
-                            <h3>Renderizar Árvore</h3>
-                            <p class="workflow-desc">Já tenho .nwk/.tre. Visualizar em SVG.</p>
+                            <h3 data-i18n="workflow.mode4.title">Renderizar Árvore</h3>
+                            <p class="workflow-desc" data-i18n="workflow.mode4.desc">Já tenho .nwk/.tre. Visualizar em SVG.</p>
                         </div>
                         <div class="workflow-card-footer">
                             <div class="workflow-meta">
                                 <span class="meta-item"><i class="ph ph-file-code"></i> .nwk, .tre</span>
-                                <span class="meta-item"><i class="ph ph-image"></i> SVG output</span>
+                                <span class="meta-item"><i class="ph ph-image"></i> <span data-i18n="workflow.meta.svgOutput">SVG output</span></span>
                             </div>
                         </div>
                     </div>
@@ -211,78 +219,78 @@
                 <div class="mode-header">
                     <button class="btn-back" id="back-from-mode1">
                         <i class="ph ph-arrow-left"></i>
-                        <span>Voltar</span>
+                        <span data-i18n="common.back">Voltar</span>
                     </button>
                     <div class="mode-title">
                         <div class="mode-icon-badge">
                             <i class="ph ph-text-align-justify"></i>
                         </div>
                         <div>
-                            <h2>Matriz Alinhada</h2>
-                            <p class="mode-subtitle">Upload de matriz pronta → Construção da árvore → SVG</p>
+                            <h2 data-i18n="workflow.mode1.title">Matriz Alinhada</h2>
+                            <p class="mode-subtitle" data-i18n="mode1.subtitle">Upload de matriz pronta -> Construção da árvore -> SVG</p>
                         </div>
                     </div>
                 </div>
                 
                 <div class="form-section">
-                    <h3><span class="step-number">1</span> Carregar matriz alinhada</h3>
-                    <p class="section-hint">Carregue sua matriz alinhada. <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
+                    <h3><span class="step-number">1</span> <span data-i18n="mode1.step1.title">Carregar matriz alinhada</span></h3>
+                    <p class="section-hint"><span data-i18n="mode1.step1.hintPrefix">Carregue sua matriz alinhada.</span> <strong data-i18n="common.genusHintStrong">Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     <div class="upload-area" id="upload-area-mode1">
                         <input type="file" id="file-input-mode1" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                         <label for="file-input-mode1" class="upload-label">
                             <div class="upload-icon"><i class="ph ph-file-text"></i></div>
-                            <p>Clique ou arraste seu arquivo FASTA alinhado</p>
+                            <p data-i18n="mode1.step1.uploadPrompt">Clique ou arraste seu arquivo FASTA alinhado</p>
                             <p class="upload-hint font-mono">.fasta .fa .fas .faa .fna</p>
                         </label>
                     </div>
                     <div id="mode1-file-info" class="file-info-box" style="display: none;">
                         <i class="ph ph-file-check"></i>
-                        <span><strong>Arquivo:</strong> <span id="mode1-filename" class="filename"></span></span>
+                        <span><strong data-i18n="common.fileLabel">Arquivo:</strong> <span id="mode1-filename" class="filename"></span></span>
                     </div>
                 </div>
                 
                 <div class="form-section">
-                    <h3><span class="step-number">2</span> Configurações</h3>
+                    <h3><span class="step-number">2</span> <span data-i18n="common.settings">Configurações</span></h3>
 
                     <div class="info-box">
                         <i class="ph ph-info" class="inline-icon"></i>
-                        <span><strong>Pipeline:</strong> <code><strong>IQtree command:</strong> iqtree -s infile.fas -B 1000 -T 2 or <strong>FastTree command:</strong> fasttree </code></span>
+                        <span><strong data-i18n="common.pipeline">Pipeline:</strong> <code><strong data-i18n="pipeline.iqtreeCommandLabel">IQtree command:</strong> iqtree -s infile.fas -B 1000 -T 2 <span data-i18n="pipeline.or">or</span> <strong data-i18n="pipeline.fasttreeCommandLabel">FastTree command:</strong> fasttree </code></span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="outgroup-mode1" class="label">Outgroup (para enraizamento)</label>
-                        <input type="text" id="outgroup-mode1" class="font-mono" value="uncisetus" placeholder="ex: uncisetus, outgroup_species">
-                        <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                        <label for="outgroup-mode1" class="label" data-i18n="common.outgroupLabel">Outgroup (para enraizamento)</label>
+                        <input type="text" id="outgroup-mode1" class="font-mono" value="uncisetus" placeholder="ex: uncisetus, outgroup_species" data-i18n-placeholder="common.outgroupPlaceholderLong">
+                        <small data-i18n="common.outgroupHelp">Termo para buscar nas tips e usar como raiz da árvore</small>
                     </div>
                     <div class="form-group">
-                        <label for="job-name-mode1" class="label">Nome do job (opcional)</label>
-                        <input type="text" id="job-name-mode1" placeholder="Ex: Fomitiporia ITS - amostras maio">
+                        <label for="job-name-mode1" class="label" data-i18n="common.jobNameOptional">Nome do job (opcional)</label>
+                        <input type="text" id="job-name-mode1" placeholder="Ex: Fomitiporia ITS - amostras maio" data-i18n-placeholder="mode1.jobNamePlaceholder">
                     </div>
                     <div class="form-group">
-                        <label for="email-mode1" class="label">Email (opcional)</label>
-                        <input type="email" id="email-mode1" placeholder="voce@exemplo.com">
-                        <small>Receba o link de resultados quando finalizar</small>
+                        <label for="email-mode1" class="label" data-i18n="common.emailOptional">Email (opcional)</label>
+                        <input type="email" id="email-mode1" placeholder="voce@exemplo.com" data-i18n-placeholder="common.emailPlaceholder">
+                        <small data-i18n="common.emailHelp">Receba o link de resultados quando finalizar</small>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="tree-tool-mode1" class="label">Ferramenta</label>
+                            <label for="tree-tool-mode1" class="label" data-i18n="common.tool">Ferramenta</label>
                             <select id="tree-tool-mode1">
-                                <option value="fasttree">FastTree (rápido)</option>
-                                <option value="iqtree" selected>IQ-TREE (preciso)</option>
+                                <option value="fasttree" data-i18n="common.toolFastTree">FastTree (rápido)</option>
+                                <option value="iqtree" selected data-i18n="common.toolIqTree">IQ-TREE (preciso)</option>
                             </select>
                         </div>
 
                         <div class="form-group" id="bootstrap-group-mode1">
-                            <label for="bootstrap-mode1" class="label">Bootstrap</label>
+                            <label for="bootstrap-mode1" class="label" data-i18n="common.bootstrap">Bootstrap</label>
                             <input type="number" id="bootstrap-mode1" class="tabular-nums" value="1000" min="100" max="10000" step="100">
-                            <small>Recomendado: <span class="tabular-nums">1000</span> para publicação</small>
+                            <small><span data-i18n="common.recommendedForPublicationPrefix">Recomendado:</span> <span class="tabular-nums">1000</span> <span data-i18n="common.recommendedForPublicationSuffix">para publicação</span></small>
                         </div>
                     </div>
                 </div>
                 
                 <button type="button" class="btn btn-primary btn-lg" id="submit-mode1">
-                    <i class="ph ph-play" class="btn-icon"></i> Iniciar Análise
+                    <i class="ph ph-play" class="btn-icon"></i> <span data-i18n="common.startAnalysis">Iniciar Análise</span>
                 </button>
             </section>
 
@@ -293,114 +301,114 @@
                 <header class="mode-header">
                     <button class="btn-back" id="back-from-mode2">
                         <i class="ph ph-arrow-left"></i>
-                        <span>Voltar</span>
+                        <span data-i18n="common.back">Voltar</span>
                     </button>
                     <div class="mode-title">
                         <div class="mode-icon-badge">
                             <i class="ph ph-plus-circle"></i>
                         </div>
                         <div>
-                            <h2>Adicionar Sequências</h2>
-                            <p class="mode-subtitle">Adicionar novas sequências a uma matriz base</p>
+                            <h2 data-i18n="workflow.mode2.title">Adicionar Sequências</h2>
+                            <p class="mode-subtitle" data-i18n="mode2.subtitle">Adicionar novas sequências a uma matriz base</p>
                         </div>
                     </div>
                 </header>
                 
                 <div class="form-section">
-                    <h3><span class="step-number">1</span> Matriz de Alinhamento Base</h3>
-                    <p class="section-hint">Carregue sua matriz alinhada ou use a de <i>Fomitiporia</i> (updated january 2026) - <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
+                    <h3><span class="step-number">1</span> <span data-i18n="mode2.step1.title">Matriz de Alinhamento Base</span></h3>
+                    <p class="section-hint"><span data-i18n="mode2.step1.hintPrefix">Carregue sua matriz alinhada ou use a de</span> <i>Fomitiporia</i> <span data-i18n="mode2.step1.hintMiddle">(atualizado janeiro 2026) -</span> <strong data-i18n="common.genusHintStrong">Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     
                     <div class="alignment-container">
                         <div class="upload-area" id="upload-area-alignment">
                             <input type="file" id="file-input-alignment" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                             <label for="file-input-alignment" class="upload-label">
                                 <div class="upload-icon"><i class="ph ph-file-text"></i></div>
-                                <p>Clique ou arraste para substituir o alinhamento</p>
-                                <p class="upload-hint">.fasta, .fa, .fas, .faa, .fna</p>
+                                <p data-i18n="mode2.step1.replaceAlignment">Clique ou arraste para substituir o alinhamento</p>
+                                <p class="upload-hint" data-i18n="common.fastaExtensionsList">.fasta, .fa, .fas, .faa, .fna</p>
                             </label>
                         </div>
                         <div id="alignment-info" style="display: none;">
-                            <p><strong>Alinhamento carregado:</strong> <span id="alignment-filename"></span></p>
+                            <p><strong data-i18n="mode2.step1.loadedAlignment">Alinhamento carregado:</strong> <span id="alignment-filename"></span></p>
                         </div>
                         <div id="alignment-default" style="display: block;">
-                            <p style="color: #667eea; font-weight: 600;">✓ Usando alinhamento padrão de <i>Fomitiporia</i></p>
+                            <p style="color: #667eea; font-weight: 600;">✓ <span data-i18n="mode2.step1.usingDefault">Usando alinhamento padrão de</span> <i>Fomitiporia</i></p>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h3><span class="step-number">2</span> Adicionar Novas Sequências</h3>
-                    <p class="section-hint">Insira novas sequências por texto ou carregue um arquivo. <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
+                    <h3><span class="step-number">2</span> <span data-i18n="mode2.step2.title">Adicionar Novas Sequências</span></h3>
+                    <p class="section-hint"><span data-i18n="mode2.step2.hintPrefix">Insira novas sequências por texto ou carregue um arquivo.</span> <strong data-i18n="common.genusHintStrong">Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     
                     <div class="sequences-input-container">
                         <div class="input-method">
-                            <h4><i class="ph ph-pencil-simple" class="inline-icon"></i> Por Texto</h4>
-                            <p class="format-hint"><code class="font-mono">&gt;nome_da_sequência</code><br><code class="font-mono">AAATTTGGGCCC</code></p>
-                            <textarea id="sequences-text" class="textarea-mono" placeholder=">sequence_1&#10;AAATTTGGGCCC&#10;&#10;>sequence_2&#10;GGGCCCAAATTT" rows="6"></textarea>
+                            <h4><i class="ph ph-pencil-simple" class="inline-icon"></i> <span data-i18n="common.byText">Por Texto</span></h4>
+                            <p class="format-hint"><code class="font-mono"><span data-i18n="common.fastaHeaderExample">&gt;nome_da_sequência</span></code><br><code class="font-mono"><span data-i18n="common.fastaSequenceExample">AAATTTGGGCCC</span></code></p>
+                            <textarea id="sequences-text" class="textarea-mono" placeholder=">sequence_1&#10;AAATTTGGGCCC&#10;&#10;>sequence_2&#10;GGGCCCAAATTT" rows="6" data-i18n-placeholder="mode2.sequencesTextareaPlaceholder"></textarea>
                         </div>
 
-                        <div class="divider">OU</div>
+                        <div class="divider" data-i18n="common.or">OU</div>
 
                         <div class="input-method">
-                            <h4><i class="ph ph-upload-simple" class="inline-icon"></i> Por Upload</h4>
+                            <h4><i class="ph ph-upload-simple" class="inline-icon"></i> <span data-i18n="common.byUpload">Por Upload</span></h4>
                             <div class="upload-area upload-area-small" id="upload-area-sequences">
                                 <input type="file" id="file-input-sequences" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                                 <label for="file-input-sequences" class="upload-label">
                                     <div class="upload-icon"><i class="ph ph-folder-open"></i></div>
-                                    <p>Clique ou arraste arquivo FASTA</p>
+                                    <p data-i18n="common.fastaUploadPrompt">Clique ou arraste arquivo FASTA</p>
                                 </label>
                             </div>
                             <div id="sequences-file-info" class="file-info-box" style="display: none;">
                                 <i class="ph ph-file-check"></i>
-                                <span><strong>Arquivo:</strong> <span id="sequences-filename" class="filename"></span></span>
+                                <span><strong data-i18n="common.fileLabel">Arquivo:</strong> <span id="sequences-filename" class="filename"></span></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h3><span class="step-number">3</span> Configurações</h3>
+                    <h3><span class="step-number">3</span> <span data-i18n="common.settings">Configurações</span></h3>
 
                     <div class="info-box">
                         <i class="ph ph-info" class="inline-icon"></i>
-                        <span><strong>Pipeline:</strong> <code>MAFFT --adjustdirection --keeplength --add --auto</code> → Árvore (<code><strong>IQtree command:</strong> iqtree -s infile.fas -B 1000 -T 1 or <strong>FastTree command:</strong> fasttree </code>)</span>
+                        <span><strong data-i18n="common.pipeline">Pipeline:</strong> <code>MAFFT --adjustdirection --keeplength --add --auto</code> -> <span data-i18n="common.treeLabel">Árvore</span> (<code><strong data-i18n="pipeline.iqtreeCommandLabel">IQtree command:</strong> iqtree -s infile.fas -B 1000 -T 1 <span data-i18n="pipeline.or">or</span> <strong data-i18n="pipeline.fasttreeCommandLabel">FastTree command:</strong> fasttree </code>)</span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="outgroup-mode2">Outgroup (para enraizamento)</label>
-                        <input type="text" id="outgroup-mode2" value="uncisetus" placeholder="ex: uncisetus">
-                        <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                        <label for="outgroup-mode2" data-i18n="common.outgroupLabel">Outgroup (para enraizamento)</label>
+                        <input type="text" id="outgroup-mode2" value="uncisetus" placeholder="ex: uncisetus" data-i18n-placeholder="common.outgroupPlaceholderShort">
+                        <small data-i18n="common.outgroupHelp">Termo para buscar nas tips e usar como raiz da árvore</small>
                     </div>
                     <div class="form-group">
-                        <label for="job-name-mode2" class="label">Nome do job (opcional)</label>
-                        <input type="text" id="job-name-mode2" placeholder="Ex: Adicionar sequencias 2024">
+                        <label for="job-name-mode2" class="label" data-i18n="common.jobNameOptional">Nome do job (opcional)</label>
+                        <input type="text" id="job-name-mode2" placeholder="Ex: Adicionar sequencias 2024" data-i18n-placeholder="mode2.jobNamePlaceholder">
                     </div>
                     <div class="form-group">
-                        <label for="email-mode2" class="label">Email (opcional)</label>
-                        <input type="email" id="email-mode2" placeholder="voce@exemplo.com">
-                        <small>Receba o link de resultados quando finalizar</small>
+                        <label for="email-mode2" class="label" data-i18n="common.emailOptional">Email (opcional)</label>
+                        <input type="email" id="email-mode2" placeholder="voce@exemplo.com" data-i18n-placeholder="common.emailPlaceholder">
+                        <small data-i18n="common.emailHelp">Receba o link de resultados quando finalizar</small>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="tree-tool">Ferramenta</label>
+                            <label for="tree-tool" data-i18n="common.tool">Ferramenta</label>
                             <select id="tree-tool">
-                                <option value="fasttree">FastTree (rápido)</option>
-                                <option value="iqtree" selected>IQ-TREE (preciso)</option>
+                                <option value="fasttree" data-i18n="common.toolFastTree">FastTree (rápido)</option>
+                                <option value="iqtree" selected data-i18n="common.toolIqTree">IQ-TREE (preciso)</option>
                             </select>
                         </div>
 
                         <div class="form-group" id="bootstrap-group">
-                            <label for="bootstrap">Bootstrap</label>
+                            <label for="bootstrap" data-i18n="common.bootstrap">Bootstrap</label>
                             <input type="number" id="bootstrap" value="1000" min="100" max="10000" step="100">
-                            <small>Recomendado: <span class="font-mono">1000</span></small>
+                            <small><span data-i18n="common.recommendedPrefix">Recomendado:</span> <span class="font-mono">1000</span></small>
                         </div>
                     </div>
                 </div>
 
                 <button type="button" class="btn btn-primary btn-lg" id="submit-mode2">
                     <i class="ph ph-play"></i>
-                    Iniciar Análise
+                    <span data-i18n="common.startAnalysis">Iniciar Análise</span>
                 </button>
             </section>
 
@@ -411,109 +419,109 @@
                 <header class="mode-header">
                     <button class="btn-back" id="back-from-mode3">
                         <i class="ph ph-arrow-left"></i>
-                        <span>Voltar</span>
+                        <span data-i18n="common.back">Voltar</span>
                     </button>
                     <div class="mode-title">
                         <div class="mode-icon-badge">
                             <i class="ph ph-text-align-center"></i>
                         </div>
                         <div>
-                            <h2>Alinhar do Zero</h2>
-                            <p class="mode-subtitle">Pipeline completo: MAFFT → trimAl → Árvore → SVG</p>
+                            <h2 data-i18n="workflow.mode3.title">Alinhar do Zero</h2>
+                            <p class="mode-subtitle" data-i18n="mode3.subtitle">Pipeline completo: MAFFT -> trimAl -> Árvore -> SVG</p>
                         </div>
                     </div>
                 </header>
                 
                 <div class="form-section">
-                    <h3><span class="step-number">1</span> Matriz principal (não alinhada)</h3>
-                    <p class="section-hint">Carregue sua matriz com todas as sequências de referência. <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
+                    <h3><span class="step-number">1</span> <span data-i18n="mode3.step1.title">Matriz principal (não alinhada)</span></h3>
+                    <p class="section-hint"><span data-i18n="mode3.step1.hintPrefix">Carregue sua matriz com todas as sequências de referência.</span> <strong data-i18n="common.genusHintStrong">Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     
                     <div class="upload-area" id="upload-area-raw">
                         <input type="file" id="file-input-raw" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                         <label for="file-input-raw" class="upload-label">
                             <div class="upload-icon"><i class="ph ph-file-text"></i></div>
-                            <p>Clique ou arraste a matriz crua (FASTA)</p>
+                            <p data-i18n="mode3.step1.uploadPrompt">Clique ou arraste a matriz crua (FASTA)</p>
                             <p class="upload-hint font-mono">.fasta .fa .fas .faa .fna</p>
                         </label>
                     </div>
                     <div id="raw-file-info" class="file-info-box" style="display: none;">
                         <i class="ph ph-file-check"></i>
-                        <span><strong>Matriz carregada:</strong> <span id="raw-filename" class="filename"></span></span>
+                        <span><strong data-i18n="mode3.step1.loadedMatrix">Matriz carregada:</strong> <span id="raw-filename" class="filename"></span></span>
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h3><span class="step-number">2</span> Suas sequências <span class="badge badge-optional">opcional</span></h3>
-                    <p class="section-hint">Envie suas sequências separadamente para serem marcadas como novas. <strong>Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
+                    <h3><span class="step-number">2</span> <span data-i18n="mode3.step2.title">Suas sequências</span> <span class="badge badge-optional" data-i18n="common.optional">opcional</span></h3>
+                    <p class="section-hint"><span data-i18n="mode3.step2.hintPrefix">Envie suas sequências separadamente para serem marcadas como novas.</span> <strong data-i18n="common.genusHintStrong">Escreva os gêneros por extenso para melhor formatação durante a renderização</strong></p>
                     
                     <div class="sequences-input-container">
                         <div class="input-method">
-                            <h4><i class="ph ph-pencil-simple" class="inline-icon"></i> Por Texto</h4>
-                            <p class="format-hint"><code class="font-mono">&gt;nome_da_sequência</code><br><code class="font-mono">AAATTTGGGCCC</code></p>
-                            <textarea id="user-sequences-text-mode3" class="textarea-mono" placeholder=">minha_sequencia_1&#10;AAATTTGGGCCC&#10;&#10;>minha_sequencia_2&#10;GGGCCCAAATTT" rows="6"></textarea>
+                            <h4><i class="ph ph-pencil-simple" class="inline-icon"></i> <span data-i18n="common.byText">Por Texto</span></h4>
+                            <p class="format-hint"><code class="font-mono"><span data-i18n="common.fastaHeaderExample">&gt;nome_da_sequência</span></code><br><code class="font-mono"><span data-i18n="common.fastaSequenceExample">AAATTTGGGCCC</span></code></p>
+                            <textarea id="user-sequences-text-mode3" class="textarea-mono" placeholder=">minha_sequencia_1&#10;AAATTTGGGCCC&#10;&#10;>minha_sequencia_2&#10;GGGCCCAAATTT" rows="6" data-i18n-placeholder="mode3.userSequencesTextareaPlaceholder"></textarea>
                         </div>
 
-                        <div class="divider">OU</div>
+                        <div class="divider" data-i18n="common.or">OU</div>
 
                         <div class="input-method">
-                            <h4><i class="ph ph-upload-simple" class="inline-icon"></i> Por Upload</h4>
+                            <h4><i class="ph ph-upload-simple" class="inline-icon"></i> <span data-i18n="common.byUpload">Por Upload</span></h4>
                             <div class="upload-area upload-area-small" id="upload-area-user">
                                 <input type="file" id="file-input-user" accept=".fasta,.fa,.fas,.faa,.fna" style="display: none;">
                                 <label for="file-input-user" class="upload-label">
                                     <div class="upload-icon"><i class="ph ph-folder-open"></i></div>
-                                    <p>Clique ou arraste arquivo FASTA</p>
+                                    <p data-i18n="common.fastaUploadPrompt">Clique ou arraste arquivo FASTA</p>
                                 </label>
                             </div>
                             <div id="user-file-info" class="file-info-box" style="display: none;">
                                 <i class="ph ph-file-check"></i>
-                                <span><strong>Arquivo:</strong> <span id="user-filename" class="filename"></span></span>
+                                <span><strong data-i18n="common.fileLabel">Arquivo:</strong> <span id="user-filename" class="filename"></span></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h3><span class="step-number">3</span> Configurações</h3>
+                    <h3><span class="step-number">3</span> <span data-i18n="common.settings">Configurações</span></h3>
                     
                     <div class="info-box">
                         <i class="ph ph-info" class="inline-icon"></i>
-                        <span><strong>Pipeline:</strong> <code>MAFFT --adjustdirection --auto</code> → <code>trimAl -gt 0.2 -cons 60</code> → Árvore (<code><strong>IQtree command:</strong> iqtree -s infile.fas -B 1000 -T 1 or <strong>FastTree command:</strong> fasttree </code>)</span>
+                        <span><strong data-i18n="common.pipeline">Pipeline:</strong> <code>MAFFT --adjustdirection --auto</code> -> <code>trimAl -gt 0.2 -cons 60</code> -> <span data-i18n="common.treeLabel">Árvore</span> (<code><strong data-i18n="pipeline.iqtreeCommandLabel">IQtree command:</strong> iqtree -s infile.fas -B 1000 -T 1 <span data-i18n="pipeline.or">or</span> <strong data-i18n="pipeline.fasttreeCommandLabel">FastTree command:</strong> fasttree </code>)</span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="outgroup-mode3" class="label">Outgroup (para enraizamento)</label>
-                        <input type="text" id="outgroup-mode3" class="font-mono" value="uncisetus" placeholder="ex: outgroup_species">
-                        <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                        <label for="outgroup-mode3" class="label" data-i18n="common.outgroupLabel">Outgroup (para enraizamento)</label>
+                        <input type="text" id="outgroup-mode3" class="font-mono" value="uncisetus" placeholder="ex: outgroup_species" data-i18n-placeholder="common.outgroupPlaceholderSpecies">
+                        <small data-i18n="common.outgroupHelp">Termo para buscar nas tips e usar como raiz da árvore</small>
                     </div>
                     <div class="form-group">
-                        <label for="job-name-mode3" class="label">Nome do job (opcional)</label>
-                        <input type="text" id="job-name-mode3" placeholder="Ex: Alinhamento completo - lote A">
+                        <label for="job-name-mode3" class="label" data-i18n="common.jobNameOptional">Nome do job (opcional)</label>
+                        <input type="text" id="job-name-mode3" placeholder="Ex: Alinhamento completo - lote A" data-i18n-placeholder="mode3.jobNamePlaceholder">
                     </div>
                     <div class="form-group">
-                        <label for="email-mode3" class="label">Email (opcional)</label>
-                        <input type="email" id="email-mode3" placeholder="voce@exemplo.com">
-                        <small>Receba o link de resultados quando finalizar</small>
+                        <label for="email-mode3" class="label" data-i18n="common.emailOptional">Email (opcional)</label>
+                        <input type="email" id="email-mode3" placeholder="voce@exemplo.com" data-i18n-placeholder="common.emailPlaceholder">
+                        <small data-i18n="common.emailHelp">Receba o link de resultados quando finalizar</small>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="tree-tool-mode3" class="label">Ferramenta</label>
+                            <label for="tree-tool-mode3" class="label" data-i18n="common.tool">Ferramenta</label>
                             <select id="tree-tool-mode3">
-                                <option value="fasttree">FastTree (rápido)</option>
-                                <option value="iqtree" selected>IQ-TREE (preciso)</option>
+                                <option value="fasttree" data-i18n="common.toolFastTree">FastTree (rápido)</option>
+                                <option value="iqtree" selected data-i18n="common.toolIqTree">IQ-TREE (preciso)</option>
                             </select>
                         </div>
 
                         <div class="form-group" id="bootstrap-group-mode3">
-                            <label for="bootstrap-mode3" class="label">Bootstrap</label>
+                            <label for="bootstrap-mode3" class="label" data-i18n="common.bootstrap">Bootstrap</label>
                             <input type="number" id="bootstrap-mode3" class="tabular-nums" value="1000" min="100" max="10000" step="100">
-                            <small>Recomendado: <span class="tabular-nums">1000</span> para publicação</small>
+                            <small><span data-i18n="common.recommendedForPublicationPrefix">Recomendado:</span> <span class="tabular-nums">1000</span> <span data-i18n="common.recommendedForPublicationSuffix">para publicação</span></small>
                         </div>
                     </div>
                 </div>
 
                 <button type="button" class="btn btn-primary btn-lg" id="submit-mode3">
-                    <i class="ph ph-play" class="btn-icon"></i> Iniciar Análise
+                    <i class="ph ph-play" class="btn-icon"></i> <span data-i18n="common.startAnalysis">Iniciar Análise</span>
                 </button>
             </section>
 
@@ -524,63 +532,63 @@
                 <header class="mode-header">
                     <button class="btn-back" id="back-from-mode4">
                         <i class="ph ph-arrow-left"></i>
-                        <span>Voltar</span>
+                        <span data-i18n="common.back">Voltar</span>
                     </button>
                     <div class="mode-title">
                         <div class="mode-icon-badge">
                             <i class="ph ph-git-branch"></i>
                         </div>
                         <div>
-                            <h2>Renderizar Árvore</h2>
-                            <p class="mode-subtitle">Visualizar Newick como SVG</p>
+                            <h2 data-i18n="workflow.mode4.title">Renderizar Árvore</h2>
+                            <p class="mode-subtitle" data-i18n="mode4.subtitle">Visualizar Newick como SVG</p>
                         </div>
                     </div>
                 </header>
                 
                 <div class="form-section">
-                    <h3><span class="step-number">1</span> Carregar arquivo de árvore</h3>
-                    <p class="section-hint">Formato Newick</p>
+                    <h3><span class="step-number">1</span> <span data-i18n="mode4.step1.title">Carregar arquivo de árvore</span></h3>
+                    <p class="section-hint" data-i18n="mode4.step1.hint">Formato Newick</p>
                     
                     <div class="upload-area" id="upload-area-mode4">
                         <input type="file" id="file-input-mode4" accept=".nwk,.tre,.tree,.newick" style="display: none;">
                         <label for="file-input-mode4" class="upload-label">
                             <div class="upload-icon"><i class="ph ph-git-branch"></i></div>
-                            <p>Clique ou arraste seu arquivo de árvore</p>
+                            <p data-i18n="mode4.step1.uploadPrompt">Clique ou arraste seu arquivo de árvore</p>
                             <p class="upload-hint font-mono">.nwk .tre .tree .newick</p>
                         </label>
                     </div>
                     <div id="mode4-file-info" class="file-info-box" style="display: none;">
                         <i class="ph ph-file-check"></i>
-                        <span><strong>Arquivo:</strong> <span id="mode4-filename" class="filename"></span></span>
+                        <span><strong data-i18n="common.fileLabel">Arquivo:</strong> <span id="mode4-filename" class="filename"></span></span>
                     </div>
                 </div>
                 
                 <div class="form-section">
-                    <h3><span class="step-number">2</span> Configurações</h3>
+                    <h3><span class="step-number">2</span> <span data-i18n="common.settings">Configurações</span></h3>
                     
                     <div class="info-box">
                         <i class="ph ph-info" class="inline-icon"></i>
-                        <span><strong>Pipeline:</strong> Árvore Newick → Renderização SVG com valores de suporte</span>
+                        <span><strong data-i18n="common.pipeline">Pipeline:</strong> <span data-i18n="mode4.pipelineValue">Árvore Newick -> Renderização SVG com valores de suporte</span></span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="outgroup-mode4" class="label">Outgroup (para enraizamento)</label>
-                        <input type="text" id="outgroup-mode4" class="font-mono" value="uncisetus" placeholder="ex: uncisetus, outgroup_species">
-                        <small>Termo para buscar nas tips e usar como raiz da árvore</small>
+                        <label for="outgroup-mode4" class="label" data-i18n="common.outgroupLabel">Outgroup (para enraizamento)</label>
+                        <input type="text" id="outgroup-mode4" class="font-mono" value="uncisetus" placeholder="ex: uncisetus, outgroup_species" data-i18n-placeholder="common.outgroupPlaceholderLong">
+                        <small data-i18n="common.outgroupHelp">Termo para buscar nas tips e usar como raiz da árvore</small>
                     </div>
                     <div class="form-group">
-                        <label for="job-name-mode4" class="label">Nome do job (opcional)</label>
-                        <input type="text" id="job-name-mode4" placeholder="Ex: Renderizacao rapida 01">
+                        <label for="job-name-mode4" class="label" data-i18n="common.jobNameOptional">Nome do job (opcional)</label>
+                        <input type="text" id="job-name-mode4" placeholder="Ex: Renderizacao rapida 01" data-i18n-placeholder="mode4.jobNamePlaceholder">
                     </div>
                     <div class="form-group">
-                        <label for="email-mode4" class="label">Email (opcional)</label>
-                        <input type="email" id="email-mode4" placeholder="voce@exemplo.com">
-                        <small>Receba o link de resultados quando finalizar</small>
+                        <label for="email-mode4" class="label" data-i18n="common.emailOptional">Email (opcional)</label>
+                        <input type="email" id="email-mode4" placeholder="voce@exemplo.com" data-i18n-placeholder="common.emailPlaceholder">
+                        <small data-i18n="common.emailHelp">Receba o link de resultados quando finalizar</small>
                     </div>
                 </div>
                 
                 <button type="button" class="btn btn-primary btn-lg" id="submit-mode4">
-                    <i class="ph ph-image" class="btn-icon"></i> Renderizar Árvore
+                    <i class="ph ph-image" class="btn-icon"></i> <span data-i18n="common.renderTree">Renderizar Árvore</span>
                 </button>
             </section>
 
@@ -589,8 +597,8 @@
                 <header class="mode-header">
                     <span class="step-number step-processing">4</span>
                     <div>
-                        <h2>Processamento</h2>
-                        <p class="mode-subtitle">Aguarde enquanto a análise é executada</p>
+                        <h2 data-i18n="progress.sectionTitle">Processamento</h2>
+                        <p class="mode-subtitle" data-i18n="progress.sectionSubtitle">Aguarde enquanto a análise é executada</p>
                     </div>
                 </header>
 
@@ -605,48 +613,48 @@
                         <div class="pipeline-step-icon">
                             <i class="ph ph-upload-simple"></i>
                         </div>
-                        <span class="pipeline-step-label">Upload</span>
+                        <span class="pipeline-step-label" data-i18n="progress.pipeline.upload">Upload</span>
                     </div>
                     <div class="pipeline-connector"></div>
                     <div class="pipeline-step" id="step-align">
                         <div class="pipeline-step-icon">
                             <i class="ph ph-list-dashes"></i>
                         </div>
-                        <span class="pipeline-step-label">Alinhamento</span>
+                        <span class="pipeline-step-label" data-i18n="progress.pipeline.alignment">Alinhamento</span>
                     </div>
                     <div class="pipeline-connector"></div>
                     <div class="pipeline-step" id="step-trim">
                         <div class="pipeline-step-icon">
                             <i class="ph ph-scissors"></i>
                         </div>
-                        <span class="pipeline-step-label">Trimagem</span>
+                        <span class="pipeline-step-label" data-i18n="progress.pipeline.trimming">Trimagem</span>
                     </div>
                     <div class="pipeline-connector"></div>
                     <div class="pipeline-step" id="step-tree">
                         <div class="pipeline-step-icon">
                             <i class="ph ph-git-branch"></i>
                         </div>
-                        <span class="pipeline-step-label">Árvore</span>
+                        <span class="pipeline-step-label" data-i18n="progress.pipeline.tree">Árvore</span>
                     </div>
                     <div class="pipeline-connector"></div>
                     <div class="pipeline-step" id="step-render">
                         <div class="pipeline-step-icon">
                             <i class="ph ph-image"></i>
                         </div>
-                        <span class="pipeline-step-label">SVG</span>
+                        <span class="pipeline-step-label" data-i18n="progress.pipeline.svg">SVG</span>
                     </div>
                 </div>
                 
                 <div class="progress-container">
                     <div class="job-status-row">
-                        <span id="job-status-badge" class="status-badge status-queued">Em fila</span>
+                        <span id="job-status-badge" class="status-badge status-queued" data-i18n="status.queued">Em fila</span>
                         <span id="job-queue-text" class="queue-text"></span>
                     </div>
                     <div class="progress-bar">
                         <div id="progress-fill" class="progress-fill"></div>
                     </div>
                     <div class="progress-info">
-                        <p id="progress-text" class="progress-status">Iniciando...</p>
+                        <p id="progress-text" class="progress-status" data-i18n="progress.initializing">Iniciando...</p>
                         <span id="progress-percent" class="progress-percent tabular-nums">0%</span>
                     </div>
                     <p id="progress-step" class="progress-detail font-mono"></p>
@@ -654,21 +662,21 @@
                 
                 <div class="progress-tip">
                     <i class="ph ph-lightbulb"></i>
-                    <span>Análises com IQ-TREE podem levar alguns minutos dependendo do tamanho da matriz. Se estiver na fila ou o job está demorando, use o link abaixo para acesso ao resultado posteriormente. Este mesmo link será mandado por email caso tenha o inserido na página anterior</span>
+                    <span data-i18n="progress.tip">Análises com IQ-TREE podem levar alguns minutos dependendo do tamanho da matriz. Se estiver na fila ou o job está demorando, use o link abaixo para acesso ao resultado posteriormente. Este mesmo link será mandado por email caso tenha o inserido na página anterior</span>
                 </div>
 
                 <div id="job-link-box" class="job-link-box" style="display: none;">
                     <div class="job-link-label">
                         <i class="ph ph-link"></i>
-                        <span>Link de resultados</span>
+                        <span data-i18n="common.resultsLinkLabel">Link de resultados</span>
                     </div>
                     <div class="job-link-row">
                         <input type="text" id="job-link-input" readonly>
                         <button class="btn btn-secondary btn-sm" id="copy-job-link">
-                            <i class="ph ph-copy"></i> Copiar
+                            <i class="ph ph-copy"></i> <span data-i18n="common.copy">Copiar</span>
                         </button>
                     </div>
-                    <small>O link expira 3 dias após a conclusão.</small>
+                    <small data-i18n="common.linkExpires">O link expira 3 dias após a conclusão.</small>
                 </div>
             </section>
 
@@ -679,8 +687,8 @@
                         <i class="ph ph-check"></i>
                     </span>
                     <div>
-                        <h2>Resultados</h2>
-                        <p class="mode-subtitle">Análise concluída com sucesso</p>
+                        <h2 data-i18n="results.sectionTitle">Resultados</h2>
+                        <p class="mode-subtitle" data-i18n="results.sectionSubtitle">Análise concluída com sucesso</p>
                     </div>
                 </header>
 
@@ -692,15 +700,15 @@
                 <div id="job-link-box-results" class="job-link-box" style="display: none;">
                     <div class="job-link-label">
                         <i class="ph ph-link"></i>
-                        <span>Link de resultados</span>
+                        <span data-i18n="common.resultsLinkLabel">Link de resultados</span>
                     </div>
                     <div class="job-link-row">
                         <input type="text" id="job-link-input-results" readonly>
                         <button class="btn btn-secondary btn-sm" id="copy-job-link-results">
-                            <i class="ph ph-copy"></i> Copiar
+                            <i class="ph ph-copy"></i> <span data-i18n="common.copy">Copiar</span>
                         </button>
                     </div>
-                    <small>O link expira 3 dias após a conclusão.</small>
+                    <small data-i18n="common.linkExpires">O link expira 3 dias após a conclusão.</small>
                 </div>
                 
                 <!-- Download Cards -->
@@ -710,14 +718,14 @@
                             <i class="ph ph-git-branch"></i>
                         </div>
                         <div class="download-card-info">
-                            <h4>Árvore Filogenética</h4>
+                            <h4 data-i18n="results.download.tree.title">Árvore Filogenética</h4>
                             <p class="download-meta">
                                 <span class="file-ext">.tree</span>
-                                <span class="file-format">Newick format</span>
+                                <span class="file-format" data-i18n="results.download.tree.format">Newick format</span>
                             </p>
                         </div>
                         <button class="btn btn-success btn-sm">
-                            <i class="ph ph-download-simple"></i> Download
+                            <i class="ph ph-download-simple"></i> <span data-i18n="common.download">Download</span>
                         </button>
                     </div>
                     
@@ -726,14 +734,14 @@
                             <i class="ph ph-list-dashes"></i>
                         </div>
                         <div class="download-card-info">
-                            <h4>Alinhamento</h4>
+                            <h4 data-i18n="results.download.alignment.title">Alinhamento</h4>
                             <p class="download-meta">
                                 <span class="file-ext">.fasta</span>
-                                <span class="file-format">FASTA format</span>
+                                <span class="file-format" data-i18n="results.download.alignment.format">FASTA format</span>
                             </p>
                         </div>
                         <button class="btn btn-success btn-sm">
-                            <i class="ph ph-download-simple"></i> Download
+                            <i class="ph ph-download-simple"></i> <span data-i18n="common.download">Download</span>
                         </button>
                     </div>
                     
@@ -742,14 +750,14 @@
                             <i class="ph ph-image"></i>
                         </div>
                         <div class="download-card-info">
-                            <h4>Visualização SVG</h4>
+                            <h4 data-i18n="results.download.svg.title">Visualização SVG</h4>
                             <p class="download-meta">
                                 <span class="file-ext">.svg</span>
-                                <span class="file-format">Vetorial</span>
+                                <span class="file-format" data-i18n="results.download.svg.format">Vetorial</span>
                             </p>
                         </div>
                         <button class="btn btn-success btn-sm">
-                            <i class="ph ph-download-simple"></i> Download
+                            <i class="ph ph-download-simple"></i> <span data-i18n="common.download">Download</span>
                         </button>
                     </div>
                     
@@ -758,14 +766,14 @@
                             <i class="ph ph-file-text"></i>
                         </div>
                         <div class="download-card-info">
-                            <h4>Resumo IQ-TREE</h4>
+                            <h4 data-i18n="results.download.iqtree.title">Resumo IQ-TREE</h4>
                             <p class="download-meta">
                                 <span class="file-ext">.iqtree</span>
-                                <span class="file-format">Modelos e sumário</span>
+                                <span class="file-format" data-i18n="results.download.iqtree.format">Modelos e sumário</span>
                             </p>
                         </div>
                         <button class="btn btn-success btn-sm">
-                            <i class="ph ph-download-simple"></i> Download
+                            <i class="ph ph-download-simple"></i> <span data-i18n="common.download">Download</span>
                         </button>
                     </div>
                     
@@ -774,36 +782,36 @@
                             <i class="ph ph-file-pdf"></i>
                         </div>
                         <div class="download-card-info">
-                            <h4>Árvore em PDF</h4>
+                            <h4 data-i18n="results.download.pdf.title">Árvore em PDF</h4>
                             <p class="download-meta">
                                 <span class="file-ext">.pdf</span>
-                                <span class="file-format">Alta resolução</span>
+                                <span class="file-format" data-i18n="results.download.pdf.format">Alta resolução</span>
                             </p>
                         </div>
                         <button class="btn btn-success btn-sm">
-                            <i class="ph ph-download-simple"></i> Download
+                            <i class="ph ph-download-simple"></i> <span data-i18n="common.download">Download</span>
                         </button>
                     </div>
                 </div>
                 
                 <div class="results-divider">
                     <button class="btn btn-secondary" id="new-analysis">
-                        <i class="ph ph-plus"></i> Nova Análise
+                        <i class="ph ph-plus"></i> <span data-i18n="results.newAnalysis">Nova Análise</span>
                     </button>
                 </div>
                 
                 <!-- Tree Visualization Section -->
                 <div class="visualization-section">
                     <div class="visualization-header">
-                        <h3>Visualização da Árvore</h3>
+                        <h3 data-i18n="results.visualization.title">Visualização da Árvore</h3>
                         <div class="visualization-controls">
-                            <button class="btn-icon-only" id="zoom-in" title="Zoom In">
+                            <button class="btn-icon-only" id="zoom-in" title="Zoom In" data-i18n-tooltip="results.zoom.in">
                                 <i class="ph ph-magnifying-glass-plus"></i>
                             </button>
-                            <button class="btn-icon-only" id="zoom-out" title="Zoom Out">
+                            <button class="btn-icon-only" id="zoom-out" title="Zoom Out" data-i18n-tooltip="results.zoom.out">
                                 <i class="ph ph-magnifying-glass-minus"></i>
                             </button>
-                            <button class="btn-icon-only" id="zoom-reset" title="Reset">
+                            <button class="btn-icon-only" id="zoom-reset" title="Reset" data-i18n-tooltip="results.zoom.reset">
                                 <i class="ph ph-arrows-out"></i>
                             </button>
                         </div>
@@ -813,25 +821,25 @@
                     <div id="svg-dimension-controls" class="svg-dimension-controls">
                         <div class="dimension-inputs">
                             <div class="dimension-group">
-                                <label for="svg-width" class="label">Largura</label>
+                                <label for="svg-width" class="label" data-i18n="results.svgDimensions.width">Largura</label>
                                 <div class="input-with-unit">
                                     <input type="number" id="svg-width" class="tabular-nums" value="1700" min="500" max="5000" step="100">
                                     <span class="input-unit font-mono">px</span>
                                 </div>
                             </div>
                             <div class="dimension-group">
-                                <label for="svg-height" class="label">Altura</label>
+                                <label for="svg-height" class="label" data-i18n="results.svgDimensions.height">Altura</label>
                                 <div class="input-with-unit">
-                                    <input type="number" id="svg-height" class="tabular-nums" placeholder="auto" min="500" max="20000" step="100">
+                                    <input type="number" id="svg-height" class="tabular-nums" placeholder="auto" min="500" max="20000" step="100" data-i18n-placeholder="results.svgDimensions.auto">
                                     <span class="input-unit font-mono">px</span>
                                 </div>
                             </div>
                             <div class="dimension-group">
-                                <label for="svg-outgroup" class="label">Outgroup (opcional)</label>
-                                <input type="text" id="svg-outgroup" placeholder="Manter padrão">
+                                <label for="svg-outgroup" class="label" data-i18n="results.svgDimensions.outgroupOptional">Outgroup (opcional)</label>
+                                <input type="text" id="svg-outgroup" placeholder="Manter padrão" data-i18n-placeholder="results.svgDimensions.keepDefault">
                             </div>
                             <button class="btn btn-primary btn-sm" id="rerender-svg">
-                                <i class="ph ph-arrows-clockwise"></i> Re-renderizar
+                                <i class="ph ph-arrows-clockwise"></i> <span data-i18n="results.svgDimensions.rerender">Re-renderizar</span>
                             </button>
                         </div>
                     </div>
@@ -840,7 +848,7 @@
                     <div id="tree-container" class="tree-viewer">
                         <div class="tree-viewer-loading">
                             <i class="ph ph-spinner spin"></i>
-                            <span>Carregando visualização...</span>
+                            <span data-i18n="tree.loading">Carregando visualização...</span>
                         </div>
                     </div>
                 </div>
@@ -853,8 +861,8 @@
                         <i class="ph ph-warning"></i>
                     </div>
                     <div>
-                        <h2>Erro na Análise</h2>
-                        <p class="mode-subtitle">Algo deu errado durante o processamento</p>
+                        <h2 data-i18n="error.sectionTitle">Erro na Análise</h2>
+                        <p class="mode-subtitle" data-i18n="error.sectionSubtitle">Algo deu errado durante o processamento</p>
                     </div>
                 </header>
                 <div class="error-content">
@@ -862,10 +870,10 @@
                 </div>
                 <div class="error-actions">
                     <button class="btn btn-primary" id="retry-btn">
-                        <i class="ph ph-arrows-clockwise"></i> Tentar Novamente
+                        <i class="ph ph-arrows-clockwise"></i> <span data-i18n="error.retry">Tentar Novamente</span>
                     </button>
                     <button class="btn btn-secondary" id="back-to-start">
-                        <i class="ph ph-arrow-left"></i> Voltar ao Início
+                        <i class="ph ph-arrow-left"></i> <span data-i18n="error.backToStart">Voltar ao Início</span>
                     </button>
                 </div>
             </section>
@@ -875,19 +883,19 @@
         <footer class="main-footer">
             <div class="footer-content">
                 <div class="footer-copy">
-                    <p>Desenvolvido por <a href="https://github.com/genivaldo-alves-silva" target="_blank" rel="noopener noreferrer">Genivaldo Alves-Silva</a> para análises filogenéticas de fungos e outros organismos</p>
+                    <p><span data-i18n="footer.copy.prefix">Desenvolvido por</span> <a href="https://github.com/genivaldo-alves-silva" target="_blank" rel="noopener noreferrer">Genivaldo Alves-Silva</a> <span data-i18n="footer.copy.suffix">para análises filogenéticas de fungos e outros organismos</span></p>
                 </div>
                 <div class="footer-feedback">
-                    <h4>Envie sugestões ou pedidos <i class="ph ph-arrow-down"></i></h4>
+                    <h4><span data-i18n="footer.feedback.title">Envie sugestões ou pedidos</span> <i class="ph ph-arrow-down"></i></h4>
                     <form id="feedback-form" class="feedback-form">
                         <div class="feedback-row">
-                            <input type="text" id="feedback-name" placeholder="Nome (opcional)">
-                            <input type="email" id="feedback-email" placeholder="Email (opcional)">
+                            <input type="text" id="feedback-name" placeholder="Nome (opcional)" data-i18n-placeholder="footer.feedback.namePlaceholder">
+                            <input type="email" id="feedback-email" placeholder="Email (opcional)" data-i18n-placeholder="footer.feedback.emailPlaceholder">
                         </div>
-                        <textarea id="feedback-message" rows="3" placeholder="Escreva sua mensagem" required></textarea>
+                        <textarea id="feedback-message" rows="3" placeholder="Escreva sua mensagem" required data-i18n-placeholder="footer.feedback.messagePlaceholder"></textarea>
                         <div class="feedback-actions">
                             <button type="submit" class="btn btn-secondary btn-sm" id="feedback-submit">
-                                <i class="ph ph-paper-plane-tilt"></i> Enviar
+                                <i class="ph ph-paper-plane-tilt"></i> <span data-i18n="footer.feedback.send">Enviar</span>
                             </button>
                             <span id="feedback-status" class="feedback-status" role="status"></span>
                         </div>
@@ -898,6 +906,7 @@
     </div>
     </div>
 
+    <script src="/i18n.js"></script>
     <script src="/app.js"></script>
     <script>
         // Theme Management
