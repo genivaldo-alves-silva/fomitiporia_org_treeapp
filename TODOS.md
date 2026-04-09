@@ -11,7 +11,11 @@
 
 - Não mostrar botões de download quando não houver dados por fazer download;
 - Largura ser proporcional ao tamanho dos tips e ramos, tal como a altura.
-- Modo dark no mobile
+
+- Failed jobs should free the queue
+- Verificar a trimagem
+
+- Verificar como está o idioma para a escrita dos emails
 
 ## Verificar
 

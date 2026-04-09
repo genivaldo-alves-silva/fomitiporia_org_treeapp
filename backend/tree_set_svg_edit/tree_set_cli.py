@@ -20,6 +20,15 @@ DEFAULT_HEIGHT = 4000
 # Altura base por sequência (multiplicador)
 HEIGHT_PER_SEQUENCE = 23
 
+# Remove caracteres de controle invalidos em XML antes de desenhar labels
+INVALID_XML_CHARS_PATTERN = re.compile(r"[\x00-\x08\x0B\x0C\x0E-\x1F]")
+
+
+def sanitize_tip_label(label: str) -> str:
+    """Sanitiza labels das tips para evitar ParseError no Toyplot/XML."""
+    cleaned = INVALID_XML_CHARS_PATTERN.sub("", label or "")
+    return html.escape(cleaned, quote=False)
+
 def count_sequences_in_alignment(alignment_file: str) -> int:
     """
     Conta o número de sequências em um arquivo FASTA de alinhamento.
@@ -125,12 +134,16 @@ def generate_tree_svg(tree_file: str, output_dir: str, outgroup: str = DEFAULT_O
     # Usar width padrão se não especificado
     tree_width = width if width is not None else DEFAULT_WIDTH
     print(f"Dimensões do SVG: {tree_width}px x {tree_height}px")
+
+    # Toyplot mede labels via XML interno; escapar '&', '<', '>' evita ParseError.
+    sanitized_tip_labels = [sanitize_tip_label(label) for label in ladderized_tree.get_tip_labels()]
     
     # Draw the tree SEM scale_bar (vamos criar uma customizada estilo FigTree)
     canvas, axes, mark = ladderized_tree.draw(
         width=tree_width,
         height=tree_height,
         scale_bar=False,
+        tip_labels=sanitized_tip_labels,
         tip_labels_align=False,
         tip_labels_style={
             "fill": "#262626",
