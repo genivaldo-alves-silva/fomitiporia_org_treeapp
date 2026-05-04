@@ -76,6 +76,32 @@ cd deploy
 ./sync.sh     # Sync files only
 ```
 
+### Robust build with reusable base image
+
+To avoid reinstalling bioinformatics tools and Python dependencies on every deploy,
+the backend Dockerfile now supports two stages:
+
+- `backend-base`: system packages + trimAl + Python venv dependencies
+- `runtime`: application code only
+
+Recommended flow:
+
+```bash
+cd deploy
+
+# First time or whenever requirements/system deps change
+./deploy.sh 7 --build-base --build-app --base-tag 2026-04
+
+# Daily deploys (code-only changes)
+./deploy.sh 8 --build-app --base-tag 2026-04
+```
+
+If the image is already built, deploy only:
+
+```bash
+./deploy.sh 8
+```
+
 SSL certificates are managed via Certbot in the `certbot/` folder with automatic renewal configured through systemd timers.
 
 ## Roadmap

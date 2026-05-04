@@ -56,6 +56,7 @@ backup/
 *.tar.gz
 deploy/
 nginx/
+tests/
 
 # Documentation
 COMO_ATUALIZAR_ALINHAMENTO.md

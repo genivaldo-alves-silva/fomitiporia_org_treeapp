@@ -8,7 +8,7 @@ let publicUrl = null;
 let currentJobName = null;
 let currentOutgroup = null;
 const POLL_INTERVAL_MS = 2000;
-const ERROR_MESSAGE_CHAR_LIMIT = 4000;
+const ERROR_MESSAGE_CHAR_LIMIT = 20000;
 
 function t(key, params = null, fallback = '') {
     if (window.TreeI18n && typeof window.TreeI18n.t === 'function') {

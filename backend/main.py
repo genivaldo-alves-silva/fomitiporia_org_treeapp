@@ -23,6 +23,7 @@ import requests
 import asyncio
 import xml.etree.ElementTree as ET
 import logging
+import html
 
 # Configurar logging
 logging.basicConfig(
@@ -60,6 +61,7 @@ DB_PATH = DATA_DIR / "jobs.sqlite3"
 PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "http://localhost").rstrip("/")
 JOB_RETENTION_DAYS = int(os.getenv("JOB_RETENTION_DAYS", "3"))
 MODE4_INLINE_TIMEOUT_SEC = int(os.getenv("MODE4_INLINE_TIMEOUT_SEC", "30"))
+QUEUE_RECONCILE_INTERVAL_SEC = int(os.getenv("QUEUE_RECONCILE_INTERVAL_SEC", "60"))
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 SENDGRID_FROM = os.getenv("SENDGRID_FROM")
@@ -300,11 +302,13 @@ def get_queue_position(job_id: str) -> Optional[int]:
 
 
 def enqueue_job(job_id: str) -> Optional[int]:
+    # Persist status first to avoid race where worker consumes the item
+    # before DB reflects queued state.
+    job_store.update_job(job_id, status="queued", progress=0, step="queued")
     with queue_lock:
         queue_list.append(job_id)
         position = len(queue_list)
     job_queue.put(job_id)
-    job_store.update_job(job_id, status="queued", progress=0, step="queued")
     return position
 
 
@@ -422,16 +426,31 @@ def send_job_email(job: dict, status_label: str, error_message: Optional[str] = 
     if error_message:
         text_lines.append(f"Erro: {error_message}")
     text_content = "\n".join(text_lines)
-    html_content = ""
-    if job_name:
-        html_content += f"<p>Nome do job: <strong>{job_name}</strong></p>"
-    html_content += (
-        "<p>Status do job: <strong>{status}</strong></p>"
-        "<p>Link de resultados: <a href=\"{link}\">{link}</a></p>"
-        "<p>O link fica ativo por 3 dias apos a conclusao do job.</p>"
-    ).format(status=status_label, link=link)
-    if error_message:
-        html_content += f"<p>Erro: {error_message}</p>"
+    safe_job_name = html.escape(job_name) if job_name else None
+    safe_status = html.escape(status_label)
+    safe_link_attr = html.escape(link, quote=True)
+    safe_link_text = html.escape(link)
+    safe_error = html.escape(error_message) if error_message else None
+
+    html_parts = [
+        '<div style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.5;">'
+    ]
+    if safe_job_name:
+        html_parts.append(f"<p>Nome do job: <strong>{safe_job_name}</strong></p>")
+    html_parts.append(f"<p>Status do job: <strong>{safe_status}</strong></p>")
+    html_parts.append(f'<p>Link de resultados: <a href="{safe_link_attr}">{safe_link_text}</a></p>')
+    html_parts.append("<p>O link fica ativo por 3 dias apos a conclusao do job.</p>")
+    if safe_error:
+        html_parts.append("<p><strong>Erro:</strong></p>")
+        html_parts.append(
+            '<pre style="white-space: pre-wrap; word-break: break-word; '
+            'background: #fff5f5; border: 1px solid #fecaca; border-radius: 8px; '
+            'padding: 12px; color: #b91c1c;">'
+            f"{safe_error}"
+            "</pre>"
+        )
+    html_parts.append("</div>")
+    html_content = "".join(html_parts)
 
     try:
         if send_email_via_sendgrid(email, subject, html_content, text_content):
@@ -488,7 +507,31 @@ def is_job_expired(job: dict) -> bool:
     return bool(expires_at and utcnow() >= expires_at)
 
 
+def enrich_failed_iqtree_error(job: dict) -> Optional[str]:
+    error_message = job.get("error_message")
+    if job.get("status") != "failed" or not error_message:
+        return error_message
+    if "IQ-TREE falhou" not in error_message:
+        return error_message
+    if "Trecho final do iqtree.log:" in error_message:
+        return error_message
+
+    result_dir = Path(job.get("result_dir") or "")
+    log_tail = read_text_tail(result_dir / "iqtree.log", max_lines=80)
+    if not log_tail:
+        return error_message
+
+    enriched_message = "IQ-TREE falhou.\n\nTrecho final do iqtree.log:\n" + log_tail
+    try:
+        job_store.update_job(job["id"], error_message=enriched_message)
+        job["error_message"] = enriched_message
+    except Exception as e:
+        logger.warning(f"Falha ao persistir erro enriquecido do job {job.get('id')}: {e}")
+    return enriched_message
+
+
 def build_status_response(job: dict) -> dict:
+    error_message = enrich_failed_iqtree_error(job)
     response = {
         "job_id": job["id"],
         "status": job.get("status"),
@@ -496,7 +539,7 @@ def build_status_response(job: dict) -> dict:
         "step": job.get("step"),
         "workflow_mode": job.get("workflow_mode"),
         "outgroup": job.get("outgroup"),
-        "error_message": job.get("error_message"),
+        "error_message": error_message,
         "job_name": job.get("job_name"),
         "expires_at": job.get("expires_at"),
         "public_url": public_url_for(job["token"]) if job.get("token") else None,
@@ -508,24 +551,26 @@ def build_status_response(job: dict) -> dict:
 
 def job_worker() -> None:
     while True:
-        job_id = job_queue.get()
-        with queue_lock:
-            if job_id in queue_list:
-                queue_list.remove(job_id)
-        job = job_store.get_job(job_id)
-        if not job:
-            job_queue.task_done()
-            continue
-        # Skip stale queue entries for jobs that were cancelled/completed manually.
-        if job.get("status") not in ["queued", "running"]:
-            job_queue.task_done()
-            continue
-        if is_job_expired(job):
-            job_store.update_job(job_id, status="expired", progress=0, step="expired")
-            job_queue.task_done()
-            continue
-        job_store.update_job(job_id, status="running", progress=10, step="running")
+        job_id: Optional[str] = None
         try:
+            job_id = job_queue.get()
+            with queue_lock:
+                if job_id in queue_list:
+                    queue_list.remove(job_id)
+
+            job = job_store.get_job(job_id)
+            if not job:
+                continue
+
+            # Skip stale queue entries for jobs that were cancelled/completed manually.
+            if job.get("status") not in ["queued", "running"]:
+                continue
+
+            if is_job_expired(job):
+                job_store.update_job(job_id, status="expired", progress=0, step="expired")
+                continue
+
+            job_store.update_job(job_id, status="running", progress=10, step="running")
             asyncio.run(
                 run_phylogenetic_analysis(
                     job_id,
@@ -545,9 +590,52 @@ def job_worker() -> None:
                 )
             )
         except Exception as e:
-            mark_job_completed(job_id, "failed", str(e))
+            logger.exception(f"[QueueWorker] Erro inesperado ao processar job {job_id}")
+            if job_id:
+                try:
+                    job = job_store.get_job(job_id)
+                    if job and job.get("status") in ["queued", "running"]:
+                        mark_job_completed(job_id, "failed", str(e))
+                except Exception:
+                    logger.exception(f"[QueueWorker] Falha ao marcar job {job_id} como failed")
         finally:
-            job_queue.task_done()
+            if job_id:
+                try:
+                    job_queue.task_done()
+                except ValueError:
+                    logger.warning(f"[QueueWorker] task_done sem item pendente para job {job_id}")
+
+
+def reconcile_orphan_queued_jobs() -> None:
+    while True:
+        time.sleep(QUEUE_RECONCILE_INTERVAL_SEC)
+        try:
+            queued_jobs = job_store.list_jobs_by_status(["queued"])
+            now = utcnow()
+
+            with queue_lock:
+                tracked_ids = set(queue_list)
+
+            for job in queued_jobs:
+                job_id = job.get("id")
+                if not job_id or job_id in tracked_ids:
+                    continue
+
+                # Evita re-enfileirar jobs recém-enfileirados em janela de corrida.
+                updated_at = str_to_dt(job.get("updated_at"))
+                if updated_at and (now - updated_at).total_seconds() < 20:
+                    continue
+
+                with queue_lock:
+                    if job_id in queue_list:
+                        continue
+                    queue_list.append(job_id)
+                    position = len(queue_list)
+
+                job_queue.put(job_id)
+                logger.warning(f"[QueueRecovery] Re-enfileirado job orfao {job_id} na posicao {position}")
+        except Exception:
+            logger.exception("[QueueRecovery] Erro durante reconciliacao da fila")
 
 
 def cleanup_expired_jobs() -> None:
@@ -587,6 +675,8 @@ def recover_pending_jobs() -> None:
 def on_startup() -> None:
     worker_thread = threading.Thread(target=job_worker, daemon=True)
     worker_thread.start()
+    reconcile_thread = threading.Thread(target=reconcile_orphan_queued_jobs, daemon=True)
+    reconcile_thread.start()
     cleanup_thread = threading.Thread(target=cleanup_expired_jobs, daemon=True)
     cleanup_thread.start()
     recover_pending_jobs()
@@ -1515,6 +1605,34 @@ async def run_mafft_with_monitoring(job_id: str, mafft_cmd: list, output_file: P
     job_store.update_job(job_id, status="running", progress=60, step="alignment_done")
 
 
+def read_text_tail(file_path: Path, max_lines: int = 80) -> str:
+    if not file_path.exists():
+        return ""
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+            lines = f.readlines()
+        return "".join(lines[-max_lines:]).strip()
+    except Exception as e:
+        logger.warning(f"Falha ao ler tail de {file_path}: {e}")
+        return ""
+
+
+def build_iqtree_failure_message(result: subprocess.CompletedProcess, log_file: Path) -> str:
+    stderr_text = (result.stderr or "").strip()
+    log_tail = read_text_tail(log_file, max_lines=80)
+
+    parts = ["IQ-TREE falhou."]
+    if stderr_text:
+        parts.append(f"stderr:\n{stderr_text}")
+    if log_tail:
+        parts.append(f"Trecho final do iqtree.log:\n{log_tail}")
+
+    if len(parts) == 1:
+        parts.append("Sem detalhes no stderr e no iqtree.log.")
+
+    return "\n\n".join(parts)
+
+
 async def build_tree(job_id: str, aligned_file: Path, tree_file: Path, result_dir: Path,
                      tree_tool: str, bootstrap: int, outgroup: str, workflow_mode: str):
     """Constrói árvore filogenética com FastTree ou IQ-TREE"""
@@ -1581,7 +1699,7 @@ async def build_tree(job_id: str, aligned_file: Path, tree_file: Path, result_di
             shutil.copy(result_dir / "iqtree.contree", tree_file)
             generate_svg_with_outgroup(tree_file, result_dir, outgroup, aligned_file, raise_on_error=True)
         else:
-            raise Exception(f"IQ-TREE falhou: {result.stderr}")
+            raise Exception(build_iqtree_failure_message(result, log_file))
 
 
 def generate_svg_with_outgroup(

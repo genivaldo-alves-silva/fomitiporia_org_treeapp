@@ -13,9 +13,21 @@
 - Largura ser proporcional ao tamanho dos tips e ramos, tal como a altura.
 
 - Failed jobs should free the queue
+    - Testar com matriz não alinhada no modo 1 e ver comportamento do sistema
+    - Pensar sobre o implementar o retry. Existe um chat iniciado com isso ('Comportamento do app em caso de falhas de job').
+    - Implementar testes de arquivos por modo e retorar msg específica para o user, como o caso da matriz não alinhada usando o modo 1. Cada modo pode ter seus testes de arquivos
+
 - Verificar a trimagem
 
+- Adicionar sugestões para usar Fasttree antes de tudo, quando não se conhece o comportamento da topologia e sugestões de como usar o outgroup para enraizamento;
+
+- Incluir no bolding as palavras 'type region', 'genus type', etc
+
 - Verificar como está o idioma para a escrita dos emails
+
+- Retirar o debugging deeper no log. Os endereços de emails estão sendo expostos. Há alguma conversa aqui no chat que pode ajudar. Se não me engano tem uma forma de desligar hardcoded.
+
+- Toy datasets to teach
 
 ## Verificar
 

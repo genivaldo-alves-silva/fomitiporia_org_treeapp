@@ -851,6 +851,126 @@ small, .small {
     color: var(--color-accent);
 }
 
+/* DNA logo motion presets (sidebar + mobile brand) */
+:root {
+    --dna-logo-animation-name: dna-logo-scientific;
+    --dna-logo-animation-duration: 760ms;
+    --dna-logo-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+html[data-logo-motion="subtle"] {
+    --dna-logo-animation-name: dna-logo-subtle;
+    --dna-logo-animation-duration: 520ms;
+    --dna-logo-shadow: 0 2px 6px rgba(37, 99, 235, 0.22);
+}
+
+html[data-logo-motion="scientific"] {
+    --dna-logo-animation-name: dna-logo-scientific;
+    --dna-logo-animation-duration: 760ms;
+    --dna-logo-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+html[data-logo-motion="energetic"] {
+    --dna-logo-animation-name: dna-logo-energetic;
+    --dna-logo-animation-duration: 920ms;
+    --dna-logo-shadow: 0 6px 14px rgba(37, 99, 235, 0.36);
+}
+
+.sidebar-logo .ph-dna,
+.sidebar-logo .logo-icon,
+.mobile-brand .ph-dna {
+    transform-origin: center;
+    transition: color var(--duration-fast) var(--easing),
+                filter var(--duration-fast) var(--easing);
+    will-change: transform;
+}
+
+.sidebar-logo:hover .ph-dna,
+.sidebar-logo:hover .logo-icon,
+.sidebar-logo:focus-visible .ph-dna,
+.sidebar-logo:focus-visible .logo-icon,
+.mobile-brand:hover .ph-dna,
+.mobile-brand:focus-visible .ph-dna,
+.mobile-brand:active .ph-dna {
+    animation: var(--dna-logo-animation-name) var(--dna-logo-animation-duration) var(--easing);
+    color: var(--color-accent-hover);
+    filter: drop-shadow(var(--dna-logo-shadow));
+}
+
+@keyframes dna-logo-subtle {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    30% {
+        transform: rotate(-5deg) scale(1.03);
+    }
+    65% {
+        transform: rotate(4deg) scale(1.03);
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes dna-logo-scientific {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    20% {
+        transform: rotate(-10deg) scale(1.08);
+    }
+    45% {
+        transform: rotate(9deg) scale(1.08);
+    }
+    70% {
+        transform: rotate(-5deg) scale(1.04);
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes dna-logo-energetic {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    18% {
+        transform: rotate(-13deg) translateY(-1px) scale(1.1);
+    }
+    40% {
+        transform: rotate(11deg) translateY(0) scale(1.1);
+    }
+    62% {
+        transform: rotate(-8deg) translateY(-1px) scale(1.06);
+    }
+    82% {
+        transform: rotate(5deg) scale(1.03);
+    }
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar-logo .ph-dna,
+    .sidebar-logo .logo-icon,
+    .mobile-brand .ph-dna {
+        transition: none;
+        animation: none;
+    }
+
+    .sidebar-logo:hover .ph-dna,
+    .sidebar-logo:hover .logo-icon,
+    .sidebar-logo:focus-visible .ph-dna,
+    .sidebar-logo:focus-visible .logo-icon,
+    .mobile-brand:hover .ph-dna,
+    .mobile-brand:focus-visible .ph-dna,
+    .mobile-brand:active .ph-dna {
+        animation: none;
+        filter: none;
+    }
+}
+
 .header-content {
     flex: 1;
 }
@@ -1876,6 +1996,7 @@ header p {
 
 /* Number input - hide spinners */
 .form-group input[type="number"] {
+    appearance: textfield;
     -moz-appearance: textfield;
 }
 

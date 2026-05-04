@@ -1,4 +1,6 @@
-FROM ubuntu:24.04
+ARG BASE_IMAGE=backend-base
+
+FROM ubuntu:24.04 AS backend-base
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -29,6 +31,16 @@ RUN curl -L -o /tmp/trimal.tar.gz https://github.com/inab/trimal/archive/refs/ta
 COPY requirements.txt /app/requirements.txt
 RUN python3 -m venv /opt/venv \
     && /opt/venv/bin/pip install --no-cache-dir -r /app/requirements.txt
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+FROM ${BASE_IMAGE} AS runtime
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
 
 COPY . /app
 
