@@ -17,6 +17,8 @@
     - Pensar sobre o implementar o retry. Existe um chat iniciado com isso ('Comportamento do app em caso de falhas de job').
     - Implementar testes de arquivos por modo e retorar msg específica para o user, como o caso da matriz não alinhada usando o modo 1. Cada modo pode ter seus testes de arquivos
 
+- Melhorar o quadro de visualização da árvore. Adicionar a opção de mover a árvore quando zoom out/in. Adicionar a opção de redimencionamento do quadro de visualização.
+
 - Verificar a trimagem
 
 - Adicionar sugestões para usar Fasttree antes de tudo, quando não se conhece o comportamento da topologia e sugestões de como usar o outgroup para enraizamento;
