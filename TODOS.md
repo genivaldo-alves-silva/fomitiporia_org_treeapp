@@ -19,6 +19,8 @@
 
 - Melhorar o quadro de visualização da árvore. Adicionar a opção de mover a árvore quando zoom out/in. Adicionar a opção de redimencionamento do quadro de visualização.
 
+- Verificar o pt-br e ENG do corpo do email.
+
 - Verificar a trimagem
 
 - Adicionar sugestões para usar Fasttree antes de tudo, quando não se conhece o comportamento da topologia e sugestões de como usar o outgroup para enraizamento;
