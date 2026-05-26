@@ -23,6 +23,8 @@
 
 - Tratar a exceção como 'Panus sp. eciosus' ao lidar com sp. e italização;
 
+- Dar a opção de download da árvore como imagem (ex.: PNG);
+
 - Verificar a trimagem
 
 - Adicionar sugestões para usar Fasttree antes de tudo, quando não se conhece o comportamento da topologia e sugestões de como usar o outgroup para enraizamento;
