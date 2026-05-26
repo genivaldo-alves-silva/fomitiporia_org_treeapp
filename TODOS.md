@@ -21,6 +21,8 @@
 
 - Verificar o pt-br e ENG do corpo do email.
 
+- Tratar a exceção como 'Panus sp. eciosus' ao lidar com sp. e italização;
+
 - Verificar a trimagem
 
 - Adicionar sugestões para usar Fasttree antes de tudo, quando não se conhece o comportamento da topologia e sugestões de como usar o outgroup para enraizamento;
